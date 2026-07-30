@@ -29,3 +29,16 @@ tmp
 TODO.md
 package-lock.json
 *.code-*
+
+# --- picomatch-port (branch chirag) ---
+# Rust build artifacts
+target/
+# benchmark/bench raw outputs except committed reports
+artifacts/tmp/
+# fuzzer artifacts (crashes are triaged into tests/fixtures, not committed raw)
+fuzz/corpus/
+fuzz/artifacts/
+# proptest regressions are COMMITTED intentionally (do not ignore)
+# scratch large dumps (scratch/ itself stays, but bulky generated data is ignored)
+scratch/out/
+

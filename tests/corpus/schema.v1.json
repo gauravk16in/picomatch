@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/gauravk16in/picomatch/tests/corpus/schema.v1.json",
+  "title": "picomatch-port oracle corpus record (v1)",
+  "type": "object",
+  "required": ["id", "suite", "op", "expected", "meta"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9_.-]+/[0-9]{4}$" },
+    "suite": { "type": "string" },
+    "op": {
+      "type": "string",
+      "enum": ["match", "matchObject", "isMatch", "makeRe", "parse", "scan", "test", "matchBase", "error", "events"]
+    },
+    "pattern": { "type": ["string", "null"] },
+    "patterns": { "type": ["array", "null"], "items": { "type": "string" } },
+    "input": { "type": ["string", "null"] },
+    "options": {
+      "type": "object",
+      "description": "picomatch options; function-valued options use '@namespace/name' registry ids",
+      "additionalProperties": true
+    },
+    "expected": {
+      "type": "object",
+      "description": "normalized expected result; see spec §5.3 normalization",
+      "additionalProperties": true
+    },
+    "compareSource": {
+      "type": "boolean",
+      "default": false,
+      "description": "true only where exact JS regex-source string equality is claimed (spec §5.4)"
+    },
+    "engine": {
+      "type": ["string", "null"],
+      "enum": ["regex", "fallback", null],
+      "description": "engine the port is expected to select (recorded after Phase 5)"
+    },
+    "platforms": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["linux", "darwin", "win32"] },
+      "default": ["linux", "darwin", "win32"]
+    },
+    "meta": {
+      "type": "object",
+      "required": ["sourceFile", "oracleCommit"],
+      "properties": {
+        "sourceFile": { "type": "string" },
+        "node": { "type": "string" },
+        "oracleCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
