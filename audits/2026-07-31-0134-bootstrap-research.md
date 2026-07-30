@@ -107,8 +107,12 @@ No **critical** or **high** findings open.
 
 **Phase 0 + Phase 1 kickoff block (one session):** read Discord kickoff announcements (adapter templates, unsafe thresholds, test-hash manifest); ratify D-001/D-002 (and D-012 after first build); record kickoff test-suite hashes; then build `tools/oracle/` corpus generator and produce `tests/corpus/v1` + manifest with a 100% oracle self-replay. Success = ratified decisions + committed corpus manifest. (Only after that should a separate session start Phase 2 workspace scaffolding — which also requires installing the Rust toolchain, G-13.)
 
-## Final Git state (pre-push, to be filled after push)
+## Final Git state (after push)
 
-- Branch: `chirag` @ (bootstrap commit(s) — see section 5 row for push result)
-- Push: `git push -u origin chirag` — result recorded below.
+- Pre-push check (2026-07-31 03:23 IST): `git status --short` → `M .gitignore` + untracked new dirs only; `git diff --stat HEAD -- lib/ test/ index.js posix.js package.json LICENSE bench/ examples/ .github/` → **empty** (upstream files untouched).
+- Commit: `54c9eb0282d7332666c639251acffec89c8f6a49` — "bootstrap: governance + context + spec + plan + decisions + architecture docs" (2026-07-31 03:35:31 +0530, author Chirag), 43 files incl. `Prompts/Session-0.md`.
+- Push: `git push -u origin chirag` from d:\picomatch\picomatch at 03:36 IST → **success**: `* [new branch] chirag -> chirag`, tracking `origin/chirag` set. No force, no retries needed. (PowerShell NativeCommandError line is stderr-progress noise, not a failure.)
+- Post-audit-update commit: this section + implementation.md log committed and pushed as a follow-up (see implementation.md).
+- Readiness gate: all items in the bootstrap checklist pass; no unresolved critical/high findings; diff contains documentation/scaffolding only.
+
 

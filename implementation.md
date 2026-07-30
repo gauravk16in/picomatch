@@ -4,7 +4,7 @@
 
 ## Current phase / status
 
-- **Phase:** Bootstrap (pre-Phase 0) — research + scaffolding. **Status: COMPLETE pending push.**
+- **Phase:** Bootstrap (pre-Phase 0) — research + scaffolding. **Status: COMPLETE — pushed to `origin/chirag` (2026-07-31 03:36 IST).**
 - **Current branch:** `chirag` (base `4f41a8edade7a5ab19832f7b40ecce46b288767f`, tag 4.0.5).
 - **Production Rust code:** none — intentionally (event rule: no port code before kickoff; bootstrap scope).
 
@@ -36,9 +36,8 @@ Environment: Windows 11, PowerShell 5.1, Node v24.13.0, npm 11.6.2, git 2.53.0.w
 
 - Read fully: `index.js`, `posix.js`, `lib/picomatch.js` (361), `lib/parse.js` (1416), `lib/scan.js` (391), `lib/constants.js` (184), `lib/utils.js` (72), `package.json`, `.github/workflows/test.yml`, `bench/index.js`, `bench/package.json`, `test/support/match.js`, `test/api.picomatch.js`, `test/malicious.js`, `test/options.maxExtglobRecursion.js`, `test/options.js` (1–120), `LICENSE`, `CHANGELOG.md`, README options table; listed full tree incl. 38 test files, 13 examples.
 - Ran: `npm install` (0), `npm run mocha` (1977 passing), `npm run lint` (0), `npm run test:cover` (1977 passing; coverage table above).
-- LOC counts: lib 2,424 (2,444 incl. index/posix); tests 16,961.
+- LOC counts: lib 2,424 (2,444 incl. index/posix); tests 16,961 across 36 `.js` files.
 - Git archaeology: security merges 5eceecd (extglob ReDoS fix + maxExtglobRecursion), 4516eb5 (null-proto POSIX map); ab8bc4d + 6289307 (4.0.5 fixes); CHANGELOG stops at 4.0.0.
-- Mismatches: none vs expectations; recorded CHANGELOG gap.
 
 ### 2026-07-31 01:51–01:54 IST — Behavioral probes
 
@@ -87,6 +86,16 @@ See "Latest verified baseline" above. No Rust builds yet (toolchain absent; Phas
 - [ ] Phase 10 — benchmarks
 - [ ] Phase 11 — CI/submission/demo
 
+### 2026-07-31 03:22–03:36 IST — Stage 4/5: adversarial review, commit, push
+
+- Adversarial review (clean-context pass): 8 findings logged in audit §7 — 2 medium FIXED (test-file count 36 not 38; options-matrix `prepend` wording), 4 low accepted-with-documentation, 2 notes. No critical/high.
+- User-requested rename: all "You.com" tool references → "Search MCP" in our docs (4 files; `Prompts/Session-0.md` kept verbatim by design).
+- `.gitignore` extended for Rust/fuzz/artifact paths (only upstream-file modification; additive).
+- Committed `54c9eb0282d7332666c639251acffec89c8f6a49` ("bootstrap: governance + context + spec + plan + decisions + architecture docs", 43 files) and pushed: `git push -u origin chirag` → success, new branch `chirag` on origin with tracking.
+- Commands/outcomes: see audit §5 rows 17–19 + final Git state.
+- Mismatches: none remaining. Decisions: none changed.
+
 ## Next exact action
 
-**Stage 4 (this session):** adversarial audit of the produced documentation set; fix critical/high findings; then Stage 5: final verification, commit docs/scaffolding in logical commits, `git push -u origin chirag`, final report.
+**Next session (Phase 0+1):** kickoff block — read Discord announcements (adapter templates, unsafe thresholds, test-hash manifest), ratify D-001/D-002, record kickoff test hashes, then build `tools/oracle/` and generate `tests/corpus/v1` + manifest with 100% oracle self-replay. Install Rust toolchain beforehand (G-13).
+
