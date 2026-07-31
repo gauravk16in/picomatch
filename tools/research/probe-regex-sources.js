@@ -65,7 +65,7 @@ const cases = {
   triple_star: ['***'],
   star_star_slash_star_star: ['**/**'],
   posix_false: ['[[:alpha:]]', { posix: false }],
-  nocase_match: ['*.JS', { nocase: true }],
+  nocase_match: ['*.JS', { nocase: true }]
 };
 
 for (const [name, args] of Object.entries(cases)) {
@@ -90,7 +90,7 @@ out.match_samples = {
   'a\\b vs * posix-entry': require('../../posix').isMatch('a\\b', '*'),
   'foo vs !(bar)': pm.isMatch('foo', '!(bar)'),
   'bar vs !(bar)': pm.isMatch('bar', '!(bar)'),
-  'a.js vs *.!(*a)': pm.isMatch('a.b', '*.!(*a)'),
+  'a.js vs *.!(*a)': pm.isMatch('a.b', '*.!(*a)')
 };
 
 console.log(JSON.stringify(out, null, 1));
