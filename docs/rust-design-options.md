@@ -11,7 +11,7 @@ The oracle emits JS regex sources rich in lookarounds: dot guards `(?!.)`, `(?=.
 | Axis | S1: compile to `regex` | S2: `regex-automata` direct | S3: custom AST + matcher/VM | S4: hybrid (regex + guarded fallback) |
 |---|---|---|---|---|
 | Semantic fidelity | fails on lookaround subset (~negation, dot guards) | same lookaround gap as S1 (no engine in the crate supports it) | highest possible but must re-prove every regex behavior | high: regex where exact, fallback for the rest |
-| ReDoS resistance | linear-time guaranteed | linear-time guaranteed | exponential if backtracking; must invent budgets | linear for primary; step-budgeted fallback |
+| ReDoS resistance | linear-time guaranteed | linear-time guaranteed | exponential if backtracking; must invent budgets | linear for primary; explicit backtrack_limit on fallback |
 | Capture support | yes (capture groups, exec) | NFA Thompson yes; hybrid DFA no capture offsets | must build | yes via regex + fancy-regex captures |
 | Unicode/case folding | simple fold ≈ JS `i` (G-10) | same | self-managed | same as regex |
 | Windows/POSIX handling | orthogonal (pattern-level) | orthogonal | orthogonal | orthogonal |
@@ -22,13 +22,13 @@ The oracle emits JS regex sources rich in lookarounds: dot guards `(?!.)`, `(?=.
 
 ## Candidates for the fallback (lookaround subset)
 
-- **fancy-regex 0.17.0** (MIT/Apache): backtracking VM delegating to `regex` for non-fancy spans; supports lookaround/backrefs; worst case exponential (docs.rs/fancy-regex; repo README). Chosen as primary fallback candidate with a **configurable step budget** and deterministic no-match degradation (FR-073).
-- **Hand-rolled mini backtracker** for exactly two constructs (`^(?!S).*$` top-level negation and `(?:(?!X))STAR` negate-extglob): implementable as *negative check + linear scan* without general backtracking — because picomatch's lookarounds are anchored and fixed-position. Kept as fallback-of-fallback (D-003 reversal trigger) since it avoids exponential blowup by construction.
+- **fancy-regex 0.19.0** (MIT per registry; current as of 2026-07-31): backtracking VM delegating to `regex` for non-fancy spans; supports lookaround/backrefs; worst case exponential (docs.rs/fancy-regex; repo README). **Chosen as the fallback engine under an explicit `backtrack_limit`** (candidate 1,000,000 steps = crate default, lib.rs-verified); budget trip surfaces as typed `ResourceLimitError` (D-003, DV-6), never silent no-match.
+- **Hand-rolled mini backtracker: REMOVED from the committed plan (2026-07-31).** A prose-only contingency is not an implementation plan; if Phase 7 differential evidence shows a fancy-regex mismatch class, a bounded spec (constructs, input model, complexity bound, operation budget, captures, errors, trigger criteria, differential tests) is written as a new ADR before any implementation (D-003 reversal trigger).
 - regex-automata PikeVM: still no lookaround → cannot serve alone.
 
-## Decision (D-003, Proposed)
+## Decision (D-003, Accepted 2026-07-31)
 
-Primary `regex`; fallback `fancy-regex` (step-budgeted) for the lookaround subset; mini-backtracker as contingency per construct. Engine selection deterministic via source inspection `(?=` / `(?!` / `(?<`). Every corpus case records the selected engine; Phase 9 fuzzes both paths.
+Primary `regex`; fallback `fancy-regex` (explicit `backtrack_limit`, typed `ResourceLimitError` on trip — DV-6) for the lookaround subset; no mini-backtracker in the committed plan (reversal trigger: bounded spec as new ADR if Phase 7 evidence demands). Engine selection deterministic via source inspection `(?=` / `(?!` / `(?<`). Every corpus case records the selected engine; Phase 9 fuzzes both paths.
 
 ## Prior art note (non-copy, D-010)
 

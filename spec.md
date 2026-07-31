@@ -16,7 +16,7 @@ Picomatch compiles glob patterns to JavaScript `RegExp` objects and matches stri
 
 ## 3. Scope and Non-Goals
 
-**MUST (must-have parity):** `picomatch()` matcher construction (string|array|state), `.test`, `.matchBase`, `.isMatch`, `.parse`, `.scan`, `.compileRe`, `.makeRe`, `.toRegex`, `.constants`; all 32 main options + 7 scan options (`knowledge/options-matrix.md`); POSIX + Windows separator modes; error model; resource limits; the risky-extglob safeguard.
+**MUST (must-have parity):** `picomatch()` matcher construction (string|array|state), `.test`, `.matchBase`, `.isMatch`, `.parse`, `.scan`, `.compileRe`, `.makeRe`, `.toRegex`, `.constants`; all documented main + scan options (`knowledge/options-matrix.md` — canonical counts: 33 main rows incl. 2 aliases, 7 scan rows incl. 3 shared); POSIX + Windows separator modes; error model; resource limits; the risky-extglob safeguard.
 
 **SHOULD:** rich result-object parity (normalized), `capture` group values, scan tokens/parts/maxDepth, callback sequences, fastpaths table, cross-platform CI (linux/windows/macos).
 
@@ -37,20 +37,22 @@ Picomatch compiles glob patterns to JavaScript `RegExp` objects and matches stri
 
 - **P0 — Behavioral parity (MUST):** for every corpus case: identical `isMatch`, identical `output`, identical error class + message, identical callback event sequence, identical scan/parse data shapes (normalized), identical thrown-vs-returned distinction.
 - **P1 — Rich result parity (SHOULD):** `matcher(input, true)` object fields after normalization (§5.3): `{glob, state, regex, posix, input, output, match, isMatch}`.
-- **P2 — Regex-source parity (STRETCH only):** `makeRe().source` string equality after the normalization in §5.4. Not promised globally `(verified: Rust regex lacks lookaround)`.
+- **P2 — Regex-source parity (STRETCH only):** `makeRe().source` string equality after the normalization in §5.4. Not promised globally `(verified: Rust regex lacks lookaround; boundary ratified D-002 2026-07-31)`.
 
 ### 5.2 Oracle authority order
 
-When sources conflict: **JS test suite (executed) > JS source code > README > Bash**. Every recorded conflict must appear in `docs/compatibility-matrix.md`. Known conflicts at bootstrap: README vs issue #89 (matchBase applies to slash patterns — source wins); README options table vs removed options; CHANGELOG stops at 4.0.0 (git log wins); Bash vs picomatch intentional divergences (`*` doesn't cross `/`; `!(foo)*` non-greedy) — picomatch wins, `[README §Matching behavior vs. Bash]`.
+When sources conflict: **JS test suite (executed) > JS source code > README > Bash**. Every recorded conflict must appear in `docs/compatibility-matrix.md`. Known conflicts at bootstrap: README vs issue #89 (matchBase applies to slash patterns — source wins); README options table vs removed options; README `posix` row/prose ("disabled by default") vs source (`lib/parse.js:719` expands classes unless `posix === false` — source wins, enabled by default); CHANGELOG stops at 4.0.0 (git log wins); Bash vs picomatch intentional divergences (`*` doesn't cross `/`; `!(foo)*` non-greedy) — picomatch wins, `[README §Matching behavior vs. Bash]`.
 
 ### 5.3 Normalization (for corpus + adapter)
 
 - `Infinity` → `{"__inf__":true}`; RegExp → `{source, flags}`; match arrays → JSON arrays (holes/undefined → null); errors → `{errorClass, message}`; functions → named-library identifiers (`knowledge/test-inventory.md` §callbacks); `undefined` vs absent distinguished.
 - Regex-source comparison (`compareSource: true`) is only enabled for cases where the Rust compiler emits the identical string; otherwise behavioral comparison.
+- **Observable positions are UTF-16 code-unit offsets (D-013).** Every numeric position exposed by scan/parse (`start`, `slashes[]`, parse-state `index`/`start`/`consumed`) is the exact UTF-16-unit value the JS oracle produces (BMP char = 1 unit, astral char = 2 units, ASCII fast path identical). Corpus scan/parse records declare `meta.indexUnits: "utf16_code_unit"`. Rust internals iterate scalar values and derive unit positions from a cumulative counter (never byte offsets). Unpaired surrogates cannot exist in Rust `String`; the JSON protocol replaces them with U+FFFD at ingestion and records the replacement in `meta` — corpus cases never contain unpaired surrogates.
+- Resource-limit outcomes (D-003): when the fallback engine's backtrack budget trips, `expected` carries `{"errorClass": "ResourceLimitError", "kind": "backtrack_limit"}` (or `"stack_overflow"` / `"runtime"`) plus `meta.limitNote`; these cases are classified `EXPECTED_LIMIT` in differential runs (docs/fuzzing.md), not match-result mismatches.
 
 ### 5.4 Regex-source parity boundary
 
-JS sources contain lookarounds — `(?!.)`, `(?=.)`, `^(?!...).*$`, `(?:(?!X))STAR` — that Rust `regex` rejects `(verified: docs.rs/regex)`. Therefore: the Rust compiler emits a **Rust-regex-compatible source** for the non-lookaround subset and routes the lookaround subset to the fallback engine (D-003). P2 claims are made only per-case with a recorded mapping, never as a blanket guarantee. `[assumed: judges accept documented impossibility — mitigation: differential parity + explanation in DECISIONS.md D-004]`
+JS sources contain lookarounds — `(?!.)`, `(?=.)`, `^(?!...).*$`, `(?:(?!X))STAR` — that Rust `regex` rejects `(verified: docs.rs/regex)`. Therefore: the Rust compiler emits a **Rust-regex-compatible source** for the non-lookaround subset and routes the lookaround subset to the fallback engine (D-003). P2 claims are made only per-case with a recorded mapping, never as a blanket guarantee. `(decided: D-002, ratified 2026-07-31 — the official rubric scores behavioral/test-suite parity, not source strings; differential parity + explanation in DECISIONS.md D-002/D-004 is the accepted mitigation)`
 
 ## 6. Public API Surface
 
@@ -64,7 +66,7 @@ JS sources contain lookarounds — `(?!.)`, `(?=.)`, `^(?!...).*$`, `(?:(?!X))ST
 **FR-008 (must)** `.test(input, regex, options?, {glob, posix}?)`: non-string input → `TypeError('Expected input to be a string')`; empty input → `{isMatch:false, output:''}`; equality fast paths `input===glob` then `format(input)===glob`; `matchBase/basename` branch; `capture:true` forces exec; returns `{isMatch, match, output}` `[lib/picomatch.js:128-156]`.
 **FR-009 (must)** `.matchBase(input, glob|regex, options?, posix?)`: tests `utils.basename(input, {windows:posix})`; windows mode splits on `[\\/]`; trailing-slash basename = previous segment `[lib/picomatch.js:172-175; lib/utils.js:63-72; test/options.js:25-33]`.
 **FR-010 (must)** `.isMatch(str, patterns, options)` ≡ `picomatch(patterns, options)(str)` `[lib/picomatch.js:194]`.
-**FR-011 (must)** `.parse(pattern, options)`: array → mapped array; always `fastpaths:false`; returns state with keys `{input,index,start,dot,consumed,output,prefix,backtrack,negated,brackets,braces,parens,quotes,globstar,tokens,peek,advance}` (functions normalized out in corpus) `[lib/picomatch.js:210-213; probe]`.
+**FR-011 (must)** `.parse(pattern, options)`: array → mapped array; always `fastpaths:false`; returns state with keys `{input,index,start,dot,consumed,output,prefix,backtrack,negated,brackets,braces,parens,quotes,globstar,tokens,peek,advance}` (functions normalized out in corpus). All numeric positions (`index`, `start`, `consumed`, token boundaries) are **UTF-16 code-unit offsets** identical to the oracle (D-013, §5.3) `[lib/picomatch.js:210-213; probe]`.
 **FR-012 (must)** `.scan(input, options)` full contract incl. `negatedExtglob`, tokens/parts/slashes/maxDepth per options `[lib/scan.js:327-388; test/api.scan.js]`.
 **FR-013 (must)** `.compileRe(state, options, returnOutput, returnState)`: `returnOutput:true` → `state.output`; wraps `^(?:…)$` (or unanchored when `contains`); negated → `^(?!SOURCE).*$`; `returnState` attaches state `[lib/picomatch.js:264-284]`.
 **FR-014 (must)** `.makeRe(input, options, returnOutput, returnState)`: non-string/empty → `TypeError('Expected a non-empty string')`; fastpath attempt when `input[0] ∈ {'.','*'}` and `fastpaths!==false`; falls back to full parse `[lib/picomatch.js:305-321]`.
@@ -98,12 +100,12 @@ JS sources contain lookarounds — `(?!.)`, `(?=.)`, `^(?!...).*$`, `(?:(?!X))ST
 
 ## 8. Options and Configuration
 
-Canonical matrix: `knowledge/options-matrix.md` (32 main + 7 scan options, defaults, scopes, interactions). **FR-040 (must)** All defaults and aliases (`matchBase`=`basename`, `noext`→`noextglob`) as tabulated. **FR-041 (must)** Option interactions: flags-over-nocase; windows+matchBase; dot+globstar; capture+extglob wrappers; contains+negation; strictSlashes+fastpaths; bash+escapes `[options-matrix §interactions; test/options.js]`.
+**FR-040 (must)** All defaults and aliases (`matchBase`=`basename`, `noext`→`noextglob`) as tabulated in `knowledge/options-matrix.md` (canonical counts: 33 main rows = 31 distinct + 2 aliases; 7 scan rows = 4 scan-specific + 3 shared). **FR-041 (must)** Option interactions: flags-over-nocase; windows+matchBase; dot+globstar; capture+extglob wrappers; contains+negation; strictSlashes+fastpaths; bash+escapes `[options-matrix §interactions; test/options.js]`.
 
 ## 9. Scanner Contract
 
-**FR-050 (must)** Output fields `{prefix,input,start,base,glob,isBrace,isBracket,isGlob,isExtglob,isGlobstar,negated,negatedExtglob}` always present `[lib/scan.js:327-340]`.
-**FR-051 (must)** `parts:true` adds `slashes:number[]` + `parts:string[]`; `tokens:true` implies parts and adds `tokens` + `maxDepth` (globstar depth=Infinity→normalized); prefix token `isPrefix:true, depth:0` when `start!==0` `[lib/scan.js:342-386; test/api.scan.js]`.
+**FR-050 (must)** Output fields `{prefix,input,start,base,glob,isBrace,isBracket,isGlob,isExtglob,isGlobstar,negated,negatedExtglob}` always present; `start` is a **UTF-16 code-unit offset** (D-013) `[lib/scan.js:327-340]`.
+**FR-051 (must)** `parts:true` adds `slashes:number[]` + `parts:string[]`; `tokens:true` implies parts and adds `tokens` + `maxDepth` (globstar depth=Infinity→normalized); prefix token `isPrefix:true, depth:0` when `start!==0`. `slashes[]` entries are **UTF-16 code-unit offsets**; `parts[]` are unit-derived substrings (D-013) `[lib/scan.js:342-386; test/api.scan.js]`.
 **FR-052 (must)** Options `parts, tokens, scanToEnd, noext, noparen, nonegate, unescape` behaviors as source `[lib/scan.js:53,171,250,256,288,319-325]`.
 **FR-053 (must)** Base/glob split: last slash before first glob marker; trailing separator stripped from base unless base is `/` or whole input; escaped-brace handling `[lib/scan.js:293-317]`.
 
@@ -121,7 +123,7 @@ Canonical matrix: `knowledge/options-matrix.md` (32 main + 7 scan options, defau
 **FR-070 (must)** Two-engine design (D-003): primary Rust `regex` for sources without lookaround; fallback engine for the lookaround subset with identical accept/reject behavior; engine selection is deterministic by source inspection and recorded per corpus case.
 **FR-071 (must)** Equality fast path before regex (FR-008) including `format` handling.
 **FR-072 (must)** Flags mapping: `nocase`→case-insensitive (simple fold parity G-10); `flags` passthrough limited to `{i,m,s,u}` subset semantics — `g`/`y` documented as stateful-JS edge case, rejected or normalized `[lib/picomatch.js:343; knowledge/research-gaps.md G-10]`.
-**FR-073 (must)** No catastrophic-backtracking guarantee at least as strong as oracle: risky extglobs literalized identically; fallback engine carries a configurable step budget with deterministic `RegexError`-free degradation (never-match fallback like `/ $^ /` on internal compile failure) `[GHSA-c2c7-rcm5-vvqj; lib/picomatch.js:344-347]`.
+**FR-073 (must)** No catastrophic-backtracking guarantee at least as strong as oracle: risky extglobs literalized identically; fallback engine runs under an explicit `backtrack_limit` (candidate 1,000,000 backtrack steps, matching the fancy-regex upstream default; engine option `maxBacktrackSteps`). On `BacktrackLimitExceeded`/`StackOverflow` the matcher returns a typed `PicomatchError::ResourceLimit` (CLI `{"errorClass":"ResourceLimitError","kind":...}`) — a typed, visible failure, never a silent `isMatch:false`; divergence **DV-6** registered (oracle eventually answers a boolean). Never-match `/ $^ /` remains for internal compile failure only (FR-015) `[GHSA-c2c7-rcm5-vvqj; lib/picomatch.js:344-347; D-003 budget semantics 2026-07-31]`.
 **FR-074 (must)** No panics on adversarial input: all parse/compile/match paths return `Result` or controlled values; fuzz-proven in Phase 9 `[NFR-003]`.
 
 ## 12. Platform and Path Semantics
@@ -140,7 +142,7 @@ Canonical matrix: `knowledge/options-matrix.md` (32 main + 7 scan options, defau
 **NFR-001 (must)** `maxLength` 65536 enforced identically; pattern length arithmetic cannot overflow `[lib/parse.js:364-368]`.
 **NFR-002 (must)** Risky-extglob safeguard parity incl. branch-preserving rewrite `[FR-064; commit 6289307]`.
 **NFR-003 (must)** Zero panics/UB: `#![forbid(unsafe_code)]` in our crates by default; any approved exception documented per-block (D-009); Miri run if any unsafe exists `[event bonus; Miri docs]`.
-**NFR-004 (must)** Fallback-engine worst case bounded (step budget; see FR-073); documented residual risk for pathological non-risky lookahead patterns `[research-gaps G-15]`.
+**NFR-004 (must)** Fallback-engine worst case bounded (explicit `backtrack_limit`; see FR-073/D-003); limit-exceeded outcome is the typed `ResourceLimitError` (DV-6) with corpus `EXPECTED_LIMIT` classification; documented residual risk for pathological non-risky lookahead patterns `[research-gaps G-15; D-003]`.
 **NFR-005 (should)** Prototype-injection class of bugs is N/A in Rust by construction (no prototype chain); POSIX class table is a closed map `[GHSA-3v7f-55p6-f55p]`.
 **NFR-006 (should)** Allocation growth bounded by output size ∝ input length; recursion depth in parser is loop-based (no unbounded recursion) — extglob analysis recursion mirrors JS iteration `[lib/parse.js:164-285]`.
 
@@ -160,7 +162,7 @@ Canonical matrix: `knowledge/options-matrix.md` (32 main + 7 scan options, defau
 
 ## 17. Build, Packaging, and Distribution
 
-**NFR-030 (must)** One-command build: `cargo build --release` from repo root after `rustup` install; `rust-toolchain.toml` pins 1.95.0; Cargo.lock committed `[event §05; research-gaps G-13]`.
+**NFR-030 (must)** One-command build: `cargo build --release` from repo root after `rustup` install; `rust-toolchain.toml` pins **1.97.1** (current stable as of 2026-07-31, D-012); Cargo.lock committed `[event §05; research-gaps G-13]`.
 **NFR-031 (must)** One-command test: `cargo test` (unit+integration+doc) and documented adapter command for original mocha suite `[docs/build-and-ci.md]`.
 **NFR-032 (must)** Crate layout: `crates/picomatch` (lib) + `crates/picomatch-cli` (differential/adapter CLI); no Node in dependency graph of shipped artifacts.
 **NFR-033 (should)** Dockerfile reproducing build+test in one command `[event anatomy]`.
@@ -179,7 +181,7 @@ Canonical matrix: `knowledge/options-matrix.md` (32 main + 7 scan options, defau
 
 | Requirement class | Acceptance test | Evidence artifact |
 |---|---|---|
-| FR-001..091 (behavior) | corpus replay 100% P0 pass + mocha adapter run | parity report (Phase 8) |
+| FR-001..091 — 60 defined IDs, gaps reserved (behavior) | corpus replay 100% P0 pass + mocha adapter run | parity report (Phase 8) |
 | NFR-001..006 (security) | malicious corpus + fuzz + panic-free | fuzz log, Miri report |
 | NFR-010..012 (perf) | benchmark suite executed | bench/results.json + methodology |
 | NFR-020..024 (diff/fuzz) | 60s zero-divergence | fuzz/log.txt |
@@ -191,4 +193,4 @@ Traceability matrix requirement→test lives in `plan.md` phases (Covers fields)
 
 ## 21. Unresolved Items with Safe Defaults
 
-See `knowledge/research-gaps.md` G-01..G-18. No blocking TODOs: each has a default and a verification phase. The only team-confirmation gate is **D-001 product shape** (Phase 0).
+See `knowledge/research-gaps.md` G-01..G-18. As of Phase 0 remediation (2026-07-31): G-01 eligibility is closed (pool-listed, VERIFIED); **D-001/D-002/D-003/D-012/D-013 are Accepted**; the only `Proposed` ADR is D-004 (Phase 5 validation gate, by design). Remaining open items are Discord/kickoff logistics (G-02) and phase-gated validations with owners — no load-bearing `[assumed: ...]` markers remain in Phase 0/1 claims.

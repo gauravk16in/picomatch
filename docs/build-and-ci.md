@@ -5,7 +5,7 @@ Status: contract defined (spec §17, D-012 Proposed); implementation Phases 2, 1
 ## One-command contract (judges)
 
 ```bash
-# prerequisite, one time: install Rust via https://rustup.rs (rust-toolchain.toml pins 1.95.0)
+# prerequisite, one time: install Rust via https://rustup.rs (rust-toolchain.toml pins 1.97.1, D-012)
 cargo build --release        # builds library + CLI (the runnable artifact)
 cargo test                   # unit + integration + doc tests
 node test/adapter/run-mocha.js   # original suite (unmodified) against the artifact
@@ -17,7 +17,7 @@ Docker alternative (event anatomy): `docker build -t picomatch-port . && docker 
 
 ```
 Cargo.toml            # workspace root
-rust-toolchain.toml   # channel = "1.95.0"
+rust-toolchain.toml   # channel = "1.97.1"
 crates/picomatch/     # library (#![forbid(unsafe_code)])
 crates/picomatch-cli/ # differential/adapter CLI (JSON protocol)
 Dockerfile

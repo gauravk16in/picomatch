@@ -79,3 +79,9 @@ Saturation rule: a track is saturated when two consecutive refinements produce n
 - PRIOR-ART: saturated (picomatch-rs, satch, glob-match, fast-glob documented; zeromatch unconfirmed).
 - SEMANTICS: saturated (Bash manual, POSIX classes, JS/Rust regex differences documented).
 
+## Corrections (2026-07-31, Phase 0 remediation)
+
+- Row 3 pool sub-claims are superseded by the fetched pool page: the pool is **~104 repos** (not ~30), **no ≥80% coverage requirement** ("tests are optional… passing the original suite unmodified is the ideal"), **no 4h pick window**, and BYO needs **no pre-approval** (but must be "not already ported to the target"). The pool page exists at `https://coderesurrection.com/2026/repo-pool` — earlier searches (#4–6) predated its discovery; it is linked from the event site HTML.
+- Row 3's pool-page outcome is resolved: page found and picomatch is listed (track F, Standard, MIT) — see `knowledge/research-gaps.md` G-01 (CLOSED — VERIFIED) and `audits/2026-07-31-1935-phase0-remediation.md` §3.
+- Version facts re-verified 2026-07-31 (superseding rows 20/32/33/61): fancy-regex current 0.19.0 (0.17.0 stale), regex current 1.13.1 (1.12.4 note wrong), Rust stable 1.97.1 (1.95.0 stale); fancy-regex `backtrack_limit` default 1_000_000 confirmed from crate source. Canonical home: `knowledge/dependency-evaluation.md`.
+

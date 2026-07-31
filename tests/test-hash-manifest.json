@@ -1,0 +1,203 @@
+{
+  "manifestVersion": 1,
+  "scope": "test/ (entire upstream suite incl. support/ and .eslintrc.json; no exclusions)",
+  "oracleCommit": "4f41a8edade7a5ab19832f7b40ecce46b288767f",
+  "algorithm": "sha256",
+  "fileCount": 38,
+  "aggregateSha256": "cc5a06a6f38b7353c75835448e09422a1b41527206f036e50d1277c2c35082cd",
+  "generator": "tools/research/hash-tests.js",
+  "deterministic": "sorted POSIX paths; fixed key order; no timestamps; regenerate with: node tools/research/hash-tests.js",
+  "nodeVersionAtFirstGeneration": "v24.13.0",
+  "files": [
+    {
+      "path": "test/.eslintrc.json",
+      "sha256": "b530a222c1f1b5d3396a65cfd9737a37dc143619f400f7a9f5b4d6cee9fef980",
+      "bytes": 81
+    },
+    {
+      "path": "test/api.picomatch.js",
+      "sha256": "7f0058ce7bff774c89861e5e0aff629a330f4ad95f0ae4aa80155852d8cb8dea",
+      "bytes": 14787
+    },
+    {
+      "path": "test/api.posix.js",
+      "sha256": "3bd37c2b5d71e23b9cf5752a31f7227b048311b7a238bb5708f0ca5db2a1e09c",
+      "bytes": 476
+    },
+    {
+      "path": "test/api.scan.js",
+      "sha256": "8abd94a2d7040911017d125bada4e5aaf5ee166bf5b37cd377d0378cb7174f36",
+      "bytes": 29645
+    },
+    {
+      "path": "test/bash.js",
+      "sha256": "ddc5406fd7aa316d78e4177d5a7c5acd0f4b9d63b47aeae62e9622cb432dfbe5",
+      "bytes": 26774
+    },
+    {
+      "path": "test/bash.spec.js",
+      "sha256": "07292aa1f6eb22d17594f9b80ac0e8fe66f7676e39bdd0d1dba2f5d674c27c5c",
+      "bytes": 13689
+    },
+    {
+      "path": "test/braces.js",
+      "sha256": "4ac042b7e1877dd0deb695365f3f68095c82aa32628c3e211047b2ed7d1a25b2",
+      "bytes": 8881
+    },
+    {
+      "path": "test/brackets.js",
+      "sha256": "9e1226dff735d61a45bd59212909063944fd7a3f84ee36a87b080bdd40767b7a",
+      "bytes": 750
+    },
+    {
+      "path": "test/dotfiles.js",
+      "sha256": "2091cd79c09fe4e312d9a0bec06f322201f280674bc9f10a729807de713d21a2",
+      "bytes": 17031
+    },
+    {
+      "path": "test/dots-invalid.js",
+      "sha256": "6793f76f3faf379ad9b152e733ddf1b12c8017db256469b647235697e0894e92",
+      "bytes": 82095
+    },
+    {
+      "path": "test/extglobs-bash.js",
+      "sha256": "a341b5ad988e30f9aa31202b4b87b09079368ba82ac8be30359d40c645def487",
+      "bytes": 86972
+    },
+    {
+      "path": "test/extglobs-minimatch.js",
+      "sha256": "17ed0573396a983a0f08fdbf301ba996808c2cdc653d2ae2a2a843091e896567",
+      "bytes": 78470
+    },
+    {
+      "path": "test/extglobs-temp.js",
+      "sha256": "b23617bba6f6d7f9d9e3235d438d18eab3edf5187705254f826562d79adceee1",
+      "bytes": 74315
+    },
+    {
+      "path": "test/extglobs.js",
+      "sha256": "5b8906c1320a21ceb9c69ad2b1bb6caf7c1baaeb5e85c37a3a743cf3a75a0404",
+      "bytes": 29359
+    },
+    {
+      "path": "test/globstars.js",
+      "sha256": "6faadeffee58a69f7496b43f33b14bd1c66f4c8e722d061596997f84bae048c3",
+      "bytes": 19708
+    },
+    {
+      "path": "test/issue-related.js",
+      "sha256": "409f23cc6f8242850da80235736851cbbc6506758a47f1c7c9f79999ad906664",
+      "bytes": 2423
+    },
+    {
+      "path": "test/malicious.js",
+      "sha256": "ff6107260702c7207c18e1c035965811cb794316f9ccb3dd8a8228f21855043d",
+      "bytes": 1807
+    },
+    {
+      "path": "test/minimatch.js",
+      "sha256": "feecc05d5591a0e9cc5d515b6f4d32a65e3cdf654c5d850d377ba892385dbc03",
+      "bytes": 3256
+    },
+    {
+      "path": "test/negation.js",
+      "sha256": "94a4f31ad3bc428c9fe0b1eb58758e6ef64fa374f2ec60fe918d594dbb903dbb",
+      "bytes": 10192
+    },
+    {
+      "path": "test/non-globs.js",
+      "sha256": "5598cb0820c429b51265708c81a3ba32f7c9439302ed047f27fe05dac6920f76",
+      "bytes": 1653
+    },
+    {
+      "path": "test/options.expandRange.js",
+      "sha256": "2474f1ce9bad0167f000c84a8b9af9d3714ebfc35c9a571a6d072d0f0ad1f998",
+      "bytes": 567
+    },
+    {
+      "path": "test/options.format.js",
+      "sha256": "8de912d8d5b8469cc3409403996ba26dc8ed547677ce1ac9add1c99600cc7f82",
+      "bytes": 3174
+    },
+    {
+      "path": "test/options.ignore.js",
+      "sha256": "ee3e39d00bee69b580eaac2bbe1bd320ee5f77568e4158e1905c1601f78da5c2",
+      "bytes": 3375
+    },
+    {
+      "path": "test/options.js",
+      "sha256": "5dc4c01b20207f2b508ad160a7c5fc26b392d164c43fcc89d74053de89b51b36",
+      "bytes": 11988
+    },
+    {
+      "path": "test/options.maxExtglobRecursion.js",
+      "sha256": "5f327500924b9c6563b1ddf3b48b17f65632ee14abdab9a49c29d80b77b1db2a",
+      "bytes": 4835
+    },
+    {
+      "path": "test/options.noextglob.js",
+      "sha256": "4d41527fe33da043793d4203aa51e8c982e62bfab8854f57b84002ad1b42eee7",
+      "bytes": 738
+    },
+    {
+      "path": "test/options.noglobstar.js",
+      "sha256": "df13306418071b591e1da8b15b36cc2023d7f24b887a2add7b7d5d14dca84b6a",
+      "bytes": 453
+    },
+    {
+      "path": "test/options.onMatch.js",
+      "sha256": "14a04a823029defe7aaf04b1f003686fe575c749c02db89b2ece72374043977b",
+      "bytes": 3320
+    },
+    {
+      "path": "test/parens.js",
+      "sha256": "3829504c0489a29f6fc8e4a5e5e8baa7049d44bbba92f1f3b65eeabf6e60ab04",
+      "bytes": 628
+    },
+    {
+      "path": "test/posix-classes.js",
+      "sha256": "d1f0d65d9549efe881678695a4fc05d050c39b3daccaeb6d1ef871eccb240b61",
+      "bytes": 14577
+    },
+    {
+      "path": "test/qmarks.js",
+      "sha256": "e55a86ffe7d01cd8bc79c9b127e76fc7ee6b2886c5b103a929e2d256afde1445",
+      "bytes": 7651
+    },
+    {
+      "path": "test/regex-features.js",
+      "sha256": "cb5e72d62f9a2311258466d7b952194993b9cf3e37152c3f5ae971629f0a3410",
+      "bytes": 11972
+    },
+    {
+      "path": "test/slashes-posix.js",
+      "sha256": "0487e0113526ed50d162297b588e8b5f8dc8a6eb24e23545b62300eba9c79b88",
+      "bytes": 45923
+    },
+    {
+      "path": "test/slashes-windows.js",
+      "sha256": "6da7d92f49808951c03419d485a6b83501c2e153ea8636a3b70faad77518b7ca",
+      "bytes": 27873
+    },
+    {
+      "path": "test/special-characters.js",
+      "sha256": "040f77e29c4c721b851af8f49877ac3ea9e5fcff68c574fccf52ec86a9ffdd06",
+      "bytes": 25505
+    },
+    {
+      "path": "test/stars.js",
+      "sha256": "becc99f23f94af4a31a8efd32d0996f66b0ca7064a466c9525aad44eed61f93b",
+      "bytes": 13858
+    },
+    {
+      "path": "test/support/match.js",
+      "sha256": "ac73ee77ba942ca326764ba467c0a1b425142da918dd4a72b39d61b7b36d0d1d",
+      "bytes": 414
+    },
+    {
+      "path": "test/wildmat.js",
+      "sha256": "18f1d6dd5818e56c59da1264c2f1df0e5e1b1ba9127c465b2111dbbb6ba78eff",
+      "bytes": 2412
+    }
+  ]
+}

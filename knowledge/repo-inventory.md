@@ -23,7 +23,7 @@ Method: local clone of `https://github.com/gauravk16in/picomatch` (== upstream `
 | `bench/` | dir | benchmark suite (own package.json, no lockfile) |
 | `examples/` | dir | 13 example scripts |
 | `lib/` | dir | 5 source modules |
-| `test/` | dir | 36 `.js` test files (incl. `support/match.js`) + `test/.eslintrc.json` |
+| `test/` | dir | 38 files: 37 `.js` (36 suite files + `support/match.js`) + `test/.eslintrc.json` — proven by `tests/test-hash-manifest.json` |
 
 ## lib/ — 2,424 LOC total source (incl. index/posix = 2,444)
 
@@ -39,7 +39,9 @@ Method: local clone of `https://github.com/gauravk16in/picomatch` (== upstream `
 
 Event repo-pool lead said "roughly 2,000–2,500 LOC" — matches 2,424 lib LOC `(user)` lead corroborated by local count.
 
-## test/ — 16,961 LOC across 36 `.js` files, 1977 tests (mocha)
+## test/ — 16,961 LOC across 37 `.js` files (36 suite files + `support/match.js`), 1977 tests (mocha)
+
+Kickoff test-suite hash (Phase 0, 2026-07-31): `tests/test-hash-manifest.json` — 38 files (37 `.js` + `.eslintrc.json`), sha256 per file, aggregate `cc5a06a6f38b7353c75835448e09422a1b41527206f036e50d1277c2c35082cd`; deterministic (`node tools/research/hash-tests.js`, double-run byte-identical). If kickoff Discord mandates an official hash format, regenerate in that format and record both.
 
 
 | File | Focus |

@@ -28,7 +28,8 @@ p50, p95, **p99** latency; ops/sec throughput; **RSS** (peak); **startup time** 
 
 - Slower results are published as-is with analysis (event FAQ: hiding a regression scores worse than disclosing it).
 - Any optimization lands only after a measured baseline identifies the blocker (plan Phase 10); before/after numbers recorded.
-- The risky-extglob adversarial set is reported against the ORACLE's own timings as well (documenting, not fixing, upstream behavior — D-011).
+- The risky-extglob adversarial set is reported against the ORACLE's own timings as well (documenting, not fixing, upstream behavior — D-011). Fallback cases that trip the backtrack budget are reported as typed `ResourceLimitError` outcomes (D-003, DV-6), not as timing wins.
+- Adversarial timing probes follow the bounded protocol: conservative length caps, median-of-N, environment recorded (`tools/research/redos-timing.js` is the reference harness). Single-point timing claims are prohibited (readiness-review F-17 lesson: a 963 ms single point did not reproduce; the median table did).
 
 ## Report shape (`bench/`)
 

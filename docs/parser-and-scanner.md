@@ -52,7 +52,7 @@ posix.js ──┘        │    └─────> lib/parse.js ──┘     
 | extglob open/close + negate variants | **HIGH** | four close variants + expression-after-close re-parse + lookahead engine requirement |
 | analyzeRepeatedExtglob safeguard | **HIGH** | newest code (4.0.4/4.0.5), subtle branch classification; security-relevant; must match exactly incl. `+(ab|abab)` non-catch (D-011) |
 | fastpaths | **LOW-MEDIUM** | closed table; strictSlashes/contains interactions |
-| engine boundary (regex vs fallback) | **HIGH** | lookaround subset correctness; step-budgeted fallback (D-003) |
+| engine boundary (regex vs fallback) | **HIGH** | lookaround subset correctness; backtrack-budgeted fallback with typed limit errors (D-003) |
 
 ## What cannot be copied mechanically from JS to Rust
 

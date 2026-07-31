@@ -28,7 +28,7 @@ Status: strategy complete (spec §16, D-007 Accepted); implementation Phase 9. B
 ## Panic-safety and resource rules
 
 - `#![forbid(unsafe_code)]` (D-009); fuzz asserts no panic/abort on ANY input including invalid UTF-8 boundaries, NULs, 64k±1 lengths, 10k-deep nesting attempts.
-- Fallback engine wall-clock bound per case (budget); adversarial set (`+(a|aa)`, `+(ab|abab)`, `+(+(a))`, `*(*(a)|*(b))`, 65k escape runs) must complete under the documented bound — matching oracle *behavior* while bounding worst case (FR-073, NFR-004, D-011).
+- Fallback engine wall-clock bound per case (explicit `backtrack_limit`, D-003); adversarial set (`+(a|aa)`, `+(ab|abab)`, `+(+(a))`, `*(*(a)|*(b))`, 65k escape runs) must complete under the documented bound — matching oracle *behavior* while bounding worst case (FR-073, NFR-004, D-011). Cases that trip the budget are classified **EXPECTED_LIMIT**: recorded with the typed `ResourceLimitError` outcome, reported in a separate published bucket, and excluded from the zero-divergence count with the exclusion rule printed in `fuzz/log.txt` (they are NOT silent passes and NOT mismatches).
 - Memory: no unbounded growth — output length is linear in pattern length (NFR-006); fuzz monitors RSS on the adversarial set.
 
 ## Memory-safety tooling

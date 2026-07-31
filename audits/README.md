@@ -24,4 +24,8 @@
 
 | File | Session | Scope | Outcome |
 |---|---|---|---|
-| `2026-07-31-0134-bootstrap-research.md` | bootstrap | research + scaffolding (no port code) | see file |
+| `2026-07-31-0134-bootstrap-research.md` | bootstrap | research + scaffolding (no port code) | superseded in part — its F-01/F-04/F-05 residuals (stale "38 files", lint regression, 4-file encoding corruption) were found by the readiness review; treat its "fixed" dispositions as re-verified only via the two audits below |
+| `2026-07-31-1819-bootstrap-readiness-review.md` | readiness review | independent evidence-only audit of the bootstrap | READY WITH CONDITIONS; 20 findings (F-01..F-20); start gate: Phase 0 only |
+| `2026-07-31-1935-phase0-remediation.md` | phase 0 remediation | close all 20 findings; Phase 0 completion; Phase 1 readiness | see file |
+
+Audit-disposition rule (added 2026-07-31): a finding may be marked closed only after its validation command/check has been re-run on the FINAL checkout of the session ("re-run closure validation on final checkout").

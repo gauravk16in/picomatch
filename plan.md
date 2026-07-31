@@ -2,7 +2,7 @@
 
 Read fourth. Dependency-driven; every phase starts with failing/characterization tests and leaves the repo green. No time estimates — order is by dependency, risk, and judging impact. Gate rule: a phase is complete only when its "Done when" is observably true and `implementation.md` is updated.
 
-- [ ] Phase 0: Confirm rules, baseline, license, and scope gate
+- [x] Phase 0: Confirm rules, baseline, license, and scope gate — **COMPLETE 2026-07-31 (see audits/2026-07-31-1935-phase0-remediation.md §11)**
   - Objective: Ratify team assumptions before any production code; capture kickoff artifacts.
   - Inputs and required reading: CLAUDE.md, context.md, spec.md §1–5, knowledge/research-gaps.md (G-01..G-04, G-16), knowledge/prior-art.md.
   - Steps: (1) team reads Discord #announcements at kickoff; record adapter templates, unsafe thresholds, test-hash manifest in context.md §7; (2) ratify D-001 product shape and D-002 parity boundary (edit DECISIONS.md status → Accepted or revise); (3) record kickoff test-suite hash of upstream `test/` (sha256 per file + manifest) in knowledge/repo-inventory.md; (4) confirm LICENSE/attribution plan; (5) freeze this plan or amend via DECISIONS.md.
@@ -13,23 +13,24 @@ Read fourth. Dependency-driven; every phase starts with failing/characterization
   - References: spec §1–5, docs/licensing.md, docs/submission-checklist.md.
   - Risks and fallback: Discord template contradicts D-001 → fallback is CLI adapter (already default); pool-listing mismatch → record, keep repo (already cloned per team fact).
   - Done when: D-001/D-002 are `Accepted` with evidence links; test-hash manifest committed; baseline green recorded in implementation.md.
+  - **Completion evidence (2026-07-31):** eligibility VERIFIED pool-listed (`https://coderesurrection.com/2026/repo-pool`); D-001/D-002/D-003/D-012/D-013 Accepted with evidence; `tests/test-hash-manifest.json` committed (38 files, aggregate `cc5a06a6f38b7353c75835448e09422a1b41527206f036e50d1277c2c35082cd`, deterministic double-run); baseline re-green after F-04 fix (lint 0 / mocha 1977 / cover 93.2-89.81-91.66-93.75). Residual (non-blocking): Discord #announcements items at kickoff (adapter templates, unsafe thresholds, test-hash FORMAT, submission portal) — if the mandated hash format differs, regenerate the manifest per official format before Phase 8 submission checks.
 
 - [ ] Phase 1: Freeze the behavioral oracle and compatibility inventory
   - Objective: Produce the pinned JSONL corpus + oracle runner that defines correctness for all later phases.
-  - Inputs and required reading: spec §5, §20; knowledge/test-inventory.md; docs/differential-testing.md; scratch/probe-regex-sources.json.
-  - Steps: (1) build `tools/oracle/` Node runner (dev-only) that walks every upstream test file, executes assertions, and emits normalized JSONL (ops: match, matchObject, isMatch, makeRe, parse, scan, test, matchBase, error); (2) add options/edge matrices not covered by suite (options-matrix interactions, FR-090 edges); (3) record per-case engine-relevant fields (source when compareSource); (4) write corpus SHA-256 manifest; (5) verify corpus replays green against the JS oracle itself (self-consistency).
-  - Tests/checks to write first: corpus schema validator; self-replay check (oracle vs corpus = 100%).
-  - Commands to run: `node tools/oracle/generate-corpus.js --out tests/corpus/v1 --manifest tests/corpus/v1.manifest.json; node tools/oracle/replay.js --corpus tests/corpus/v1`.
+  - Inputs and required reading: spec §5, §20; knowledge/test-inventory.md; docs/differential-testing.md §10 (oracle design); scratch/probe-regex-sources.json.
+  - Steps: (1) build `tools/oracle/` per-op generator modules (dev-only) that call the original PUBLIC API (`index.js`, `posix.js`, and `lib/scan` for scan ops) with purpose-built case lists mirroring the 37-suite mapping in knowledge/test-inventory.md — **no mechanical extraction of arbitrary Mocha assertions** (D-006 amendment); (2) add options/edge matrices not covered by suites (options-matrix interactions, FR-090 edges, D-013 non-ASCII index cases, EXPECTED_LIMIT demonstrations); (3) record per-case engine-relevant fields (source when compareSource) and `meta.indexUnits`; (4) write corpus SHA-256 manifest; (5) verify corpus self-replays green against the JS oracle; (6) validate every record against `tests/corpus/schema.v1.json`.
+  - Tests/checks to write first: corpus schema validator; self-replay check (oracle vs corpus = 100%); determinism check (double generation is byte-identical).
+  - Commands to run: `node tools/oracle/generate-corpus.js --out tests/corpus/v1 --manifest tests/corpus/v1/v1.manifest.json; node tools/oracle/replay.js --corpus tests/corpus/v1`.
   - Deliverables: `tests/corpus/v1/*.jsonl`, manifest with hashes, named-function library (`tools/oracle/named-fns.js`), replay report.
-  - Covers: NFR-020, NFR-021; foundation for FR-001..091; G-05/G-06/G-11/G-12 verification.
-  - References: spec §5.3, docs/differential-testing.md, knowledge/test-inventory.md.
-  - Risks and fallback: suite assertions entangled with mocha → fallback: hand-write extractor per file using isMatch/makeRe/parse/scan public API only (covers all behavior, loses zero fidelity).
-  - Done when: manifest committed; oracle self-replay 100%; corpus count documented in implementation.md.
+  - Covers: NFR-020, NFR-021; foundation for FR-001..091 (60 defined IDs, gaps reserved); G-05/G-06/G-11/G-12 verification.
+  - References: spec §5.3, docs/differential-testing.md §3/§10, knowledge/test-inventory.md.
+  - Risks and fallback: per-suite case lists miss an assertion family → the Phase 2/3 adapter spike (Phase 8 completion) exposes it as named adapter failures, which are then back-added as corpus cases; self-replay proves consistency, not coverage (coverage evidence = per-suite counts + Phase 8 adapter run).
+  - Done when: manifest committed; oracle self-replay 100%; schema validation 100%; determinism proven; corpus count documented in implementation.md.
 
 - [ ] Phase 2: Create Rust workspace, walking skeleton, and one-command task runner
   - Objective: End-to-end thin slice: library crate + CLI that answers one corpus case (`*.js` match) via the real engine path.
   - Inputs and required reading: spec §17, docs/build-and-ci.md, knowledge/dependency-evaluation.md (G-13/G-14), ARCHITECTURE.md.
-  - Steps: (1) `rust-toolchain.toml` (1.95.0); (2) workspace: `crates/picomatch` (lib, `#![forbid(unsafe_code)]`), `crates/picomatch-cli` (JSON stdin/stdout protocol per docs/differential-testing.md §5); (3) implement literal-pattern + `*` fastpath only, behind corpus runner; (4) CI skeleton (fmt, clippy -D warnings, test) on ubuntu/windows/macos; (5) Dockerfile one-command build+test.
+  - Steps: (1) `rust-toolchain.toml` (1.97.1, D-012); (2) workspace: `crates/picomatch` (lib, `#![forbid(unsafe_code)]`), `crates/picomatch-cli` (JSON stdin/stdout protocol per docs/differential-testing.md §5); (3) implement literal-pattern + `*` fastpath only, behind corpus runner; (4) CI skeleton (fmt, clippy -D warnings, test) on ubuntu/windows/macos; (5) Dockerfile one-command build+test; (6) START the named **adapter-spike**: build `test/adapter/hook.js` (require interception per docs/differential-testing.md §11) and choose the synchronous IPC mechanism (per-call `spawnSync` vs persistent child + `Atomics.wait`), proving one facade call end-to-end against the CLI thin slice.
   - Tests/checks to write first: characterization test: CLI answers `{"op":"match","pattern":"*.js","input":"a.js"}` → `{"isMatch":true,"output":"a.js"}`; failing until implemented.
   - Commands to run: `cargo build --release; cargo test; cargo clippy -- -D warnings; cargo fmt --check`.
   - Deliverables: workspace, CLI protocol v0, CI green on 3 OSes, Dockerfile.
@@ -41,14 +42,14 @@ Read fourth. Dependency-driven; every phase starts with failing/characterization
 - [ ] Phase 3: Define public Rust types, normalized results, and error model
   - Objective: Lock the API types and error taxonomy that every later phase uses.
   - Inputs and required reading: spec §5.3, §6 (FR-001..018), §13; docs/api-compatibility.md.
-  - Steps: (1) `Options` struct with all 32 main + 7 scan options (serde for CLI); named-function registry (format/expandRange/callbacks); (2) `PicomatchError::{TypeError, SyntaxError}` with exact message strings; (3) normalized result/event types shared by lib and CLI; (4) `Matcher` type with `is_match`, `match_object`, `state` accessors.
-  - Tests/checks to write first: error-message unit tests against FR-018 table (from corpus error ops); options default tests.
-  - Commands to run: `cargo test -p picomatch types errors options`.
-  - Deliverables: `src/options.rs`, `src/error.rs`, `src/result.rs`, registry, docs/api-compatibility.md updated with type mapping.
+  - Steps: (1) `Options` struct covering the canonical options set (33 main rows incl. aliases + 7 scan rows per knowledge/options-matrix.md; serde for CLI); named-function registry (format/expandRange/callbacks); (2) `PicomatchError::{TypeError, SyntaxError, ResourceLimit}` with exact message strings; (3) normalized result/event types shared by lib and CLI; (4) `Matcher` type with `is_match`, `match_object`, `state` accessors.
+  - Tests/checks to write first: error-message unit tests against FR-018 table (from corpus error ops); options default tests; **adapter-spike gate**: `test/api.scan.js` and `test/options.onMatch.js` running unmodified through the hook + facade (against the thin-slice CLI this will mostly fail — the gate is that the MECHANISM works: interception, facade calls, deep-equality transport, callbacks).
+  - Commands to run: `cargo test -p picomatch types errors options; node test/adapter/run-mocha.js --suites api.scan,options.onMatch --report artifacts/adapter-spike.json`.
+  - Deliverables: `src/options.rs`, `src/error.rs`, `src/result.rs`, registry, docs/api-compatibility.md updated with type mapping, **adapter-spike report** (`artifacts/adapter-spike.json` + mechanism decision recorded in implementation.md).
   - Covers: FR-001, 004, 008, 014, 015, 018, 040; NFR-020 (schema alignment).
   - References: spec §5.3, §6, §8, §13, docs/api-compatibility.md.
-  - Risks and fallback: function-valued options can't be generic → named registry only (corpus already uses it); JS `undefined` vs absent → Option<T> + explicit absent semantics per §5.3.
-  - Done when: error corpus cases pass; options round-trip through CLI JSON; no public type changes needed by Phase 4 spike.
+  - Risks and fallback: function-valued options can't be generic → named registry only (corpus already uses it); JS `undefined` vs absent → Option<T> + explicit absent semantics per §5.3. Adapter-spike fallback: if synchronous IPC cannot preserve API semantics, fall back to per-suite custom drivers (docs/differential-testing.md §11 fallback).
+  - Done when: error corpus cases pass; options round-trip through CLI JSON; no public type changes needed by Phase 4 spike; **adapter-spike gate passed on both spike suites (mechanism proven) or fallback invoked with a recorded reason**.
 
 - [ ] Phase 4: Port the scanner with characterization and differential tests
   - Objective: Full `scan()` parity including tokens/parts/maxDepth and scan options.
@@ -59,8 +60,8 @@ Read fourth. Dependency-driven; every phase starts with failing/characterization
   - Deliverables: `src/scan.rs`, scan differential report 100%, docs/parser-and-scanner.md updated.
   - Covers: FR-050..053; NFR-021.
   - References: spec §9, docs/parser-and-scanner.md, lib/scan.js.
-  - Risks and fallback: JS index arithmetic on UTF-16 vs Rust UTF-8 — restrict indices to byte positions with ASCII-fast path and char-boundary-safe slicing; corpus includes non-ASCII patterns to prove it.
-  - Done when: scan corpus replay 100% P0 on linux+windows; no panics under `cargo test` with malformed-input suite.
+  - Risks and fallback: JS index arithmetic on UTF-16 code units vs Rust UTF-8 — governed by the ratified D-013 contract: observable positions are UTF-16-unit offsets produced from a cumulative unit counter (ASCII fast path identical), conversions centralized in `src/text.rs`; D-013 non-ASCII corpus cases (BMP + astral) are the acceptance proof.
+  - Done when: scan corpus replay 100% P0 on linux+windows incl. the D-013 non-ASCII cases; no panics under `cargo test` with malformed-input suite.
 
 - [ ] Phase 5: Port parser/IR for literals, wildcards, separators, dot rules, and fast paths
   - Objective: parse() core without brackets/braces/extglobs: text, `*`, `?`, `**`, slashes, dots, quotes, escaping, negation, fastpaths, REPLACEMENTS, maxLength.
@@ -95,7 +96,7 @@ Read fourth. Dependency-driven; every phase starts with failing/characterization
   - Deliverables: extglob module, safeguard module, interactions report 100%, docs/security.md updated with safeguard parity table.
   - Covers: FR-005, 006, 026, 027, 032, 034, 041, 064; NFR-002, NFR-004; G-07/G-08.
   - References: spec §7, §10, §11, docs/security.md, docs/rust-design-options.md.
-  - Risks and fallback: negate-extglob close has four context-sensitive forms — pin all from probes before coding; fallback engine (fancy-regex) covers `^(?!...).*$` and `(?:(?!X))STAR`; if fancy-regex parity fails on a construct, implement a small hand-rolled backtracker for THAT construct only with step budget (D-003 fallback-of-fallback).
+  - Risks and fallback: negate-extglob close has four context-sensitive forms — pin all from probes before coding; fallback engine (fancy-regex) covers `^(?!...).*$` and `(?:(?!X))STAR` under the ratified D-003 budget semantics (typed `ResourceLimitError` on budget trip, DV-6); if fancy-regex parity fails on a construct, the D-003 reversal trigger fires — a bounded mini-backtracker spec is written as a NEW ADR before any implementation (no prose-only contingency).
   - Done when: extglob suites + safeguard suites replay 100% P0; `+(ab|abab)` behavior matches oracle (NOT literalized — G-08) and is documented.
 
 - [ ] Phase 8: Complete public API/helper parity and platform behavior
@@ -113,8 +114,8 @@ Read fourth. Dependency-driven; every phase starts with failing/characterization
 - [ ] Phase 9: Harden with property tests, differential fuzzing, panic/resource/security tests
   - Objective: Prove robustness beyond the suite: proptest grammar, cargo-fuzz (Linux CI), adversarial/resource matrix, unsafe/Miri verification.
   - Inputs and required reading: spec §14, §16; docs/fuzzing.md, docs/security.md, docs/differential-testing.md; knowledge/dependency-evaluation.md.
-  - Steps: (1) pattern-grammar proptests (valid + malformed) differential vs oracle JSONL batches; (2) cargo-fuzz targets: `fuzz_scan`, `fuzz_parse`, `fuzz_match` (structure-aware via arbitrary); corpus seeds from upstream suite + malicious set; (3) 60s+ zero-divergence fuzz run → fuzz/log.txt; (4) adversarial bench: long patterns, deep nesting, `+(ab|abab)` class (document, do not "fix" — G-08), huge inputs; step-budget proof for fallback engine; (5) `cargo +nightly miri test` if any unsafe exists (target: none); (6) RustSec `cargo audit`.
-  - Tests/checks to write first: panic-freedom property (no input can panic); step-budget test proving bounded worst case; seed corpus committed.
+  - Steps: (1) pattern-grammar proptests (valid + malformed) differential vs oracle JSONL batches; (2) cargo-fuzz targets: `fuzz_scan`, `fuzz_parse`, `fuzz_match` (structure-aware via arbitrary); corpus seeds from upstream suite + malicious set; (3) 60s+ zero-divergence fuzz run → fuzz/log.txt; (4) adversarial bench: long patterns, deep nesting, `+(ab|abab)` class (document, do not "fix" — G-08), huge inputs; backtrack-budget proof for the fallback engine incl. `EXPECTED_LIMIT` classification (D-003/DV-6); (5) `cargo +nightly miri test` if any unsafe exists (target: none); (6) RustSec `cargo audit`.
+  - Tests/checks to write first: panic-freedom property (no input can panic); backtrack-budget test proving the typed `ResourceLimitError` outcome on trip; seed corpus committed.
   - Commands to run: `cargo test -p proptest-suite; cargo +nightly fuzz run fuzz_parse -- -max_total_time=60; cargo audit`.
   - Deliverables: proptest-regressions committed, fuzz/log.txt (zero divergence), security matrix filled in docs/security.md, audit report.
   - Covers: NFR-001..006, NFR-020..024; FR-073, 074; G-08/G-10/G-15.

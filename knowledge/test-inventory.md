@@ -10,7 +10,7 @@ Event rule (verified): original tests are hashed at kickoff and ideally run **un
 |---|---|---|---|
 | `api.picomatch.js` | validation errors, array patterns, dotfiles, parse token shapes, negatedExtglob state | `tests/differential` (JSONL) + Rust `tests/api.rs` | token-shape assertions map to [type,value] pairs only |
 | `api.posix.js` | posix entry behavior | `tests/differential` + Rust posix ctor tests | posix entry = windows:false always |
-| `api.scan.js` | scanner outputs incl. tokens/parts | `tests/differential` op=`scan` | normalize Infinity→"Infinity" sentinel in JSON |
+| `api.scan.js` | scanner outputs incl. tokens/parts | `tests/differential` op=`scan` | normalize Infinity→`{"__inf__":true}` (canonical, spec §5.3); includes a BMP non-ASCII parts case (`フォルダ/**/*`, line 360) — D-013 index-semantics reference case |
 | `bash.js`, `bash.spec.js` | bash-derived matching | `tests/corpus` (match op) | README documents 2 intentional Bash divergences — keep as-is |
 | `braces.js` | brace lists, ranges, nesting, literals | `tests/corpus` | includes {a..z} class ranges + expandRange |
 | `brackets.js` | classes, negation `[!..]`, ranges, literal cases | `tests/corpus` | literalBrackets tri-state |

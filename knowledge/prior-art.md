@@ -1,5 +1,7 @@
 # Prior Art and Plagiarism-Risk Register
 
+**Eligibility vs clean-room (2026-07-31):** `micromatch/picomatch` is **pool-listed** by the organizers for JavaScript → Go,Rust (`https://coderesurrection.com/2026/repo-pool`, fetched 2026-07-31) — the existence of prior ports does NOT affect eligibility (the BYO "not already ported" clause applies only to non-pool repos, and this repo is on the pool). This register remains a **clean-room control**: no code from the projects below is read or copied; checks are metadata/provenance-only.
+
 Hackathon rule (verified, coderesurrection.com/2026 §11 rule 04 + Devfolio rules): "Pre-existing partial ports of your chosen repo are not [fair game]" and "Plagiarism or submission of pre-existing ports may result in disqualification."
 
 **Team policy (binding):** All port code must be written in the 72-hour window by the team. Prior art below may be read ONLY to (a) establish provenance that we are not them, (b) understand high-level approaches, and (c) serve as differential comparators. **No file, function, regex string, or test may be copied from any of these.** Any accidental convergence with an existing port must be documented in DECISIONS.md with independent-derivation evidence (our spec + our test corpus produce the same output because the JS source dictates it).

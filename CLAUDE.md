@@ -41,6 +41,8 @@ Port `micromatch/picomatch` 4.0.5 (JavaScript) to idiomatic, production-quality 
 ## End-of-session checklist
 
 - [ ] Record tests/build/lint/format results with commands + exit codes
+- [ ] Re-run the applicable baseline (`npm run lint`, `npm run mocha`) after adding or changing ANY tracked executable file — a file added after the last lint run is a lint risk (F-04 lesson)
+- [ ] Byte-check any file written via shell redirection or non-editor tooling (UTF-8, no BOM, LF — F-05/F-16 lesson)
 - [ ] Update `implementation.md` (timestamp, files changed, commands, outcomes, next exact action)
 - [ ] Update spec/plan/DECISIONS if reality changed (don't let docs drift)
 - [ ] Create exactly ONE new audit file in `audits/` (naming per audits/README.md) — one session = one audit

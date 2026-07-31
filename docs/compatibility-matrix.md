@@ -7,7 +7,7 @@ Status legend: **SPEC** = contracted (this bootstrap) · **PASS** = parity prove
 | Factory + arrays + state input | FR-001..003, 007 | lib/picomatch.js:43-66,104-106; test/api.picomatch.js | SPEC |
 | Matcher + rich object + callbacks | FR-004..006 | lib/picomatch.js:71-102; test/options.onMatch.js, options.ignore.js | SPEC |
 | test/matchBase/isMatch | FR-008..010, 032 | lib/picomatch.js:128-194; test/options.js; issue #89 note | SPEC |
-| parse/scan API + shapes | FR-011, 012, 050..053 | probes; test/api.scan.js | SPEC |
+| parse/scan API + shapes | FR-011, 012, 050..053 | probes; test/api.scan.js; positions are UTF-16 code-unit offsets (D-013) | SPEC |
 | compileRe/makeRe/toRegex | FR-013..015 | lib/picomatch.js:264-348; probe sources | SPEC |
 | constants | FR-016 | lib/constants.js | SPEC |
 | Entry modes (index/posix) | FR-017 | index.js, posix.js | SPEC |
@@ -46,3 +46,10 @@ Status legend: **SPEC** = contracted (this bootstrap) · **PASS** = parity prove
 | DV-3 | Issue #175 `+(ab|abab)` catastrophic compile retained | oracle parity beats safety change (D-011); bounded by fallback budget | DIVERGE-from-ideal (documented) |
 | DV-4 | Function-valued fields on parse state (`peek`, `advance`) not ported | functions aren't data; token/output parity covers observable use (G-06) | DIVERGE (recorded) |
 | DV-5 | `hasRegexChars`-driven literal bracket alternation emits both forms | kept — it IS oracle behavior; noted because surprising | PASS-by-design |
+| DV-6 | Fallback budget trip returns typed `ResourceLimitError` where the oracle eventually answers a boolean | safety bound required by NFR-004; typed + visible chosen over silent no-match (D-003, ratified 2026-07-31); corpus marks these `EXPECTED_LIMIT` | DIVERGE (recorded) |
+
+## README-vs-source conflicts on record
+
+| Conflict | Resolution | Evidence |
+|---|---|---|
+| README `posix` row/prose ("disabled by default") vs source (classes expand unless `posix === false`, `lib/parse.js:719`) | source wins — enabled by default; corpus includes a default-posix case (Phase 1) | options-matrix `posix` row; spec §5.2 |

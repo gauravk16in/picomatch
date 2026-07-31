@@ -4,12 +4,13 @@ Lightweight ADRs. Fields: status (Proposed/Accepted/Superseded), date, context, 
 
 ## D-001 — Product shape: pure Rust library + differential CLI; N-API only as stretch
 
-- Status: **Proposed** (requires team ratification at Phase 0 gate)
+- Status: **Accepted** (ratified 2026-07-31, Phase 0)
 - Date: 2026-07-31
 - Context: Event allows any artifact that builds with one command and runs the original tests via a thin adapter `(verified: coderesurrection.com/2026 §04/FAQ)`. Team has not formally chosen the shipping surface.
 - Options: (a) pure Rust lib + CLI adapter; (b) lib + napi-rs Node binding for in-process adapter; (c) WASM; (d) CLI-only.
 - Decision: (a) default. CLI speaks JSON (stdin/stdout) so both the mocha adapter and differential runner use one artifact. (b) is a stretch goal only, never required for parity.
 - Evidence: event FAQ "tests run against your port's binary/artifact via a thin adapter"; napi-rs docs (prebuilt binaries per platform add packaging risk); research-gaps G-04.
+- Ratification evidence (2026-07-31): eligibility verified — official repo pool lists `micromatch/picomatch` for JavaScript → Go,Rust (`https://coderesurrection.com/2026/repo-pool`, fetched 2026-07-31); event FAQ §16 confirms the artifact-level thin-adapter model, which the JSON CLI satisfies; team instruction (this session's assignment) selects (a). G-04 closed.
 - Consequences: simplest single-command build (`cargo build --release`); adapter fidelity depends on CLI protocol completeness (spec §16, docs/differential-testing.md §5).
 - Rejected: (b) as core — packaging/ABI risk inside 72h; (c) WASM — perf + toolchain risk; (d) CLI-only — loses library judging points for idiomatic Rust API.
 - Reversal trigger: Discord template mandates in-process JS loading, or team vote at Phase 0.
@@ -17,12 +18,13 @@ Lightweight ADRs. Fields: status (Proposed/Accepted/Superseded), date, context, 
 
 ## D-002 — Parity boundary: behavioral parity MUST; regex-source parity STRETCH with normalization
 
-- Status: **Proposed** (ratify at Phase 0)
+- Status: **Accepted** (ratified 2026-07-31, Phase 0)
 - Date: 2026-07-31
 - Context: JS `makeRe().source` strings embed lookarounds `(?!.)`, `(?=.)`, `^(?!...).*$` that Rust `regex` cannot compile `(verified: docs.rs/regex)`. Exact string parity is therefore impossible without a custom regex engine for the whole language (huge scope) — but behavior parity is fully achievable.
 - Options: (a) behavior parity + documented source normalization; (b) custom backtracking engine for everything to preserve sources; (c) emit JS-form sources but match with translated sources.
 - Decision: (a). Corpus records behavior always; `compareSource` recorded only where identical strings are achievable (literal-heavy patterns). (c) is adopted as presentation detail: we MAY retain the JS-form source string as metadata while executing a translated Rust-regex — documented, not hidden.
 - Evidence: probe corpus (scratch/probe-regex-sources.json — ~60 source strings, most contain lookarounds); regex docs (no lookaround); research-gaps G-05.
+- Ratification evidence (2026-07-31): the official scoring rubric (coderesurrection.com/2026 §09, fetched 2026-07-31) scores original-test-suite parity and behavioral equivalence — no rubric scores `makeRe` source-string equality; judges weigh documented divergences per rule 02/§05. G-05 closed as DECIDED (boundary, not a risk).
 - Consequences: honest scope; Behavior Equivalence judging is served by differential proof, not string diffs.
 - Rejected: (b) — ReDoS re-introduction + schedule risk.
 - Reversal trigger: judges publish a rubric explicitly scoring `makeRe` source equality (none found in research).
@@ -30,15 +32,20 @@ Lightweight ADRs. Fields: status (Proposed/Accepted/Superseded), date, context, 
 
 ## D-003 — Two-engine architecture: `regex` primary, guarded fallback for lookaround subset
 
-- Status: **Proposed** (validate in Phase 5 spike)
+- Status: **Accepted** (ratified 2026-07-31 with budget-semantics amendment, Phase 0)
 - Date: 2026-07-31
 - Context: Only a subset of compiled sources needs lookaround (dot guards at segment starts, negate extglobs, top-level negation). Everything else maps cleanly to Rust `regex` (linear-time, capture support).
 - Options: (1) regex only + rewrite lookarounds away (NOT generally possible: negated extglob `!(x)` is true negation); (2) regex-automata NFA directly (captures ok, but still no lookaround); (3) fancy-regex fallback (backtracking VM over regex crate); (4) hand-rolled mini backtracker for the lookaround subset.
-- Decision: primary `regex`; fallback `fancy-regex` wrapped in a configurable step budget; if a construct proves incompatible in Phase 7, implement (4) for that construct only. Engine selection is deterministic (source inspection) and logged per corpus case.
-- Evidence: fancy-regex docs (VM delegates to regex when non-fancy; exponential worst case possible); regex-automata docs (no lookaround anywhere); Search MCP research #61 (hybrid recommended); GHSA-c2c7-rcm5-vvqj (backtracking danger — mitigated by step budget + risky-extglob literalization parity).
-- Consequences: near-linear performance for the common case; bounded worst case for the lookaround subset; dependency surface +1 (MIT/Apache, acceptable per D-005).
-- Rejected: (1) — semantically impossible for `!(...)`; (2) — no lookaround; full custom VM — ReDoS + complexity.
-- Reversal trigger: Phase 5/7 differential corpus shows systematic fancy-regex mismatch; or measured performance unacceptable → substitute (4).
+- Decision: primary `regex`; fallback `fancy-regex` wrapped in an explicit backtrack-step budget. Engine selection is deterministic (source inspection) and logged per corpus case. **Option (4) is removed from the committed plan** — it is not implemented, specced, or scheduled; if Phase 7 differential evidence shows a fancy-regex mismatch class, a bounded spec is written then, with real data, as a new ADR (reversal trigger below).
+- Budget semantics (amendment, ratified 2026-07-31; closes readiness-review F-06):
+  - Configuration: the port sets `fancy_regex::RegexBuilder::backtrack_limit(n)` explicitly — never relies on an implicit default. Candidate `n = 1_000_000` backtracking steps, matching the crate's documented upstream default `(verified: fancy-regex lib.rs, RegexBuilder::backtrack_limit, "Default is 1_000_000", fetched 2026-07-31)`; exposed as engine option `maxBacktrackSteps` for tests. The limit counts **backtracking steps of the fancy-regex VM**; subexpressions delegated to the `regex` crate run in linear time and are not the blowup risk.
+  - On `RuntimeError::BacktrackLimitExceeded` (match time): the matcher returns a typed resource-limit error — library: `PicomatchError::ResourceLimit { kind: BacktrackLimit, pattern }`; CLI: `{ "errorClass": "ResourceLimitError", "kind": "backtrack_limit", "message": ... }`. It is **never** silently mapped to `isMatch:false` and never to the `/ $^ /` never-match path (that path remains for internal compile failure only, per FR-015).
+  - On `RuntimeError::StackOverflow` or any other runtime error: same typed mapping with `kind: "stack_overflow"` / `"runtime"`.
+  - Divergence registration: **DV-6** — the JS oracle eventually returns a boolean after unbounded backtracking; the port answers with a typed error once the budget trips. This is a deliberate, documented safety divergence (docs/compatibility-matrix.md, docs/security.md). Corpus cases expected to trip the budget carry `expected: {"errorClass": "ResourceLimitError"}` plus `meta.limitNote`; differential-fuzz classification is `EXPECTED_LIMIT` — reported separately in the fuzz log, not counted as a zero-divergence failure, with the classification published (docs/fuzzing.md).
+- Evidence: fancy-regex docs (VM delegates to regex when non-fancy; exponential worst case possible; `backtrack_limit` API + `RuntimeError::{BacktrackLimitExceeded, StackOverflow}` variants — docs.rs, fetched 2026-07-31); regex-automata docs (no lookaround anywhere); Search MCP research #61 (hybrid recommended); GHSA-c2c7-rcm5-vvqj (backtracking danger — mitigated by backtrack budget + risky-extglob literalization parity).
+- Consequences: near-linear performance for the common case; bounded worst case for the lookaround subset with a deterministic, observable, typed failure mode; dependency surface +1 (MIT/Apache, acceptable per D-005).
+- Rejected: (1) — semantically impossible for `!(...)`; (2) — no lookaround; full custom VM — ReDoS + complexity; silent no-match on budget trip — hides a real answer and would corrupt parity evidence.
+- Reversal trigger: Phase 5/7 differential corpus shows systematic fancy-regex mismatch → write the bounded mini-backtracker spec as a new ADR (supported constructs, input model, complexity bound, operation budget, captures, errors, trigger criteria, differential tests) before any implementation.
 - Links: spec §11 (FR-070..074); docs/rust-design-options.md; plan Phase 5/7/9.
 
 ## D-004 — Compile strategy: transliterate parse.js 1:1 to a Rust IR emitting engine-specific sources
@@ -68,10 +75,11 @@ Lightweight ADRs. Fields: status (Proposed/Accepted/Superseded), date, context, 
 
 ## D-006 — Differential oracle design: JS only in dev tooling, JSONL corpus, named-function registry
 
-- Status: **Accepted** (bootstrap architecture)
+- Status: **Accepted** (bootstrap architecture; amended 2026-07-31, Phase 0)
 - Date: 2026-07-31
 - Context: Event forbids source-language runtime in the shipped artifact; the original suite must run against the port via thin adapter.
 - Decision: Node oracle runner generates normalized JSONL corpus (ops + options + expected + meta) with SHA-256 manifest; Rust runner + mocha adapter consume the same corpus/CLI protocol. Function-valued options map to a named-function registry implemented identically in JS and Rust. Infinity/RegExp/match-array/error normalization per spec §5.3.
+- Amendment (2026-07-31; closes readiness-review F-03): three artifacts are explicitly separated — (1) the Phase 1 **public-API oracle generator** (per-op case generators calling the original public API + `lib/scan` directly; **no mechanical extraction of arbitrary Mocha assertions** — the "loses zero fidelity" claim is withdrawn); (2) the corpus replay/differential runner; (3) the **original-Mocha thin adapter** (require-interception facade over the Rust CLI), which is high-risk enough to earn a named spike with measurable gates in Phase 2/3 (design: docs/differential-testing.md §11) before the Phase 8 completion. Callback event sequences are captured as first-class `events` records.
 - Evidence: knowledge/test-inventory.md; event rule 05; DIFFER-style methodology (event reference #9).
 - Consequences: corpus is the executable spec; any behavior change upstream would be caught by manifest hash.
 - Rejected: live JS-in-the-loop differential at runtime (violates rule 05).
@@ -114,7 +122,7 @@ Lightweight ADRs. Fields: status (Proposed/Accepted/Superseded), date, context, 
 
 - Status: **Accepted** (bootstrap governance)
 - Date: 2026-07-31
-- Context: Baseline 4.0.5 still compiles `+(ab|abab)` to a catastrophic regex (verified locally: 963ms @ len 71; issue #175 open, third-party). "Fixing" it in the port would create oracle divergence.
+- Context: Baseline 4.0.5 still compiles `+(ab|abab)` to a catastrophic regex (verified locally 2026-07-31 with the bounded harness `tools/research/redos-timing.js`: medians 0.1→147.6 ms over n=20→35, spread recorded; issue #175 open, third-party). "Fixing" it in the port would create oracle divergence.
 - Decision: match the oracle behavior exactly (do NOT literalize `+(ab|abab)`), document the hazard in docs/security.md, and prepare a Bug Catcher report referencing existing issue #175 (add reproduction evidence; no duplicate filing). If maintainers fix it mid-hackathon, follow the fork HEAD — do not cherry-pick.
 - Evidence: local probe 2026-07-31; issue #175 text; GHSA-c2c7-rcm5-vvqj fix scope.
 - Reversal trigger: upstream releases a patch during the event AND team adopts an upstream sync via new ADR.
@@ -122,9 +130,23 @@ Lightweight ADRs. Fields: status (Proposed/Accepted/Superseded), date, context, 
 
 ## D-012 — MSRV/toolchain pin
 
-- Status: **Proposed** (confirm at first build, Phase 2)
+- Status: **Accepted** (updated and ratified 2026-07-31, Phase 0; re-confirm at first build)
 - Date: 2026-07-31
-- Decision: pin stable Rust 1.95.0 via rust-toolchain.toml (current stable per releases.rs 2026-07); MSRV = that pin; nightly used ONLY for cargo-fuzz/Miri jobs.
-- Evidence: releases.rs (stable 1.95.0); cargo-fuzz nightly requirement; research-gaps G-13/G-14.
-- Reversal trigger: regex 1.12.x requires newer → bump pin, record here.
+- Decision: pin stable Rust **1.97.1** via rust-toolchain.toml (current stable per releases.rs, fetched 2026-07-31; supersedes the earlier 1.95.0 note, which was stale by two releases); MSRV = that pin; nightly used ONLY for cargo-fuzz/Miri jobs.
+- Evidence: releases.rs (stable 1.97.1, beta 1.98.0, nightly 1.99.0 — 2026-07-31); cargo-fuzz nightly requirement; research-gaps G-13/G-14; regex current candidate 1.13.1 has rust_version 1.65 (crates.io API, 2026-07-31) and fancy-regex 0.19.0 has rust_version 1.66 — both far below the pin.
+- Reversal trigger: any adopted dependency requires newer → bump pin, record here; a judge-environment constraint requires older → re-pin with recorded rationale.
 - Links: docs/build-and-ci.md; knowledge/dependency-evaluation.md.
+
+## D-013 — Observable index convention: UTF-16 code-unit offsets
+
+- Status: **Accepted** (2026-07-31, Phase 0; closes readiness-review F-02)
+- Date: 2026-07-31
+- Context: JavaScript strings index by UTF-16 code unit; every numeric position the oracle exposes (scan `start`/`slashes[]`, parse-state `index`/`start`/`consumed`, token/part slice boundaries) is a UTF-16-unit offset. Rust `String`/`&str` indexes by UTF-8 byte. Behavioral parity (D-002) is the MUST boundary, and these positions are observable through `picomatch.scan()` and `picomatch.parse()` (FR-011, FR-050..FR-053) and asserted by the original suite (e.g. `test/api.scan.js` deep-equality on full state, incl. `slashes: [1, 5, 12, 15]`; a BMP non-ASCII case exists at `test/api.scan.js:360`).
+- Decision: all **externally observable** positions are UTF-16 code-unit offsets, matching the oracle exactly. Internally the Rust scanner/parser iterates Unicode scalar values (chars) and maintains a parallel cumulative UTF-16-unit position (BMP char = 1 unit, astral char = 2 units, ASCII fast path = byte index == unit index). Slicing internally uses UTF-8 byte ranges derived from the same iteration; observable positions are computed from the unit counter, never from byte offsets. Conversions are centralized in one helper module (`src/text.rs`: `utf16_len(str) -> usize`, `byte_to_utf16_offset`, unit-aware slicing) so the convention has exactly one home.
+- Unpaired surrogates: Rust `String` is valid UTF-8 and cannot represent them. The JSON corpus/adapter protocol treats strings as Unicode scalar sequences; any unpaired surrogate arriving over the wire is replaced with U+FFFD at ingestion and the replacement is recorded in the record's `meta` (the oracle corpus generator emits only well-formed UTF-8, so this is an adapter edge case, not a corpus case). No corpus case may contain unpaired surrogates.
+- Corpus contract: scan/parse records carry `meta.indexUnits: "utf16_code_unit"`; Phase 1 adds non-ASCII acceptance cases — BMP before/after slash (`フォルダ/**/*`, mirroring `test/api.scan.js:360`), astral (emoji) in base and glob segments, non-ASCII adjacent to prefix/brace/bracket/extglob boundaries — asserting `start`/`slashes`/`parts` values in UTF-16 units (spec §5.3, docs/differential-testing.md §3).
+- Evidence: lib/scan.js read fully (charCodeAt indexing, `slashes.push(index)`); test/api.scan.js read fully (deep-equality on numeric fields); docs.rs/str (UTF-8 indexing); readiness-review F-02.
+- Consequences: zero observable divergence on index fields; small runtime cost (one unit counter alongside byte iteration); no `unsafe` or transcoding of stored strings.
+- Rejected: byte-offset observable positions + corpus normalization — a real observable divergence against MUST-level parity, disallowed by D-002.
+- Reversal trigger: none (a change here would be a parity regression; any proposal requires a new ADR plus event-evidence that judges accept the divergence).
+- Links: spec §5.3/§9/§10; docs/parser-and-scanner.md; ARCHITECTURE.md §4/§6; plan Phase 4/5.

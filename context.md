@@ -12,7 +12,7 @@ Read this second (after `CLAUDE.md`). Canonical home for event facts, repo ident
 | Code freeze / submissions due | 2026-08-03 **18:00 UTC** | `(verified: same; corroborated by Unstop 02:00 PM EDT)` |
 | Judging window | Aug 3–13, 2026; winners Aug 14, 2026 | `(verified: same)` |
 | Selected track | **F — JavaScript → Rust** (Go also allowed; team chose Rust) | `(user)`, track exists `(verified)` |
-| Selected project | `micromatch/picomatch` | `(user)`; pool-page listing not publicly verifiable — see research-gaps G-01 |
+| Selected project | `micromatch/picomatch` | `(user)`, pool listing `(verified: https://coderesurrection.com/2026/repo-pool, fetched 2026-07-31 — JavaScript → Go,Rust, 2000-2500, Standard, MIT)`; G-01 closed |
 | Prize pool | $1,800 (1st $800 / 2nd $400 / 3rd $200 / Bug Catcher $100 / Write-Up side-quest 3×$100) | `(verified: coderesurrection.com/2026 §10)` |
 | Team size rule | 1–4 members | `(verified)` |
 
@@ -53,12 +53,12 @@ Hard rules: all port code written inside the 72h window (planning/scouting/promp
 | Baseline | `npm install` OK; `npm run mocha` → **1977 passing**; `npm run lint` → exit 0; `npm run test:cover` → stmts 93.2% / branches 89.81% / funcs 91.66% / lines 93.75% (Node v24.13.0, Windows 11) |
 | CI matrix (upstream) | node 12/14/16/18/20/22/24/25 × ubuntu/windows/macos (macos excludes 12/14); pinned actions checkout@v6, setup-node@v6 |
 
-## 5. Team assumptions (safe defaults — confirm in Phase 0)
+## 5. Team assumptions (safe defaults — Phase 0 outcomes recorded 2026-07-31)
 
-- **A-1 (product shape):** pure Rust library crate `picomatch-rs-port` + thin CLI (`picomatch-cli`) used for differential/adapter testing; N-API/JS binding is STRETCH only. Confirmation gate: plan.md Phase 0 / DECISIONS.md D-001. `[assumed — if judges require in-process JS adapter: add napi wrapper without changing the core]`
-- **A-2 (parity boundary):** match-result parity (isMatch/output/error class+message/callback order/scan+parse data shapes) is MUST; exact `makeRe().source` string parity is STRETCH subject to a defined normalization, because Rust `regex` cannot express JS lookaround. `(verified: regex crate docs)` See spec §5.4.
+- **A-1 (product shape):** pure Rust library crate `picomatch-rs-port` + thin CLI (`picomatch-cli`) used for differential/adapter testing; N-API/JS binding is STRETCH only. **RATIFIED — D-001 Accepted 2026-07-31** (pool listing + event FAQ thin-adapter model + team instruction).
+- **A-2 (parity boundary):** match-result parity (isMatch/output/error class+message/callback order/scan+parse data shapes incl. UTF-16-unit positions, D-013) is MUST; exact `makeRe().source` string parity is STRETCH subject to a defined normalization, because Rust `regex` cannot express JS lookaround. **RATIFIED — D-002 Accepted 2026-07-31.** See spec §5.4.
 - **A-3 (oracle):** JavaScript runs only in development/test tooling (Node oracle runner generating JSONL + mocha adapter), never in the shipped Rust artifact. `(verified: event rule 05)`
-- **A-4 (prior art):** no code read or copied from `Maidang1/picomatch-rs` or `satch`; independent derivation from the JS oracle. See `knowledge/prior-art.md`.
+- **A-4 (prior art):** no code read or copied from `Maidang1/picomatch-rs` or `satch`; independent derivation from the JS oracle. See `knowledge/prior-art.md`. Eligibility is pool-settled (context.md §7); the register is a clean-room control only.
 - **A-5 (this bootstrap itself):** research + scaffolding produced before kickoff contains **no port code** — consistent with the "no port code before kickoff" rule; only docs, plans, and disposable research harnesses under `tools/research/` + `scratch/`.
 
 ## 6. Glossary
@@ -72,6 +72,8 @@ Hard rules: all port code written inside the 72h window (planning/scouting/promp
 
 ## 7. Open clarifications (owned by team, checked at kickoff)
 
-1. Discord #announcements: adapter templates, per-pair unsafe thresholds, test-hash manifest format, submission portal URL. (research-gaps G-02)
-2. Confirm A-1 product shape with full team before Phase 2 production code. (D-001)
+1. Discord #announcements: adapter templates, per-pair unsafe thresholds, test-hash manifest format, submission portal URL. (research-gaps G-02) — still open at Phase 0 remediation (session ran pre-kickoff); non-blocking for Phase 1; if an official hash format is mandated, regenerate `tests/test-hash-manifest.json` in that format.
+2. ~~Confirm A-1 product shape~~ — RESOLVED 2026-07-31: D-001 Accepted (pure Rust lib + JSON CLI; N-API stretch only).
 3. Confirm whether Write-Up side quest will be attempted (no impact on main score).
+
+**Eligibility (resolved 2026-07-31):** `micromatch/picomatch` is pool-listed for track F — `https://coderesurrection.com/2026/repo-pool` ("Recommended Repo Pool — Port Mortem", footer v2026.07, fetched 2026-07-31): `micromatch/picomatch | JavaScript → Go,Rust | 2000-2500 | Standard (2k–8k) | MIT`. Prior Rust ports therefore do not affect eligibility (BYO-only clause); the prior-art register stays a clean-room control (knowledge/prior-art.md). G-01 closed.

@@ -46,6 +46,16 @@
         "sourceFile": { "type": "string" },
         "node": { "type": "string" },
         "oracleCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "indexUnits": {
+          "type": "string",
+          "enum": ["utf16_code_unit"],
+          "default": "utf16_code_unit",
+          "description": "observable positions (scan start/slashes, parse index/start/consumed) are UTF-16 code-unit offsets per D-013 / spec §5.3; required on scan+parse records"
+        },
+        "limitNote": {
+          "type": "string",
+          "description": "present when the case is expected to trip the fallback backtrack budget (expected.errorClass = 'ResourceLimitError', D-003/DV-6; classification EXPECTED_LIMIT)"
+        },
         "notes": { "type": "string" }
       },
       "additionalProperties": true

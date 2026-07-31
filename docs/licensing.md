@@ -17,7 +17,7 @@ Status: compliant by design (spec §19, NFR-050). Verified from local `LICENSE` 
 |---|---|---|
 | regex 1.12.x | MIT or Apache-2.0 | compatible |
 | regex-automata 0.4.x | MIT or Apache-2.0 | compatible |
-| fancy-regex 0.17.x | MIT or Apache-2.0 | compatible |
+| fancy-regex 0.19.x | MIT (registry field, verified 2026-07-31) | compatible |
 | proptest | MIT/Apache | dev-only, compatible |
 | criterion | MIT/Apache | dev-only, compatible |
 | libfuzzer-sys / cargo-fuzz | MIT/Apache/NCSA | dev-only (Linux CI), compatible |

@@ -4,11 +4,11 @@ Status: tracking template; verified against official submission contract (codere
 
 | # | Requirement | Evidence artifact | Owner | Phase | Status |
 |---|---|---|---|---|---|
-| 1 | Public GitHub repo with the port, OSI license | repo URL + LICENSE | team | 11 | ☐ (repo exists; MIT present) |
+| 1 | Public GitHub repo with the port, OSI license | repo URL + LICENSE + pool listing (`https://coderesurrection.com/2026/repo-pool`, verified 2026-07-31) | team | 11 | ☐ (repo exists; MIT present; eligibility pool-listed) |
 | 2 | Single documented build command → runnable artifact | docs/build-and-ci.md §one-command + Dockerfile | team | 2/11 | ☐ |
-| 3 | Original test suite (hashed at kickoff) passing vs port via thin adapter; edits (if any) documented | tests/original hash manifest + artifacts/parity-report.json + DECISIONS.md notes | team | 0/8 | ☐ |
+| 3 | Original test suite (hashed at kickoff) passing vs port via thin adapter; edits (if any) documented | `tests/test-hash-manifest.json` (38 files, aggregate `cc5a06a6f38b7353c75835448e09422a1b41527206f036e50d1277c2c35082cd`, deterministic) + artifacts/parity-report.json + DECISIONS.md notes | team | 0/8 | ☑ manifest created 2026-07-31 (regenerate if kickoff mandates an official format) |
 | 4 | Differential fuzz harness + ≥60s zero-divergence log (bonus) | fuzz/harness + fuzz/log.txt | team | 9 | ☐ |
-| 5 | DECISIONS.md with rationale (≥10 non-trivial for bonus) | DECISIONS.md (currently 12 seeded, 5 Proposed) | team | 0→11 | ☑ seeded |
+| 5 | DECISIONS.md with rationale (≥10 non-trivial for bonus) | DECISIONS.md (13 ADRs: D-001..D-013; 12 Accepted, 1 Proposed by design — D-004 with Phase 5 gate) | team | 0→11 | ☑ seeded + Phase 0 ratifications 2026-07-31 |
 | 6 | Benchmark report: original vs port, shared workload, p99/RSS/startup/throughput + methodology | bench/methodology.md + bench/results.json | team | 10 | ☐ |
 | 7 | 5-minute demo video (original suite passing live) | docs/demo-plan.md + recording | team | 11 | ☐ |
 | 8 | `.port-mortem.toml` (track letter, source URL, kickoff hash) | .port-mortem.toml | team | 11 | ☐ |

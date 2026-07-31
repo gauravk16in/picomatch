@@ -6,9 +6,9 @@ Rule: **no dependencies are added in the bootstrap session.** This file records 
 
 | Crate | Version (as of 2026-07) | License | Role candidate | Evidence | Verdict |
 |---|---|---|---|---|---|
-| `regex` | 1.12.4 (crates.io updated 2026-07-15) | MIT or Apache-2.0 | primary linear-time engine for the no-lookaround subset (~most patterns) | Context7 /rust-lang/regex + docs.rs: no lookaround/backrefs; worst case O(m·n); simple case folding; Unicode \p{}; `bytes` submodule; RegexBuilder size_limit/dfa_size_limit | **Proposed: primary** |
+| `regex` | 1.13.1 (crates.io API, published 2026-07-15 — current candidate as of 2026-07-31) | MIT or Apache-2.0 | primary linear-time engine for the no-lookaround subset (~most patterns) | Context7 /rust-lang/regex + docs.rs: no lookaround/backrefs; worst case O(m·n); simple case folding; Unicode \p{}; `bytes` submodule; RegexBuilder size_limit/dfa_size_limit; rust_version 1.65 per registry | **Proposed: primary** (version locks in Cargo.lock at adoption — candidate ≠ locked) |
 | `regex-automata` | 0.4.x (docs.rs) | MIT or Apache-2.0 | lower-level NFA/hybrid engines if captures or custom compilation needs finer control | docs.rs: nfa::thompson supports captures; hybrid lazy DFA cannot resolve capture offsets; all O(m·n) | **Proposed: only if regex API insufficient** (defer) |
-| `fancy-regex` | 0.17.0 (docs.rs latest mid-2026) | MIT or Apache-2.0 | lookaround-dependent subset (negated extglobs `!(...)`, pattern negation `^(?!...).*$`, extglob close `(?:(?!X))STAR`) | repo/docs: backtracking VM delegating to `regex` when no fancy features; exponential blowup possible in worst case | **Proposed: fallback engine behind a step limit**, decision D-003 |
+| `fancy-regex` | 0.19.0 (crates.io API, published 2026-07-28 — current candidate as of 2026-07-31; supersedes the stale 0.17.0 note) | MIT (registry field; earlier "MIT/Apache" note corrected) | lookaround-dependent subset (negated extglobs `!(...)`, pattern negation `^(?!...).*$`, extglob close `(?:(?!X))STAR`) | repo/docs: backtracking VM delegating to `regex` when no fancy features; exponential blowup possible in worst case; `RegexBuilder::backtrack_limit` (default 1_000_000, lib.rs-verified); `RuntimeError::{BacktrackLimitExceeded, StackOverflow}`; rust_version 1.66 | **Accepted: fallback engine under explicit backtrack budget (D-003 ratified 2026-07-31)** — version locks in Cargo.lock at adoption |
 | `regex-lite` | current | MIT/Apache | minimal regex if binary size matters | mentioned in regex docs | Deferred (stretch) |
 
 ## NOT candidates for the semantic engine (documented to avoid misuse)
@@ -38,8 +38,9 @@ Rule: **no dependencies are added in the bootstrap session.** This file records 
 
 ## Toolchain facts
 
-- Rust stable **1.95.0**, beta 1.96.0, nightly 1.97.0 as of 2026-06/07 (releases.rs). Proposed pin: stable 1.95.0 via `rust-toolchain.toml`; MSRV = the pinned stable (no lower MSRV promise during hackathon).
+- Rust stable **1.97.1**, beta 1.98.0, nightly 1.99.0 as of 2026-07-31 (releases.rs, re-fetched; the earlier "1.95.0 stable" note was stale by two releases). Pin: stable 1.97.1 via `rust-toolchain.toml` (D-012, Accepted 2026-07-31); MSRV = the pinned stable (no lower MSRV promise during hackathon).
 - cargo-fuzz requires nightly + Unix → fuzzing runs in Linux CI job, not locally on this Windows dev machine.
+- **Candidate ≠ locked:** versions in this file are "verified current candidates as of 2026-07-31". Nothing is a locked dependency until `Cargo.toml`/`Cargo.lock` exist (Phase 2); adoption re-verifies versions, licenses, and `cargo audit` results per policy below.
 
 ## Dependency policy (proposed, to ratify in DECISIONS.md D-005)
 

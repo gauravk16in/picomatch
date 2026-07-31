@@ -4,6 +4,8 @@ Canonical source: README options table (verified locally) + `lib/parse.js`, `lib
 
 Legend: **Scope** = which entry points honor the option. Default = effective default when option absent.
 
+**Canonical counts (script-verified 2026-07-31):** 33 documented main-option rows = 31 distinct behaviors + 2 aliases (`matchBase`, `noext`); 7 scan-option rows = 4 scan-specific (`parts`, `tokens`, `scanToEnd`, `noparen`) + 3 shared with main (`noext`, `nonegate`, `unescape`); 37 distinct option names total. Other documents link here instead of restating counts.
+
 ## Main options (picomatch() and API methods)
 
 | Option | Type | Default | Scope | Behavior (verified) |
@@ -34,7 +36,7 @@ Legend: **Scope** = which entry points honor the option. Default = effective def
 | `onIgnore` | function | undefined | matcher | called with result object when input matched pattern but is ignored via `ignore`. Order: after onResult, instead of onMatch. |
 | `onMatch` | function | undefined | matcher | called with result object on accepted match. |
 | `onResult` | function | undefined | matcher | called FIRST with result object for every input regardless of outcome. |
-| `posix` | boolean | true (non-strict) | parse (brackets) | enables `[:class:]` expansion; `posix:false` disables class expansion; `posix:true` also converts `[!` → `[^` inside brackets. |
+| `posix` | boolean | true (non-strict) | parse (brackets) | enables `[:class:]` expansion; `posix:false` disables class expansion; `posix:true` also converts `[!` → `[^` inside brackets. CONFLICT (registered 2026-07-31, spec §5.2): README table says default `false` and prose says "disabled by default" — source expands classes unless `posix === false` (`lib/parse.js:719`), so classes are ENABLED by default; source wins. |
 | `prepend` | string | undefined | parse (bos.output) | string assigned to the bos token's `output`, i.e. it seeds `state.output` ahead of all parsed tokens, before compileRe wraps `^(?:…)$` `[lib/parse.js:371]`. |
 | `regex` | boolean | false | parse | regex rules for `+` (literal by default) and for `*` after `)`/`]`. |
 | `strictBrackets` | boolean | undefined(false) | parse | imbalanced `[]{}()` throw `SyntaxError: Missing <opening|closing>: "<char>" - use "\\\\<char>" to match literal characters`. |

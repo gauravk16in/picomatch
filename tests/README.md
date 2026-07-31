@@ -5,6 +5,7 @@ This directory hosts the PORT's test assets (the upstream suite stays untouched 
 | Path | Purpose | Created when |
 |---|---|---|
 | `corpus/` | JSONL oracle corpus (`v1/`) + SHA-256 manifest; the executable spec | Phase 1 |
+| `test-hash-manifest.json` | Phase 0 kickoff hash of the pinned upstream `test/` tree (38 files, aggregate `cc5a06a6…82cd`; deterministic via `node tools/research/hash-tests.js`) | Phase 0 (done 2026-07-31) |
 | `differential/` | replay drivers + CLI protocol conformance tests (Rust side) | Phase 4+ |
 | `fixtures/` | promoted mismatch/regression cases with classification metadata | Phase 4+ (as found) |
 | `fuzz/` | fuzz seed corpus + target definitions reference (actual cargo-fuzz targets live in `fuzz/` workspace member per Rust Fuzz Book layout, Phase 9) | Phase 9 |

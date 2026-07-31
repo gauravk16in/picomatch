@@ -22,7 +22,7 @@ flowchart LR
         IR[Regex-source IR\n(JS-form string + analysis)]
         ES{{engine_select.rs\nlookahead present?}}
         RE[regex_engine.rs\n(rust `regex`, linear-time)]
-        FB[fallback.rs\n(fancy-regex, step-budgeted)]
+        FB[fallback.rs\n(fancy-regex, backtrack-limited)]
         M[matcher.rs\n(test: equality fast path,\nformat, matchBase, capture)]
         API[lib.rs public API\n(picomatch(), Matcher,\nisMatch, parse, scan,\nmakeRe, compileRe, toRegex,\nmatchBase, constants)]
         UT[utils.rs + constants.rs\n(POSIX/WINDOWS tables,\nescapes, basename)]
@@ -42,7 +42,7 @@ flowchart LR
     UT --> M
 
     subgraph crates/picomatch-cli
-        CLI[JSON stdin/stdout protocol\n(ops: match, makeRe, parse,\nscan, test, matchBase, error)]
+        CLI[JSON stdin/stdout protocol\n(ops: 10, canonical enum in\ntests/corpus/schema.v1.json)]
     end
     API --> CLI
 
@@ -67,10 +67,10 @@ flowchart LR
 
 | Module | Owns | Invariants |
 |---|---|---|
-| `scan.rs` | FR-050..053 | output field set fixed; depth Infinity sentinel only for globstar tokens; no panics on malformed input |
-| `parse.rs` | FR-060..065, 020..029, 035..039 | `bos` first token; counters never negative; backtrack ⇒ full rebuild from tokens; output is JS-form source |
+| `scan.rs` | FR-050..053 | output field set fixed; depth Infinity sentinel only for globstar tokens; no panics on malformed input; **observable positions are UTF-16 code-unit offsets (D-013)** |
+| `parse.rs` | FR-060..065, 020..029, 035..039 | `bos` first token; counters never negative; backtrack ⇒ full rebuild from tokens; output is JS-form source; **index/start/consumed are UTF-16 code-unit offsets (D-013)** |
 | `compile.rs` | FR-013..015, 037 | wrap/negate/flag rules identical to lib/picomatch.js; `/ $^ /`-equivalent never-match on internal failure (unless debug) |
-| `engine/*` | FR-070..074 | deterministic selection; fallback step budget enforced; identical accept/reject across engines for same source |
+| `engine/*` | FR-070..074 | deterministic selection; fallback `backtrack_limit` enforced; identical accept/reject across engines for same source; budget trip ⇒ typed `ResourceLimitError` (DV-6) |
 | `matcher.rs` | FR-008, 009, 071, 082 | equality fast path before regex; format defaulting per windows mode |
 | `api (lib.rs)` | FR-001..018, 040, 041 | argument errors = TypeError messages verbatim; no state mutation across calls (except documented flags:'g' edge, FR-091) |
 | `options.rs`, `result.rs`, `error.rs` | Phase 3 types | serde-round-trip == CLI JSON schema |
@@ -85,6 +85,7 @@ flowchart LR
 ## 6. Testing seams
 
 - **Corpus seam:** every public op is reachable through the CLI protocol → differential replay without Rust test-code duplication.
+- **Adapter seam:** the unmodified upstream mocha suite reaches the CLI through `test/adapter/hook.js` require interception (docs/differential-testing.md §11); mechanism proven by the Phase 2/3 adapter-spike before broad implementation.
 - **Engine seam:** engine selection is injectable in tests to force both engines over the same case.
 - **Named-function seam:** format/expandRange/callbacks resolve through a registry so JSONL can reference them (D-006).
 - **Time/step seam:** fallback engine budget configurable via Options (default documented in docs/security.md).
@@ -94,7 +95,7 @@ flowchart LR
 - `#![forbid(unsafe_code)]` (D-009). No FFI, no process spawning in library code.
 - maxLength enforced before any allocation proportional to pattern length (NFR-001).
 - Risky-extglob safeguard ported 1:1 (NFR-002) — it is a *semantic* feature (changes match results), not just hardening.
-- Fallback engine step budget = bounded worst case for lookaround subset (NFR-004); exceeding budget ⇒ deterministic no-match fallback, never hang.
+- Fallback engine budget = bounded worst case for lookaround subset (NFR-004, D-003); exceeding budget ⇒ typed `ResourceLimitError` (DV-6) — a visible, testable outcome, never a silent no-match and never a hang.
 - Node.js exists only in dev tooling (oracle generator, mocha adapter driver); shipped crates have zero JS dependency (D-006, event rule 05).
 
 ## 8. Dependency rules

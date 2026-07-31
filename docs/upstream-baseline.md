@@ -12,7 +12,7 @@ Status: **frozen** for bootstrap. Canonical repo facts live in `knowledge/repo-i
 
 ## Baseline run (this machine, Windows 11, Node v24.13.0)
 
-`npm install` exit 0 → `npm run mocha` **1977 passing** → `npm run lint` exit 0 → `npm run test:cover` 1977 passing, stmts 93.2% / branches 89.81% / funcs 91.66% / lines 93.75% (all 2026-07-31 01:39–01:40 IST; see `implementation.md` baseline table).
+`npm install` exit 0 → `npm run mocha` **1977 passing** → `npm run test:cover` 1977 passing, stmts 93.2% / branches 89.81% / funcs 91.66% / lines 93.75% (all 2026-07-31 01:39–01:40 IST; see `implementation.md` baseline table). `npm run lint` exit 0 — re-verified 2026-07-31 ~19:45 IST after the F-04 fix (the bootstrap's own `tools/research/probe-regex-sources.js` had broken lint between 01:51 and the Phase 0 remediation; rule added: re-run baseline after adding/changing any tracked executable).
 
 ## Dependencies of test outcomes
 
