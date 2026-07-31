@@ -1,0 +1,1167 @@
+{
+  "generated": "inventory.js",
+  "fileCount": 129,
+  "files": [
+    {
+      "path": ".editorconfig",
+      "bytes": 276,
+      "lines": 14,
+      "sha256": "c1896fd7a004fda2",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": ".eslintrc.json",
+      "bytes": 3913,
+      "lines": 124,
+      "sha256": "1b4f177a316025dc",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 128,
+      "lines": 10,
+      "sha256": "207ce78763e0a129",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": ".github/contributing.md",
+      "bytes": 3249,
+      "lines": 57,
+      "sha256": "a30b750cd0250a0a",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-ci(oracle)"
+    },
+    {
+      "path": ".github/workflows/test.yml",
+      "bytes": 1731,
+      "lines": 62,
+      "sha256": "d1c698bb4140cdf8",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-ci(oracle)"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 728,
+      "lines": 44,
+      "sha256": "38a1779f82334c2f",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": ".npmrc",
+      "bytes": 19,
+      "lines": 1,
+      "sha256": "f3fc23758ab91be5",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": ".verb.md",
+      "bytes": 21519,
+      "lines": 521,
+      "sha256": "62570d64fa9070c4",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "bytes": 6744,
+      "lines": 112,
+      "sha256": "53474163fb37e0e8",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "governance"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 6651,
+      "lines": 155,
+      "sha256": "b40b2d9334d913e3",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": "CLAUDE.md",
+      "bytes": 6566,
+      "lines": 80,
+      "sha256": "8b1c2ed875be8468",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "governance"
+    },
+    {
+      "path": "DECISIONS.md",
+      "bytes": 20061,
+      "lines": 152,
+      "sha256": "18c6a83fedf95354",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "governance"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1091,
+      "lines": 21,
+      "sha256": "d0cd141b0c322fde",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": "Prompts/Session-0.md",
+      "bytes": 38127,
+      "lines": 523,
+      "sha256": "fa1de4f8b1bba952",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "prompts(historical)"
+    },
+    {
+      "path": "README.md",
+      "bytes": 28319,
+      "lines": 743,
+      "sha256": "a69b87120fe2b9cb",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": "audits/2026-07-31-0134-bootstrap-research.md",
+      "bytes": 13402,
+      "lines": 118,
+      "sha256": "76d9b284d29843b5",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "audits"
+    },
+    {
+      "path": "audits/2026-07-31-1819-bootstrap-readiness-review.md",
+      "bytes": 72689,
+      "lines": 608,
+      "sha256": "bbf1a3cc34936836",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "audits"
+    },
+    {
+      "path": "audits/2026-07-31-1935-phase0-remediation.md",
+      "bytes": 19821,
+      "lines": 148,
+      "sha256": "28d1832edcfda712",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "audits"
+    },
+    {
+      "path": "audits/README.md",
+      "bytes": 2018,
+      "lines": 31,
+      "sha256": "4dc5ab5a864ef763",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "audits"
+    },
+    {
+      "path": "bench/.npmrc",
+      "bytes": 19,
+      "lines": 1,
+      "sha256": "f3fc23758ab91be5",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-bench(oracle)"
+    },
+    {
+      "path": "bench/first-match-minimatch.js",
+      "bytes": 165,
+      "lines": 7,
+      "sha256": "56c2cabd07be2919",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-bench(oracle)"
+    },
+    {
+      "path": "bench/first-match-picomatch.js",
+      "bytes": 158,
+      "lines": 7,
+      "sha256": "6630d2faa5404fbb",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-bench(oracle)"
+    },
+    {
+      "path": "bench/glob-parent.js",
+      "bytes": 2211,
+      "lines": 83,
+      "sha256": "ffbb94a1ec95d866",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-bench(oracle)"
+    },
+    {
+      "path": "bench/index.js",
+      "bytes": 2407,
+      "lines": 89,
+      "sha256": "eec1b9d449cdcee9",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-bench(oracle)"
+    },
+    {
+      "path": "bench/load-time.js",
+      "bytes": 235,
+      "lines": 10,
+      "sha256": "8b955e0c10759466",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-bench(oracle)"
+    },
+    {
+      "path": "bench/package.json",
+      "bytes": 416,
+      "lines": 24,
+      "sha256": "f17b7b12c048a6da",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-bench(oracle)"
+    },
+    {
+      "path": "context.md",
+      "bytes": 8201,
+      "lines": 79,
+      "sha256": "46cb293519f7a9df",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "governance"
+    },
+    {
+      "path": "docs/README.md",
+      "bytes": 2056,
+      "lines": 22,
+      "sha256": "90e84a122d972869",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/api-compatibility.md",
+      "bytes": 4886,
+      "lines": 47,
+      "sha256": "68c26fd6c22a2aea",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/benchmarking.md",
+      "bytes": 3415,
+      "lines": 38,
+      "sha256": "656eb580d64c2ef4",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/build-and-ci.md",
+      "bytes": 2427,
+      "lines": 48,
+      "sha256": "edeacbdcf9a6892b",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/compatibility-matrix.md",
+      "bytes": 5191,
+      "lines": 56,
+      "sha256": "c9442a61ddba3690",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/demo-plan.md",
+      "bytes": 2433,
+      "lines": 31,
+      "sha256": "4ea22d7866234881",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/differential-testing.md",
+      "bytes": 17495,
+      "lines": 143,
+      "sha256": "1ea9bb277216c675",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/fuzzing.md",
+      "bytes": 3264,
+      "lines": 37,
+      "sha256": "badffa0384b8911b",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/glob-semantics.md",
+      "bytes": 5151,
+      "lines": 72,
+      "sha256": "045f422b595c4d84",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/licensing.md",
+      "bytes": 2044,
+      "lines": 33,
+      "sha256": "59d9b3bec81064f4",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/parser-and-scanner.md",
+      "bytes": 15537,
+      "lines": 159,
+      "sha256": "7819bb3cd87b0656",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/rust-design-options.md",
+      "bytes": 5474,
+      "lines": 41,
+      "sha256": "5c7168648c729068",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/security.md",
+      "bytes": 5529,
+      "lines": 43,
+      "sha256": "5b526040d6a61dcc",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/submission-checklist.md",
+      "bytes": 3016,
+      "lines": 24,
+      "sha256": "a7cd9c095c21cca1",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "docs/upstream-baseline.md",
+      "bytes": 3006,
+      "lines": 30,
+      "sha256": "cadf7a4eda54fa60",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "docs"
+    },
+    {
+      "path": "examples/extglob-negated.js",
+      "bytes": 303,
+      "lines": 15,
+      "sha256": "27e43ed552826e6a",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/extglob.js",
+      "bytes": 645,
+      "lines": 21,
+      "sha256": "533db86c17d0fd26",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/makeRe.js",
+      "bytes": 199,
+      "lines": 9,
+      "sha256": "1a5c0de54886c4d0",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/match.js",
+      "bytes": 2202,
+      "lines": 49,
+      "sha256": "464d6e3fb6bb5625",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/option-expandRange.js",
+      "bytes": 558,
+      "lines": 19,
+      "sha256": "0fd93d9164712ee3",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/option-ignore.js",
+      "bytes": 211,
+      "lines": 8,
+      "sha256": "8352cf3011fb04d9",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/option-onIgnore.js",
+      "bytes": 343,
+      "lines": 13,
+      "sha256": "1e9d6da7d24f0825",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/option-onMatch.js",
+      "bytes": 415,
+      "lines": 15,
+      "sha256": "68fab151a3bc69e2",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/option-onResult.js",
+      "bytes": 244,
+      "lines": 12,
+      "sha256": "da5e53355ea9b18f",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/regex-quantifier.js",
+      "bytes": 1324,
+      "lines": 43,
+      "sha256": "35b1e85544ef9d82",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/scan.js",
+      "bytes": 538,
+      "lines": 17,
+      "sha256": "82be74fd1626f438",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/test.js",
+      "bytes": 176,
+      "lines": 6,
+      "sha256": "bf2fb716873d0eb0",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "examples/windows.js",
+      "bytes": 1048,
+      "lines": 35,
+      "sha256": "265f10a2de85942a",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-examples(oracle)"
+    },
+    {
+      "path": "implementation.md",
+      "bytes": 15199,
+      "lines": 132,
+      "sha256": "92894bb926574430",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "governance"
+    },
+    {
+      "path": "index.js",
+      "bytes": 479,
+      "lines": 17,
+      "sha256": "02ae26406508e28f",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-source(oracle)"
+    },
+    {
+      "path": "knowledge/README.md",
+      "bytes": 1711,
+      "lines": 17,
+      "sha256": "f8c3754d4911a9cb",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "knowledge"
+    },
+    {
+      "path": "knowledge/dependency-evaluation.md",
+      "bytes": 6957,
+      "lines": 52,
+      "sha256": "de06523cd3576072",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "knowledge"
+    },
+    {
+      "path": "knowledge/options-matrix.md",
+      "bytes": 8494,
+      "lines": 73,
+      "sha256": "ae0a97b9137fb247",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "knowledge"
+    },
+    {
+      "path": "knowledge/prior-art.md",
+      "bytes": 3910,
+      "lines": 34,
+      "sha256": "1da8d82e968a30c5",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "knowledge"
+    },
+    {
+      "path": "knowledge/repo-inventory.md",
+      "bytes": 7512,
+      "lines": 118,
+      "sha256": "2460ef8e9dd9f263",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "knowledge"
+    },
+    {
+      "path": "knowledge/research-gaps.md",
+      "bytes": 6398,
+      "lines": 24,
+      "sha256": "8f41124e680382f0",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "knowledge"
+    },
+    {
+      "path": "knowledge/search-ledger.md",
+      "bytes": 20707,
+      "lines": 87,
+      "sha256": "0dd398681541f685",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "knowledge"
+    },
+    {
+      "path": "knowledge/source-ledger.md",
+      "bytes": 15527,
+      "lines": 88,
+      "sha256": "9b94ed622dd6c9a0",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "knowledge"
+    },
+    {
+      "path": "knowledge/test-inventory.md",
+      "bytes": 11361,
+      "lines": 79,
+      "sha256": "0392e99adfa1a8f1",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "knowledge"
+    },
+    {
+      "path": "lib/constants.js",
+      "bytes": 4552,
+      "lines": 184,
+      "sha256": "c28f952d2758261f",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-source(oracle)"
+    },
+    {
+      "path": "lib/parse.js",
+      "bytes": 34668,
+      "lines": 1416,
+      "sha256": "73211a8ba85ce257",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-source(oracle)"
+    },
+    {
+      "path": "lib/picomatch.js",
+      "bytes": 10722,
+      "lines": 361,
+      "sha256": "fdd249d7ffff853f",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-source(oracle)"
+    },
+    {
+      "path": "lib/scan.js",
+      "bytes": 9189,
+      "lines": 391,
+      "sha256": "227fcc994a477ea9",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-source(oracle)"
+    },
+    {
+      "path": "lib/utils.js",
+      "bytes": 1994,
+      "lines": 72,
+      "sha256": "f04604f70cd1a3f6",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-source(oracle)"
+    },
+    {
+      "path": "package.json",
+      "bytes": 1915,
+      "lines": 83,
+      "sha256": "fb7766f5f9c724e1",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": "plan.md",
+      "bytes": 23630,
+      "lines": 148,
+      "sha256": "adfd2fe3f701f58c",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "governance"
+    },
+    {
+      "path": "posix.js",
+      "bytes": 60,
+      "lines": 3,
+      "sha256": "5695ff5dfcd5a338",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-source(oracle)"
+    },
+    {
+      "path": "renovate.json",
+      "bytes": 284,
+      "lines": 16,
+      "sha256": "c884087184972e13",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "config"
+    },
+    {
+      "path": "scratch/README.md",
+      "bytes": 1087,
+      "lines": 12,
+      "sha256": "deeb0497ad129a83",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "scratch(disposable)"
+    },
+    {
+      "path": "scratch/git-log.txt",
+      "bytes": 1534,
+      "lines": 30,
+      "sha256": "690de5a89dc41cd4",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "scratch(disposable)"
+    },
+    {
+      "path": "scratch/probe-regex-sources.json",
+      "bytes": 5206,
+      "lines": 253,
+      "sha256": "09843ee38c4093c1",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "scratch(disposable)"
+    },
+    {
+      "path": "scratch/repo-inventory.json",
+      "bytes": 26006,
+      "lines": 1149,
+      "sha256": "c2ca79f1d36ef2a1",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "scratch(disposable)"
+    },
+    {
+      "path": "scratch/test-architecture.json",
+      "bytes": 14235,
+      "lines": 918,
+      "sha256": "3fb169a7cd093668",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "scratch(disposable)"
+    },
+    {
+      "path": "spec.md",
+      "bytes": 27889,
+      "lines": 196,
+      "sha256": "0b464f1e7f100fb1",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "governance"
+    },
+    {
+      "path": "test/.eslintrc.json",
+      "bytes": 81,
+      "lines": 8,
+      "sha256": "b530a222c1f1b5d3",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/api.picomatch.js",
+      "bytes": 14787,
+      "lines": 381,
+      "sha256": "7f0058ce7bff774c",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/api.posix.js",
+      "bytes": 476,
+      "lines": 17,
+      "sha256": "3bd37c2b5d71e23b",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/api.scan.js",
+      "bytes": 29645,
+      "lines": 676,
+      "sha256": "8abd94a2d7040911",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/bash.js",
+      "bytes": 26774,
+      "lines": 726,
+      "sha256": "ddc5406fd7aa316d",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/bash.spec.js",
+      "bytes": 13689,
+      "lines": 456,
+      "sha256": "07292aa1f6eb22d1",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/braces.js",
+      "bytes": 8881,
+      "lines": 213,
+      "sha256": "4ac042b7e1877dd0",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/brackets.js",
+      "bytes": 750,
+      "lines": 26,
+      "sha256": "9e1226dff735d61a",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/dotfiles.js",
+      "bytes": 17031,
+      "lines": 354,
+      "sha256": "2091cd79c09fe4e3",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/dots-invalid.js",
+      "bytes": 82095,
+      "lines": 1771,
+      "sha256": "6793f76f3faf379a",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/extglobs-bash.js",
+      "bytes": 86972,
+      "lines": 2604,
+      "sha256": "a341b5ad988e30f9",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/extglobs-minimatch.js",
+      "bytes": 78470,
+      "lines": 2578,
+      "sha256": "17ed0573396a983a",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/extglobs-temp.js",
+      "bytes": 74315,
+      "lines": 1215,
+      "sha256": "b23617bba6f6d7f9",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/extglobs.js",
+      "bytes": 29359,
+      "lines": 773,
+      "sha256": "5b8906c1320a21ce",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/globstars.js",
+      "bytes": 19708,
+      "lines": 437,
+      "sha256": "6faadeffee58a69f",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/issue-related.js",
+      "bytes": 2423,
+      "lines": 64,
+      "sha256": "409f23cc6f824285",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/malicious.js",
+      "bytes": 1807,
+      "lines": 45,
+      "sha256": "ff6107260702c720",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/minimatch.js",
+      "bytes": 3256,
+      "lines": 70,
+      "sha256": "feecc05d5591a0e9",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/negation.js",
+      "bytes": 10192,
+      "lines": 276,
+      "sha256": "94a4f31ad3bc428c",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/non-globs.js",
+      "bytes": 1653,
+      "lines": 54,
+      "sha256": "5598cb0820c429b5",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/options.expandRange.js",
+      "bytes": 567,
+      "lines": 17,
+      "sha256": "2474f1ce9bad0167",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/options.format.js",
+      "bytes": 3174,
+      "lines": 60,
+      "sha256": "8de912d8d5b8469c",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/options.ignore.js",
+      "bytes": 3375,
+      "lines": 55,
+      "sha256": "ee3e39d00bee69b5",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/options.js",
+      "bytes": 11988,
+      "lines": 171,
+      "sha256": "5dc4c01b20207f2b",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/options.maxExtglobRecursion.js",
+      "bytes": 4835,
+      "lines": 157,
+      "sha256": "5f327500924b9c65",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/options.noextglob.js",
+      "bytes": 738,
+      "lines": 20,
+      "sha256": "4d41527fe33da043",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/options.noglobstar.js",
+      "bytes": 453,
+      "lines": 13,
+      "sha256": "df13306418071b59",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/options.onMatch.js",
+      "bytes": 3320,
+      "lines": 68,
+      "sha256": "14a04a823029defe",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/parens.js",
+      "bytes": 628,
+      "lines": 22,
+      "sha256": "3829504c0489a29f",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/posix-classes.js",
+      "bytes": 14577,
+      "lines": 353,
+      "sha256": "d1f0d65d9549efe8",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/qmarks.js",
+      "bytes": 7651,
+      "lines": 129,
+      "sha256": "e55a86ffe7d01cd8",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/regex-features.js",
+      "bytes": 11972,
+      "lines": 315,
+      "sha256": "cb5e72d62f9a2311",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/slashes-posix.js",
+      "bytes": 45923,
+      "lines": 1211,
+      "sha256": "0487e0113526ed50",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/slashes-windows.js",
+      "bytes": 27873,
+      "lines": 530,
+      "sha256": "6da7d92f49808951",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/special-characters.js",
+      "bytes": 25505,
+      "lines": 664,
+      "sha256": "040f77e29c4c721b",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/stars.js",
+      "bytes": 13858,
+      "lines": 369,
+      "sha256": "becc99f23f94af4a",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/support/match.js",
+      "bytes": 414,
+      "lines": 17,
+      "sha256": "ac73ee77ba942ca3",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "test/wildmat.js",
+      "bytes": 2412,
+      "lines": 54,
+      "sha256": "18f1d6dd5818e56c",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "upstream-test(oracle)"
+    },
+    {
+      "path": "tests/README.md",
+      "bytes": 1511,
+      "lines": 18,
+      "sha256": "d322c9d9a833e201",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "tests(port)"
+    },
+    {
+      "path": "tests/corpus/schema.v1.json",
+      "bytes": 2581,
+      "lines": 65,
+      "sha256": "281340582ed8106a",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "tests(port)"
+    },
+    {
+      "path": "tests/differential/README.md",
+      "bytes": 369,
+      "lines": 3,
+      "sha256": "99779e958248cc57",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "tests(port)"
+    },
+    {
+      "path": "tests/fixtures/README.md",
+      "bytes": 380,
+      "lines": 3,
+      "sha256": "3fe568eacdb66317",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "tests(port)"
+    },
+    {
+      "path": "tests/fuzz/README.md",
+      "bytes": 388,
+      "lines": 3,
+      "sha256": "939e532daee47d73",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "tests(port)"
+    },
+    {
+      "path": "tests/test-hash-manifest.json",
+      "bytes": 6432,
+      "lines": 203,
+      "sha256": "32cba7ac03821cc6",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "tests(port,evidence)"
+    },
+    {
+      "path": "tools/research/hash-tests.js",
+      "bytes": 1937,
+      "lines": 51,
+      "sha256": "9e73a105d613048a",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "tools(research)"
+    },
+    {
+      "path": "tools/research/inventory.js",
+      "bytes": 4593,
+      "lines": 86,
+      "sha256": "0c490bd263e48729",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "tools(research)"
+    },
+    {
+      "path": "tools/research/probe-regex-sources.js",
+      "bytes": 3340,
+      "lines": 96,
+      "sha256": "43940155564506b3",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "tools(research)"
+    },
+    {
+      "path": "tools/research/redos-timing.js",
+      "bytes": 1648,
+      "lines": 51,
+      "sha256": "e7af70292a6b604a",
+      "enc": "utf8",
+      "eol": "LF",
+      "category": "tools(research)"
+    }
+  ]
+}

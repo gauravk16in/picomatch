@@ -4,10 +4,10 @@
 
 ## Current phase / status
 
-- **Phase:** Phase 0 (rules/baseline/license/scope gate) — **COMPLETE 2026-07-31** (see `audits/2026-07-31-1935-phase0-remediation.md`). Bootstrap (pre-Phase 0) completed 03:36 IST; independent readiness review completed ~18:20 IST; Phase 0 remediation completed this session.
+- **Phase:** Phase 0 (rules/baseline/license/scope gate) — **COMPLETE 2026-07-31** (see `audits/2026-07-31-1935-phase0-remediation.md`). Final pre-Phase-1 readiness session **COMPLETE 2026-08-01 ~00:15 IST** (see `audits/2026-08-01-0015-final-phase1-readiness.md`): full repository re-read (127 files incl. all 37 test suites), adapter mechanics probe-verified, parser map made implementation-grade, Unicode engine-semantics contract added, Phase 1 coverage standard defined.
 - **Current branch:** `chirag` (base `4f41a8edade7a5ab19832f7b40ecce46b288767f`, tag 4.0.5).
 - **Production Rust code:** none — intentionally (event rule: no port code before kickoff; bootstrap/Phase-0 scope).
-- **Eligibility:** VERIFIED — pool-listed (`https://coderesurrection.com/2026/repo-pool`, 2026-07-31). D-001/D-002/D-003/D-012/D-013 Accepted; D-004 Proposed (Phase 5 gate).
+- **Eligibility:** VERIFIED — pool-listed (`https://coderesurrection.com/2026/repo-pool`, re-verified unchanged 2026-07-31 ~24:00 IST). D-001/D-002/D-003/D-012/D-013 Accepted; D-004 Proposed (Phase 5 gate).
 
 ## Latest verified baseline
 
@@ -113,7 +113,20 @@ See "Latest verified baseline" above. No Rust builds yet (toolchain absent; Phas
 - Consistency fixes: FR/NFR true counts (60/22, gaps reserved); option counts (33/7 canonical sentence); schema example 40-hex hash; Infinity single rule; op enum canonical (10, schema-owned); posix README conflict registered; dependency/toolchain facts refreshed (fancy-regex 0.19.0 MIT, regex 1.13.1, Rust 1.97.1); F-09 source-ledger count corrected; audits/README index + disposition rule.
 - Commands/outcomes: see audit §8; all final gates green (lint 0, mocha 1977, cover identical, probe identical, manifest byte-identical ×2).
 
+### 2026-07-31 22:40 – 2026-08-01 00:30 IST — final pre-Phase-1 readiness session
+
+- Session/audit: `audits/2026-08-01-0015-final-phase1-readiness.md` (full evidence there).
+- Read the complete repository: 127-file machine inventory (`tools/research/inventory.js` → `scratch/repo-inventory.json`); all lib modules, LICENSE, configs, bench (7), examples (13), and **all 37 test suites fully** (16,961 LOC; per-suite mechanical analysis in `scratch/test-architecture.json`).
+- Verified counts: it() = **1977** (== mocha), assertion call sites 623 `assert.X` + 8,810 bare `assert()`; platform guards at 5 sites (malicious:13, qmarks:45, extglobs:713/753, bash:661).
+- Probe-verified adapter mechanics (no implementation): deepStrictEqual-vs-literal mechanics (facade regex must be REAL RegExp; shadowed non-enumerable test/exec still passes; lastIndex compared), `Module._load` interception on the suites' exact request strings, spawnSync JSON round-trip, mocha `--require`, exec-array shapes (undefined holes, index/input).
+- Made `docs/parser-and-scanner.md` implementation-grade (complete function/call inventory with line refs, state/token invariants, globstar forms, extglob-close variants, analyzer call graph, engine-routing table, UTF-16 production map, implementation order).
+- Added engine-semantics contract: deterministic engine selection incl. lookbehind/backrefs; ASCII class/boundary mapping `(?-u:…)` for passthrough escapes (FR-072); DV-7 astral-scalar boundary recorded in docs/compatibility-matrix.md; dependency-evaluation Unicode note.
+- Wrote Phase 1 coverage standard (docs/differential-testing.md §10 dimensions table) + probe-evidence-backed adapter design (§11) + test inventory with per-suite counts (knowledge/test-inventory.md).
+- Consistency fixes: suite-count wording (36 suites / 37 .js / 38 manifest files), unverified `~600 patterns` estimate removed, G-06/G-09 closed as DECIDED, pool-page row resolved in source-ledger, examples staleness recorded (`pm.matcher` undefined ×4; `path.sep` no-op).
+- Baseline re-verified at session start: npm install 0 (tree clean), lint 0, mocha 1977, cover identical, probe identical, manifest byte-identical ×2, upstream diff empty.
+- Commits: see git log (`docs: finalize phase 1 readiness research`, `audit: record final phase 1 readiness`).
+
 ## Next exact action
 
-**Next session (Phase 1):** implement the public-API oracle generator per `docs/differential-testing.md` §10 — build `tools/oracle/` per-op generators, generate `tests/corpus/v1` + `v1.manifest.json`, prove self-replay 100%, schema validation 100%, and byte-identical regeneration; per-suite counts recorded in implementation.md. (No Rust code in Phase 1; Rust toolchain install can happen in parallel as Phase 2 prep, G-13. Kickoff Discord items checked when the event starts, context.md §7.)
+**Next session (Phase 1 of plan.md):** implement the dev-only public-API oracle generator and deterministic JSONL corpus using the finalized operation, normalization, suite-coverage (docs/differential-testing.md §10 standard), UTF-16, error, callback, security, schema, self-replay, and manifest contracts. Do not write Rust in Phase 1. Prove schema validation 100%, oracle self-replay 100%, quantified suite/behavior coverage (`coverage.json`), and byte-identical regeneration before marking Phase 1 complete.
 

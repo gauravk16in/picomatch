@@ -47,6 +47,7 @@ Status legend: **SPEC** = contracted (this bootstrap) · **PASS** = parity prove
 | DV-4 | Function-valued fields on parse state (`peek`, `advance`) not ported | functions aren't data; token/output parity covers observable use (G-06) | DIVERGE (recorded) |
 | DV-5 | `hasRegexChars`-driven literal bracket alternation emits both forms | kept — it IS oracle behavior; noted because surprising | PASS-by-design |
 | DV-6 | Fallback budget trip returns typed `ResourceLimitError` where the oracle eventually answers a boolean | safety bound required by NFR-004; typed + visible chosen over silent no-match (D-003, ratified 2026-07-31); corpus marks these `EXPECTED_LIMIT` | DIVERGE (recorded) |
+| DV-7 | Astral `.` and passthrough classes on astral inputs follow Unicode-scalar semantics (JS matches one UTF-16 unit, possibly a lone surrogate) | unavoidable without UTF-16-space matching (rejected: doubles engine complexity); glob constructs never emit bare `.`; ASCII mapping `(?-u:…)` applied to `\b\w\d\s\W\D\S\B` passthrough escapes (FR-072) | DIVERGE (recorded) |
 
 ## README-vs-source conflicts on record
 

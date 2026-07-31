@@ -1,0 +1,918 @@
+[
+  {
+    "file": "test/api.picomatch.js",
+    "lines": 382,
+    "itBlocks": 24,
+    "assertCallSites": 4,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": true,
+    "windowsOpts": [],
+    "markers": {
+      "deepStrictEqual": [
+        9,
+        362
+      ],
+      "throws": [
+        15,
+        16
+      ],
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/api.posix.js",
+    "lines": 18,
+    "itBlocks": 2,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'../posix'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: true"
+    ],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/api.scan.js",
+    "lines": 677,
+    "itBlocks": 40,
+    "assertCallSites": 291,
+    "requires": [
+      "'assert'",
+      "'../lib/scan'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "deepStrictEqual": [
+        18,
+        31,
+        32,
+        33,
+        34,
+        35,
+        39,
+        56,
+        73,
+        90,
+        107,
+        126
+      ],
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/bash.js",
+    "lines": 727,
+    "itBlocks": 12,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "process.platform": [
+        661
+      ],
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/bash.spec.js",
+    "lines": 457,
+    "itBlocks": 111,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/braces.js",
+    "lines": 214,
+    "itBlocks": 17,
+    "assertCallSites": 3,
+    "requires": [
+      "'assert'",
+      "'fill-range'",
+      "'./support/match'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "deepStrictEqual": [
+        10,
+        11,
+        12
+      ],
+      "require(": [
+        3,
+        4,
+        5,
+        6
+      ]
+    }
+  },
+  {
+    "file": "test/brackets.js",
+    "lines": 27,
+    "itBlocks": 3,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/dotfiles.js",
+    "lines": 355,
+    "itBlocks": 23,
+    "assertCallSites": 46,
+    "requires": [
+      "'assert'",
+      "'./support/match'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "deepStrictEqual": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        20,
+        21,
+        25,
+        26,
+        31,
+        32,
+        33
+      ],
+      "require(": [
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/dots-invalid.js",
+    "lines": 1772,
+    "itBlocks": 152,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/extglobs-bash.js",
+    "lines": 2605,
+    "itBlocks": 648,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: true",
+      "windows: false"
+    ],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/extglobs-minimatch.js",
+    "lines": 2579,
+    "itBlocks": 642,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: true",
+      "windows: false"
+    ],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/extglobs-temp.js",
+    "lines": 1216,
+    "itBlocks": 11,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: true"
+    ],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/extglobs.js",
+    "lines": 774,
+    "itBlocks": 42,
+    "assertCallSites": 18,
+    "requires": [
+      "'assert'",
+      "'./support/match'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      ".source": [
+        28
+      ],
+      "groups": [
+        27
+      ],
+      "deepStrictEqual": [
+        754,
+        757,
+        758,
+        759,
+        760,
+        761,
+        762,
+        763,
+        764,
+        765,
+        766,
+        767
+      ],
+      "throws": [
+        14,
+        15
+      ],
+      "process.platform": [
+        713,
+        753
+      ],
+      "require(": [
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/globstars.js",
+    "lines": 438,
+    "itBlocks": 18,
+    "assertCallSites": 22,
+    "requires": [
+      "'assert'",
+      "'./support/match'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "deepStrictEqual": [
+        19,
+        55,
+        56,
+        57,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70
+      ],
+      "require(": [
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/issue-related.js",
+    "lines": 65,
+    "itBlocks": 7,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/malicious.js",
+    "lines": 46,
+    "itBlocks": 5,
+    "assertCallSites": 4,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "throws": [
+        22,
+        23,
+        29
+      ],
+      "process.platform": [
+        13
+      ],
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/minimatch.js",
+    "lines": 71,
+    "itBlocks": 8,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: true"
+    ],
+    "markers": {
+      ".test(": [
+        11,
+        13,
+        21,
+        23,
+        34,
+        66
+      ],
+      "require(": [
+        3,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/negation.js",
+    "lines": 277,
+    "itBlocks": 13,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/non-globs.js",
+    "lines": 55,
+    "itBlocks": 4,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: true"
+    ],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/options.expandRange.js",
+    "lines": 18,
+    "itBlocks": 1,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'fill-range'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/options.format.js",
+    "lines": 61,
+    "itBlocks": 1,
+    "assertCallSites": 1,
+    "requires": [
+      "'assert'",
+      "'./support/match'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: false"
+    ],
+    "markers": {
+      "deepStrictEqual": [
+        8
+      ],
+      "require(": [
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/options.ignore.js",
+    "lines": 56,
+    "itBlocks": 2,
+    "assertCallSites": 27,
+    "requires": [
+      "'assert'",
+      "'./support/match'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "deepStrictEqual": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        33,
+        34
+      ],
+      "require(": [
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/options.js",
+    "lines": 172,
+    "itBlocks": 16,
+    "assertCallSites": 81,
+    "requires": [
+      "'assert'",
+      "'./support/match'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: true",
+      "windows: false"
+    ],
+    "markers": {
+      ".flags": [
+        36,
+        43
+      ],
+      "deepStrictEqual": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        38,
+        39,
+        40,
+        44,
+        45,
+        46
+      ],
+      "require(": [
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/options.maxExtglobRecursion.js",
+    "lines": 158,
+    "itBlocks": 11,
+    "assertCallSites": 19,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": true,
+    "windowsOpts": [],
+    "markers": {
+      ".source": [
+        9,
+        13,
+        17,
+        21,
+        39,
+        43,
+        53,
+        57,
+        64,
+        68,
+        80,
+        89
+      ],
+      ".exec": [
+        124,
+        131
+      ],
+      ".test(": [
+        147,
+        152
+      ],
+      "deepStrictEqual": [
+        123,
+        130
+      ],
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/options.noextglob.js",
+    "lines": 21,
+    "itBlocks": 2,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/options.noglobstar.js",
+    "lines": 14,
+    "itBlocks": 1,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/options.onMatch.js",
+    "lines": 69,
+    "itBlocks": 1,
+    "assertCallSites": 1,
+    "requires": [
+      "'assert'",
+      "'./support/match'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "deepStrictEqual": [
+        9
+      ],
+      "require(": [
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/parens.js",
+    "lines": 23,
+    "itBlocks": 2,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/posix-classes.js",
+    "lines": 354,
+    "itBlocks": 34,
+    "assertCallSites": 15,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "deepStrictEqual": [
+        188,
+        189
+      ],
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/qmarks.js",
+    "lines": 130,
+    "itBlocks": 10,
+    "assertCallSites": 81,
+    "requires": [
+      "'assert'",
+      "'./support/match'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "deepStrictEqual": [
+        9,
+        10,
+        11,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        24,
+        25,
+        26
+      ],
+      "process.platform": [
+        45
+      ],
+      "require(": [
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/regex-features.js",
+    "lines": 316,
+    "itBlocks": 26,
+    "assertCallSites": 6,
+    "requires": [
+      "'assert'",
+      "'../lib/utils'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: true"
+    ],
+    "markers": {
+      "groups": [
+        230,
+        250,
+        256,
+        265
+      ],
+      "require(": [
+        3,
+        4,
+        5
+      ]
+    }
+  },
+  {
+    "file": "test/slashes-posix.js",
+    "lines": 1212,
+    "itBlocks": 18,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/slashes-windows.js",
+    "lines": 531,
+    "itBlocks": 12,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: true",
+      "windows: false"
+    ],
+    "markers": {
+      ".test(": [
+        9
+      ],
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/special-characters.js",
+    "lines": 665,
+    "itBlocks": 39,
+    "assertCallSites": 4,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [
+      "windows: true"
+    ],
+    "markers": {
+      "throws": [
+        235,
+        236,
+        241,
+        242
+      ],
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/stars.js",
+    "lines": 370,
+    "itBlocks": 17,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  },
+  {
+    "file": "test/support/match.js",
+    "lines": 18,
+    "itBlocks": 0,
+    "assertCallSites": 0,
+    "requires": [
+      "'../..'"
+    ],
+    "loopAroundAssert": true,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3
+      ]
+    }
+  },
+  {
+    "file": "test/wildmat.js",
+    "lines": 55,
+    "itBlocks": 2,
+    "assertCallSites": 0,
+    "requires": [
+      "'assert'",
+      "'..'"
+    ],
+    "loopAroundAssert": false,
+    "windowsOpts": [],
+    "markers": {
+      "require(": [
+        3,
+        4
+      ]
+    }
+  }
+]

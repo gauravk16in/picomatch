@@ -76,7 +76,7 @@ Every non-trivial claim in `spec.md`, `plan.md`, `DECISIONS.md`, `docs/`, and `k
 
 | Source | Attempt | Status | Fallback |
 |---|---|---|---|
-| Official repo-pool page listing picomatch (user-supplied lead) | Search MCP searches #4/#5, GitHub repo+code search #6 | NOT FOUND as of 2026-07-31 01:57; likely Discord-only or not yet published | Treat pool listing as `(user)` fact; verify via Discord at kickoff |
+| Official repo-pool page listing picomatch (user-supplied lead) | Search MCP searches #4/#5, GitHub repo+code search #6 | RESOLVED 2026-07-31: page exists at https://coderesurrection.com/2026/repo-pool (found via event-site HTML link; picomatch listed) — see pool-page row in the primary table | n/a |
 | Hackathon Raptors Discord announcements | no credentials | inaccessible | Team member checks #announcements at kickoff |
 | coderesurrection.com/2026/code-of-conduct and /terms | linked from event site | not fetched (low value for port design) | Devfolio CoC link recorded |
 | "zeromatch" project | Search MCP #30 | not found | mark unverified lead |

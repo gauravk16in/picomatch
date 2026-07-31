@@ -87,6 +87,8 @@ Kickoff test-suite hash (Phase 0, 2026-07-31): `tests/test-hash-manifest.json` �
 
 13 scripts: extglob.js, extglob-negated.js, makeRe.js, match.js, option-expandRange.js, option-ignore.js, option-onIgnore.js, option-onMatch.js, option-onResult.js, regex-quantifier.js, scan.js, test.js, windows.js.
 
+Staleness notes (verified 2026-07-31 by reading all 13 + an exec probe): `option-ignore.js`, `option-onIgnore.js`, `option-onMatch.js`, `option-onResult.js` call `pm.matcher(...)`, which does **not exist** in 4.0.5 (`typeof pm.matcher === 'undefined'` — these examples would throw if run; the API map in `docs/api-compatibility.md` correctly excludes it). `examples/windows.js` mutates `path.sep`, which has no effect on picomatch behavior (OS detection reads `process.platform`) — misleading but harmless. None of this affects the oracle's tests; examples are documentation, not executed by the suite.
+
 ## .github/
 
 | File | Notes |

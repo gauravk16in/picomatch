@@ -21,11 +21,11 @@ Read fourth. Dependency-driven; every phase starts with failing/characterization
   - Steps: (1) build `tools/oracle/` per-op generator modules (dev-only) that call the original PUBLIC API (`index.js`, `posix.js`, and `lib/scan` for scan ops) with purpose-built case lists mirroring the 37-suite mapping in knowledge/test-inventory.md — **no mechanical extraction of arbitrary Mocha assertions** (D-006 amendment); (2) add options/edge matrices not covered by suites (options-matrix interactions, FR-090 edges, D-013 non-ASCII index cases, EXPECTED_LIMIT demonstrations); (3) record per-case engine-relevant fields (source when compareSource) and `meta.indexUnits`; (4) write corpus SHA-256 manifest; (5) verify corpus self-replays green against the JS oracle; (6) validate every record against `tests/corpus/schema.v1.json`.
   - Tests/checks to write first: corpus schema validator; self-replay check (oracle vs corpus = 100%); determinism check (double generation is byte-identical).
   - Commands to run: `node tools/oracle/generate-corpus.js --out tests/corpus/v1 --manifest tests/corpus/v1/v1.manifest.json; node tools/oracle/replay.js --corpus tests/corpus/v1`.
-  - Deliverables: `tests/corpus/v1/*.jsonl`, manifest with hashes, named-function library (`tools/oracle/named-fns.js`), replay report.
+  - Deliverables: `tests/corpus/v1/*.jsonl`, `tests/corpus/v1/v1.manifest.json` (SHA-256 + aggregate), `tests/corpus/v1/coverage.json` (quantified coverage per docs/differential-testing.md §10 coverage standard), named-function library (`tools/oracle/named-fns.js`), replay report.
   - Covers: NFR-020, NFR-021; foundation for FR-001..091 (60 defined IDs, gaps reserved); G-05/G-06/G-11/G-12 verification.
   - References: spec §5.3, docs/differential-testing.md §3/§10, knowledge/test-inventory.md.
-  - Risks and fallback: per-suite case lists miss an assertion family → the Phase 2/3 adapter spike (Phase 8 completion) exposes it as named adapter failures, which are then back-added as corpus cases; self-replay proves consistency, not coverage (coverage evidence = per-suite counts + Phase 8 adapter run).
-  - Done when: manifest committed; oracle self-replay 100%; schema validation 100%; determinism proven; corpus count documented in implementation.md.
+  - Risks and fallback: per-suite case lists miss an assertion family → the Phase 2/3 adapter spike (Phase 8 completion) exposes it as named adapter failures, which are then back-added as corpus cases; self-replay proves consistency, not coverage (coverage evidence = `coverage.json` dimensions + Phase 8 adapter run).
+  - Done when: manifest committed; oracle self-replay 100%; schema validation 100%; determinism proven; `coverage.json` shows every dimension at 100% or named/reasoned exclusions; counts recorded in implementation.md.
 
 - [ ] Phase 2: Create Rust workspace, walking skeleton, and one-command task runner
   - Objective: End-to-end thin slice: library crate + CLI that answers one corpus case (`*.js` match) via the real engine path.
@@ -108,7 +108,7 @@ Read fourth. Dependency-driven; every phase starts with failing/characterization
   - Deliverables: `src/lib.rs` public API, adapter, parity report (target: 1977/1977; any gap named with owner + spec link), docs/compatibility-matrix.md final.
   - Covers: FR-001..018, 030..032, 080..082; NFR-040; G-04/G-09.
   - References: spec §6, §12, §20, docs/api-compatibility.md, docs/build-and-ci.md.
-  - Risks and fallback: adapter fidelity (mocha hooks) → fallback: file-by-file custom drivers for the 38 suites (mechanical, already mapped in test-inventory).
+  - Risks and fallback: adapter fidelity (mocha hooks) → fallback: file-by-file custom drivers for the 36 suite files (37 `.js` incl. `test/support/match.js`; mechanical, already mapped in test-inventory).
   - Done when: original suite passes against the artifact (unmodified files) OR every failure has a named divergence in docs/compatibility-matrix.md with DECISIONS.md entry.
 
 - [ ] Phase 9: Harden with property tests, differential fuzzing, panic/resource/security tests

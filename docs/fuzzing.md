@@ -13,7 +13,7 @@ Status: strategy complete (spec §16, D-007 Accepted); implementation Phase 9. B
 ## Harnesses and tooling
 
 - `cargo-fuzz` + `libfuzzer-sys` with `arbitrary` derive for structured inputs (Rust Fuzz Book; **requires nightly + Unix — runs in Linux CI**, not on Windows dev machines).
-- Seeds: upstream suite patterns (all ~600 distinct patterns from corpus), malicious set, ReDoS PoCs, unicode/quotes/escapes packs; `tests/fuzz/seeds/`.
+- Seeds: upstream suite patterns (all distinct patterns collected by the Phase 1 corpus — count recorded in `tests/corpus/v1/v1.manifest.json`, not estimated), malicious set, ReDoS PoCs, unicode/quotes/escapes packs; `tests/fuzz/seeds/`.
 - Minimization: `cargo fuzz tmin <target> <crash>`; corpus hygiene `cargo fuzz cmin`.
 - proptest for the *differential property* layer (pattern grammar → both engines agree with oracle JSONL batch); `proptest-regressions/` committed (Context7: failures persist + replay first).
 

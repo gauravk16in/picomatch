@@ -28,7 +28,13 @@ The oracle emits JS regex sources rich in lookarounds: dot guards `(?!.)`, `(?=.
 
 ## Decision (D-003, Accepted 2026-07-31)
 
-Primary `regex`; fallback `fancy-regex` (explicit `backtrack_limit`, typed `ResourceLimitError` on trip — DV-6) for the lookaround subset; no mini-backtracker in the committed plan (reversal trigger: bounded spec as new ADR if Phase 7 evidence demands). Engine selection deterministic via source inspection `(?=` / `(?!` / `(?<`). Every corpus case records the selected engine; Phase 9 fuzzes both paths.
+Primary `regex`; fallback `fancy-regex` (explicit `backtrack_limit`, typed `ResourceLimitError` on trip — DV-6) for the lookaround subset; no mini-backtracker in the committed plan (reversal trigger: bounded spec as new ADR if Phase 7 evidence demands). **Engine selection (deterministic, recorded per corpus case): fallback iff the source contains `(?=`, `(?!`, `(?<` (covers lookbehind `(?<=`/`(?<!` and named groups), or a backreference `\1`–`\9` / `\k<name>`; otherwise primary.** Backreference passthrough exists in the oracle suite (`test/regex-features.js:29-41`) and lookbehind passthrough at `:20-23` — fancy-regex 0.19.0 supports both (constant lookbehind natively, variable via default feature). Phase 9 fuzzes both paths.
+
+## Engine-semantics contract (verified 2026-07-31 against oracle suite + crate docs)
+
+1. **ASCII class/boundary mapping:** JS without `/u` treats `\b`, `\w`, `\d`, `\s`, `\W`, `\D`, `\S`, `\B` as ASCII; the `regex` crate and fancy-regex are Unicode-aware by default. Glob-generated patterns never emit those escapes (POSIX classes expand to explicit ASCII ranges), but passthrough user patterns contain them (`test/extglobs.js:765-769`, `test/regex-features.js:10-15`). The emission layer ASCII-maps passthrough escapes with inline `(?-u:…)` groups, keeping `.` Unicode-scalar.
+2. **Astral `.` boundary:** JS `.` = one UTF-16 unit (astral inputs can match a lone surrogate); rust `.` = one scalar value. Glob constructs never emit bare `.`; passthrough patterns on astral inputs follow scalar semantics — recorded as divergence **DV-7** (docs/compatibility-matrix.md).
+3. **`flags:'u'`/`'iu'`:** leave Unicode semantics on (JS `/u` ≈ rust default). **`flags:'g'/'y'`:** DV-2 (fresh exec, lastIndex 0). **`nocase`/`i`:** `(?i)` simple fold (G-10, corpus-verified Phase 9).
 
 ## Prior art note (non-copy, D-010)
 
