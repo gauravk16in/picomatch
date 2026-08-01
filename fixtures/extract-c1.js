@@ -94,7 +94,7 @@ const rows = CASES.map(c => ({
   chunk: c.chunk == null ? 1 : c.chunk,
   layer: 'core',
   jsOnly: false,
-  active: (c.chunk == null ? 1 : c.chunk) === 1,
+  active: (c.chunk == null ? 1 : c.chunk) <= 2,
   pattern: c.pattern,
   options: c.options || {},
   assert: c.assert,

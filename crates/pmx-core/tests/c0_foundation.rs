@@ -1,8 +1,9 @@
 //! Chunk acceptance tests — port: lib/parse.js (C0: L356-L437+L1286-L1322;
 //! C1: L606-L655+L661-L711+L765-L782+L1109-L1122).
 //!
-//! Corpora: ../../fixtures/c0_oracle.json (C0/staged, frozen sha 663115f8d935…)
-//! and ../../fixtures/c1_oracle.json (C1, frozen sha de692974eebd…), extracted by
+//! Corpora: ../../fixtures/c0_oracle.json (C0/staged, frozen sha 42d839b2264c…),
+//! ../../fixtures/c1_oracle.json (C1, frozen sha f49fb7ae5b87…), and
+//! ../../fixtures/c2_oracle.json (C2, frozen sha 415229b89081…), extracted by
 //! fixtures/extract-c*.js from the reference checkout (../Main at 00cf02c). Rows have an `assert`
 //! key list; rows without one assert all recorded fields.
 
@@ -48,7 +49,7 @@ struct Doc {
 
 fn corpus() -> Vec<Case> {
     let mut cases = Vec::new();
-    for file in ["c0_oracle.json", "c1_oracle.json"] {
+    for file in ["c0_oracle.json", "c1_oracle.json", "c2_oracle.json"] {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../fixtures")
             .join(file)

@@ -1,0 +1,929 @@
+{
+ "meta": {
+  "corpus": "c2-segments",
+  "generator": "fixtures/extract-c2.js",
+  "reference": "..\\Main (read-only checkout)",
+  "picomatchVersion": "4.0.5",
+  "fieldPolicy": "u16-unit sequences for emitted text (canon.js); assert-all when no assert list"
+ },
+ "cases": [
+  {
+   "id": "c2.dotslash.lead",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "./a",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "leading ./ collapse via main loop",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "./a",
+     "index": 0,
+     "start": 0,
+     "dot": false,
+     "consumed": "a",
+     "output": "a",
+     "prefix": "./",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.dotslash.lead.multi",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "././a",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "double ./: first by removePrefix, second by main loop slash_branch",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "././a",
+     "index": 2,
+     "start": 2,
+     "dot": false,
+     "consumed": "a",
+     "output": "a",
+     "prefix": "./",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.dotslash.only",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "./",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "leading ./ only",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "./",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "",
+     "prefix": "./",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.dotslash.path",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "./a/b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "leading ./ with slash segment",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "./a/b",
+     "index": 2,
+     "start": 0,
+     "dot": false,
+     "consumed": "a/b",
+     "output": "a\\/b",
+     "prefix": "./",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.dot.single",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": ".",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "single dot at bos -> type dot",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 1,
+    "state": {
+     "input": ".",
+     "index": 0,
+     "start": 0,
+     "dot": false,
+     "consumed": ".",
+     "output": "\\.",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "dot",
+       "value": ".",
+       "output": "\\."
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.dot.double",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "..",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "dotdot at bos -> [dot, text]",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "..",
+     "index": 1,
+     "start": 0,
+     "dot": false,
+     "consumed": "..",
+     "output": "\\.\\.",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "dot",
+       "value": ".",
+       "output": "\\."
+      },
+      {
+       "type": "text",
+       "value": ".",
+       "output": "\\."
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.dot.triple",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "...",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "3 dots -> [dot, text(\"..\")]",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "...",
+     "index": 2,
+     "start": 0,
+     "dot": false,
+     "consumed": "...",
+     "output": "\\.\\.\\.",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "dot",
+       "value": ".",
+       "output": "\\."
+      },
+      {
+       "type": "text",
+       "value": "..",
+       "output": "\\.."
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.slash.lead",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "/a",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "leading slash",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "/a",
+     "index": 1,
+     "start": 0,
+     "dot": false,
+     "consumed": "/a",
+     "output": "\\/a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.slash.trail",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a/",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "trailing slash",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "a/",
+     "index": 1,
+     "start": 0,
+     "dot": false,
+     "consumed": "a/",
+     "output": "a\\/",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.slash.mid",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a/b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "mid-path slash",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a/b",
+     "index": 2,
+     "start": 0,
+     "dot": false,
+     "consumed": "a/b",
+     "output": "a\\/b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.slash.double",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a//b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "consecutive slashes",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a//b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a//b",
+     "output": "a\\/\\/b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.dot.mid",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a.b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "dot in text segment -> merged text",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a.b",
+     "index": 2,
+     "start": 0,
+     "dot": false,
+     "consumed": "a.b",
+     "output": "a\\.b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a.b",
+       "output": "a.b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.dotslash.mid",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a/./b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "mid-path ./ does NOT collapse (index > start+1)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "a/./b",
+     "index": 4,
+     "start": 0,
+     "dot": false,
+     "consumed": "a/./b",
+     "output": "a\\/\\.\\/b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "dot",
+       "value": ".",
+       "output": "\\."
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.dotdot.mid",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a/../b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "mid-path ..",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "a/../b",
+     "index": 5,
+     "start": 0,
+     "dot": false,
+     "consumed": "a/../b",
+     "output": "a\\/\\.\\.\\/b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "dot",
+       "value": ".",
+       "output": "\\."
+      },
+      {
+       "type": "text",
+       "value": ".",
+       "output": "\\."
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.escape.dot",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\.b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "escaped dot dropped by escape_branch, processed by dot_branch",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\.b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a.b",
+     "output": "a\\.b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a.b",
+       "output": "a.b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.escape.slash.bash",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\/b",
+   "options": {
+    "fastpaths": false,
+    "bash": true
+   },
+   "note": "escaped slash in bash mode",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\/b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\\/b",
+     "output": "a\\/b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\\/b",
+       "output": "a\\/b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.windows.slash",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a/b",
+   "options": {
+    "fastpaths": false,
+    "windows": true
+   },
+   "note": "slash_literal on windows",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a/b",
+     "index": 2,
+     "start": 0,
+     "dot": false,
+     "consumed": "a/b",
+     "output": "a[\\\\/]b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "[\\\\/]"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c2.windows.dot",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a.b",
+   "options": {
+    "fastpaths": false,
+    "windows": true
+   },
+   "note": "dot_literal on windows",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a.b",
+     "index": 2,
+     "start": 0,
+     "dot": false,
+     "consumed": "a.b",
+     "output": "a\\.b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a.b",
+       "output": "a.b"
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

@@ -1,6 +1,12 @@
 
 /target/
 node_modules/
+/node_modules
 .npm/
 .DS_Store
+/lib
+/index.js
+/posix.js
+/package.json
+
 
