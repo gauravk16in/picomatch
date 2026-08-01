@@ -17,6 +17,9 @@ const DQ: u16 = b'"' as u16;
 const DOLLAR: u16 = b'$' as u16;
 const CARET: u16 = b'^' as u16;
 
+const QMARK: u16 = b'?' as u16;
+const STAR: u16 = b'*' as u16;
+
 /// REGEX_NON_SPECIAL_CHARS set (constants.js:L98): chars that STOP a literal
 /// run — `@ ! [ \ ] . , $ * + ? ^ { } ( ) | \ /`
 fn is_special(u: u16) -> bool {
@@ -95,15 +98,26 @@ impl Parser {
                 continue;
             }
 
-            // (C7 parens, C6 brackets, C5 braces, C7 pipe, C5 comma,
-            //  C3 qmark, C7/C9 '!', C7 '+', C7 '@': not present.)
+            // L1021-L1047 — question marks
+            if value == QMARK {
+                self.qmark_branch();
+                continue;
+            }
 
-            // L1109-L1122 — plain text.
-            // STAGING (removed in C3): the source guards `value !== '*'`
-            // (L1109) because its star branch follows. C3 owns L1124-L1284;
-            // until then '*' flows through text, which is why C1 corpus rows
-            // contain no slow-path '*' cases (C1_DESIGN.md §7).
-            self.text_branch(value);
+            // (C7 parens, C6 brackets, C5 braces, C7 pipe, C5 comma,
+            //  C7 '!', C7 '+', C7 '@': not present.)
+
+            // L1109-L1122 — plain text
+            if value != STAR {
+                self.text_branch(value);
+                continue;
+            }
+
+            // L1246-L1283 — plain star
+            if value == STAR {
+                self.star_branch();
+                continue;
+            }
         }
     }
 
@@ -223,6 +237,127 @@ impl Parser {
 
         self.push(Token::units(TokenKind::Text, &value, None));
     }
+
+    /// L1021-L1047 — question marks branch
+    fn qmark_branch(&mut self) {
+        let prev_tok = self.state.tokens.get(self.prev);
+        let prev_kind = prev_tok.map(|t| t.kind);
+
+        if prev_kind == Some(TokenKind::Paren) {
+            let next = self.peek(1);
+            let mut output = vec![QMARK];
+
+            let is_open_paren = prev_tok.is_some_and(|t| t.value == [b'(' as u16]);
+            let not_lookaround_char = match next {
+                Some(c) => {
+                    c != b'!' as u16 && c != b'=' as u16 && c != b'<' as u16 && c != b':' as u16
+                }
+                None => true,
+            };
+            let cond1 = is_open_paren && not_lookaround_char;
+            let cond2 = next == Some(b'<' as u16) && !matches_lookbehind_spec(self.remaining());
+
+            if cond1 || cond2 {
+                output = vec![BS, QMARK];
+            }
+
+            self.push(Token::units(TokenKind::Text, &[QMARK], Some(output)));
+            return;
+        }
+
+        if !self.opts.dot()
+            && (prev_kind == Some(TokenKind::Slash) || prev_kind == Some(TokenKind::Bos))
+        {
+            let qmark_no_dot = self.fragments.qmark_no_dot.encode_utf16().collect();
+            self.push(Token::units(TokenKind::Qmark, &[QMARK], Some(qmark_no_dot)));
+            return;
+        }
+
+        let qmark = self.platform.qmark.encode_utf16().collect();
+        self.push(Token::units(TokenKind::Qmark, &[QMARK], Some(qmark)));
+    }
+
+    /// L1246-L1283 — plain star branch
+    fn star_branch(&mut self) {
+        let star_output: Vec<u16> = self.fragments.star.encode_utf16().collect();
+        let mut token_output = star_output;
+
+        let prev_kind = self.state.tokens.get(self.prev).map(|t| t.kind);
+
+        if self.opts.bash() {
+            token_output = ".*?".encode_utf16().collect();
+            if prev_kind == Some(TokenKind::Bos) || prev_kind == Some(TokenKind::Slash) {
+                let mut nodot: Vec<u16> = self.fragments.nodot.encode_utf16().collect();
+                nodot.extend(token_output);
+                token_output = nodot;
+            }
+            self.push(Token::units(TokenKind::Star, &[STAR], Some(token_output)));
+            return;
+        }
+
+        if (prev_kind == Some(TokenKind::Bracket) || prev_kind == Some(TokenKind::Paren))
+            && self.opts.regex()
+        {
+            token_output = vec![STAR];
+            self.push(Token::units(TokenKind::Star, &[STAR], Some(token_output)));
+            return;
+        }
+
+        let is_start = self.state.index == isize::try_from(self.state.start).unwrap_or(-1);
+        if is_start || prev_kind == Some(TokenKind::Slash) || prev_kind == Some(TokenKind::Dot) {
+            let guard_str = if prev_kind == Some(TokenKind::Dot) {
+                self.platform.no_dot_slash
+            } else if self.opts.dot() {
+                self.platform.no_dots_slash
+            } else {
+                self.fragments.nodot
+            };
+
+            let mut addition: Vec<u16> = guard_str.encode_utf16().collect();
+            if self.peek(1) != Some(STAR) {
+                addition.extend(self.platform.one_char.encode_utf16());
+            }
+
+            self.state.output.extend_from_slice(&addition);
+            if let Some(prev_tok) = self.state.tokens.get_mut(self.prev) {
+                let mut out = match prev_tok.output.take() {
+                    Some(o) => o,
+                    None => prev_tok.value.clone(),
+                };
+                out.extend_from_slice(&addition);
+                prev_tok.output = Some(out);
+            }
+        }
+
+        self.push(Token::units(TokenKind::Star, &[STAR], Some(token_output)));
+    }
+}
+
+fn matches_lookbehind_spec(rem: &[u16]) -> bool {
+    for i in 0..rem.len() {
+        if rem[i] == b'<' as u16 {
+            if let Some(&next) = rem.get(i + 1) {
+                if next == b'!' as u16 || next == b'=' as u16 {
+                    return true;
+                }
+                let mut j = i + 1;
+                while j < rem.len() && is_word_char(rem[j]) {
+                    j += 1;
+                }
+                if j > i + 1 && j < rem.len() && rem[j] == b'>' as u16 {
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
+fn is_word_char(u: u16) -> bool {
+    let Ok(c) = u8::try_from(u) else {
+        return false;
+    };
+    c.is_ascii_alphanumeric() || c == b'_'
 }
 
 fn count_run(units: &[u16], u: u16) -> usize {
@@ -263,5 +398,31 @@ mod tests {
         let res2 = parse("..", &opts).unwrap();
         assert_eq!(res2.tokens[1].kind.to_js_str(), "dot");
         assert_eq!(res2.tokens[2].kind.to_js_str(), "text");
+    }
+
+    #[test]
+    fn test_qmark_tokens_and_guards() {
+        let opts = Options::default().with_fastpaths(false);
+        let res = parse("?", &opts).unwrap();
+        assert_eq!(res.tokens[1].kind.to_js_str(), "qmark");
+        assert_eq!(res.output, "[^.\\/]".encode_utf16().collect::<Vec<_>>());
+
+        let res_dot = parse("?", &opts.clone().with_dot(true)).unwrap();
+        assert_eq!(res_dot.output, "[^/]".encode_utf16().collect::<Vec<_>>());
+    }
+
+    #[test]
+    fn test_star_tokens_and_guards() {
+        let opts = Options::default().with_fastpaths(false);
+        let res = parse("a*", &opts).unwrap();
+        assert_eq!(res.tokens[1].kind.to_js_str(), "text");
+        assert_eq!(res.tokens[2].kind.to_js_str(), "star");
+        assert_eq!(res.output, "a[^/]*?\\/?".encode_utf16().collect::<Vec<_>>());
+
+        let res_bos = parse("*", &opts).unwrap();
+        assert_eq!(
+            res_bos.output,
+            "(?!\\.)(?=.)[^/]*?\\/?".encode_utf16().collect::<Vec<_>>()
+        );
     }
 }

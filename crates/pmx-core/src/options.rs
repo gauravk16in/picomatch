@@ -140,6 +140,13 @@ impl Options {
         }
     }
 
+    // ---------- C3 accessors ----------
+
+    /// parse.js:L1257 — `opts.regex === true`.
+    pub fn regex(&self) -> bool {
+        self.regex == Some(true)
+    }
+
     // ---------- builder (tests + adapters; one knob per field) ----------
 
     pub fn with_windows(mut self, v: bool) -> Self {
@@ -188,6 +195,10 @@ impl Options {
     }
     pub fn with_contains(mut self, v: bool) -> Self {
         self.contains = Some(v);
+        self
+    }
+    pub fn with_regex(mut self, v: bool) -> Self {
+        self.regex = Some(v);
         self
     }
 }
