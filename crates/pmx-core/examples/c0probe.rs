@@ -40,6 +40,21 @@ fn opts_of(v: &Value) -> Options {
     if let Some(x) = b("strictSlashes") {
         o = o.with_strict_slashes(x);
     }
+    if let Some(x) = b("unescape") {
+        o = o.with_unescape(x);
+    }
+    if let Some(x) = b("keepQuotes") {
+        o = o.with_keep_quotes(x);
+    }
+    if let Some(x) = b("contains") {
+        o = o.with_contains(x);
+    }
+    if let Some(x) = b("regex") {
+        o = o.with_regex(x);
+    }
+    if let Some(x) = b("noglobstar") {
+        o = o.with_noglobstar(x);
+    }
     if let Some(s) = v.get("prepend").and_then(|x| x.as_str()) {
         o = o.with_prepend(s);
     }
