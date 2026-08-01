@@ -48,7 +48,12 @@ struct Doc {
 
 fn corpus() -> Vec<Case> {
     let mut cases = Vec::new();
-    for file in ["c0_oracle.json", "c1_oracle.json", "c2_oracle.json"] {
+    for file in [
+        "c0_oracle.json",
+        "c1_oracle.json",
+        "c2_oracle.json",
+        "c3_oracle.json",
+    ] {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../fixtures")
             .join(file)
@@ -92,6 +97,9 @@ fn options_of(v: &serde_json::Value) -> Options {
     if let Some(b) = v.get("strictBrackets").and_then(|x| x.as_bool()) {
         o = o.with_strict_brackets(b);
     }
+    if let Some(b) = v.get("strictSlashes").and_then(|x| x.as_bool()) {
+        o = o.with_strict_slashes(b);
+    }
     if let Some(b) = v.get("windows").and_then(|x| x.as_bool()) {
         o = o.with_windows(b);
     }
@@ -112,6 +120,9 @@ fn options_of(v: &serde_json::Value) -> Options {
     }
     if let Some(b) = v.get("contains").and_then(|x| x.as_bool()) {
         o = o.with_contains(b);
+    }
+    if let Some(b) = v.get("regex").and_then(|x| x.as_bool()) {
+        o = o.with_regex(b);
     }
     o
 }

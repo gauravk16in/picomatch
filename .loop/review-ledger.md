@@ -4,4 +4,5 @@
 | C0 | 2026-08-01 | ACCEPT (iter 2) | 1 MAJOR (serde_json f64 decode in JSON transports is not correctly rounded — harness fixed review-side, 5000/5000 re-attack clean; implementer owes DECISIONS.md entry for §4b adapter), 4 MINOR (I-1 delta undeclared, windows globstar byte-pins missing, stale corpus-sha comment, workspace not a git repo) |
 | C1 | 2026-08-01 | ACCEPT | 0 BLOCKER, 0 MAJOR, 0 MINOR |
 | C2 | 2026-08-01 | ACCEPT | 0 BLOCKER, 0 MAJOR, 0 MINOR |
+| C3 | 2026-08-01 | ACCEPT | 0 BLOCKER, 0 MAJOR, 0 MINOR |
 

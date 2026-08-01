@@ -19,6 +19,7 @@ const CARET: u16 = b'^' as u16;
 
 const QMARK: u16 = b'?' as u16;
 const STAR: u16 = b'*' as u16;
+const PLUS: u16 = b'+' as u16;
 
 /// REGEX_NON_SPECIAL_CHARS set (constants.js:L98): chars that STOP a literal
 /// run — `@ ! [ \ ] . , $ * + ? ^ { } ( ) | \ /`
@@ -104,8 +105,14 @@ impl Parser {
                 continue;
             }
 
+            // L1071-L1089 — plus
+            if value == PLUS {
+                self.plus_branch();
+                continue;
+            }
+
             // (C7 parens, C6 brackets, C5 braces, C7 pipe, C5 comma,
-            //  C7 '!', C7 '+', C7 '@': not present.)
+            //  C7 '!', C7 '@': not present.)
 
             // L1109-L1122 — plain text
             if value != STAR {
@@ -275,6 +282,31 @@ impl Parser {
 
         let qmark = self.platform.qmark.encode_utf16().collect();
         self.push(Token::units(TokenKind::Qmark, &[QMARK], Some(qmark)));
+    }
+
+    /// L1071-L1089 — plus branch
+    fn plus_branch(&mut self) {
+        let prev_tok = self.state.tokens.get(self.prev);
+        let prev_kind = prev_tok.map(|t| t.kind);
+        let prev_val_is_open_paren = prev_tok.is_some_and(|t| t.value == [b'(' as u16]);
+
+        let plus_lit: Vec<u16> = self.platform.plus_literal.encode_utf16().collect();
+
+        if prev_val_is_open_paren || self.opts.regex == Some(false) {
+            self.push(Token::units(TokenKind::Plus, &[PLUS], Some(plus_lit)));
+            return;
+        }
+
+        if matches!(
+            prev_kind,
+            Some(TokenKind::Bracket) | Some(TokenKind::Paren) | Some(TokenKind::Brace)
+        ) || self.state.parens > 0
+        {
+            self.push(Token::units(TokenKind::Plus, &[PLUS], None));
+            return;
+        }
+
+        self.push(Token::units(TokenKind::Plus, &plus_lit, None));
     }
 
     /// L1246-L1283 — plain star branch

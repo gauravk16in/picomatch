@@ -1,14 +1,17 @@
 'use strict';
 
 /**
- * C2 corpus extractor — segment semantics: slash handling, dot handling,
- * and leading "./" collapse (lib/parse.js:L975-L991, L997-L1015).
+ * C3 corpus extractor — single wildcards ? and * with BOS/dot guards
+ * (lib/parse.js:L1021-L1047, L1246-L1283).
  * Extracts test cases directly from original test files in picomatch-original:
- *   - test/slashes-posix.js
- *   - test/dots-invalid.js
+ *   - test/qmarks.js
+ *   - test/stars.js
+ *   - test/dotfiles.js
+ *   - test/special-characters.js
+ *   - test/options.js
  *   - test/api.picomatch.js
  *
- * node fixtures/extract-c2.js → fixtures/c2_oracle.json
+ * node fixtures/extract-c3.js → fixtures/c3_oracle.json
  */
 
 const path = require('path');
@@ -30,9 +33,9 @@ function requiredChunk(pattern) {
   if (pattern.length > 65536) return 0;
   if (pattern.includes('**')) return 8;
   if (pattern.startsWith('!')) return 9;
-  if (/[?*+@!]\(|[()]/.test(pattern)) return 7;
+  if (/[?*+@!]\(|[()]|\|/.test(pattern)) return 7;
   if (/[\[\]]/.test(pattern)) return 6;
-  if (/[\{\}]/.test(pattern)) return 5;
+  if (/[\{\},]/.test(pattern)) return 5;
   if (/[*?+@]/.test(pattern)) return 3;
   if (/[.\/]/.test(pattern)) return 2;
   if (/["'\\]/.test(pattern)) return 1;
@@ -58,7 +61,14 @@ Object.assign(require.cache[parsePath].exports, origParse);
 function SilentReporter(runner) {}
 
 const mocha = new Mocha({ reporter: SilentReporter });
-const testFiles = ['slashes-posix.js', 'dots-invalid.js', 'api.picomatch.js'];
+const testFiles = [
+  'qmarks.js',
+  'stars.js',
+  'dotfiles.js',
+  'special-characters.js',
+  'options.js',
+  'api.picomatch.js'
+];
 testFiles.forEach(file => {
   const filePath = path.join(REF, 'test', file);
   if (fs.existsSync(filePath)) {
@@ -82,7 +92,7 @@ mocha.run(() => {
   const rows = captured.map((c, idx) => {
     const chunk = requiredChunk(c.pattern, c.options);
     return {
-      id: `c2.orig.${idx}`,
+      id: `c3.orig.${idx}`,
       chunk: chunk,
       layer: 'core',
       jsOnly: false,
@@ -96,8 +106,8 @@ mocha.run(() => {
 
   const doc = {
     meta: {
-      corpus: 'c2-segments',
-      generator: 'fixtures/extract-c2.js',
+      corpus: 'c3-wildcards',
+      generator: 'fixtures/extract-c3.js',
       reference: path.join('..', '..', 'picomatch-original') + ' (read-only checkout)',
       picomatchVersion: require(path.join(REF, 'package.json')).version,
       fieldPolicy: 'u16-unit sequences for emitted text (canon.js); assert-all when no assert list'
@@ -106,7 +116,7 @@ mocha.run(() => {
   };
 
   const json = JSON.stringify(doc, null, 1) + '\n';
-  const out = path.join(__dirname, 'c2_oracle.json');
+  const out = path.join(__dirname, 'c3_oracle.json');
   fs.writeFileSync(out, json);
   const sha = crypto.createHash('sha256').update(json).digest('hex');
   const activeCount = rows.filter(r => r.active).length;
