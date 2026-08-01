@@ -13,4 +13,4 @@ pub mod utils;
 
 pub use error::PmxError;
 pub use options::Options;
-pub use parse::{parse, ParseState, Token, TokenKind};
+pub use parse::{fastpaths, parse, ParseState, Token, TokenKind};

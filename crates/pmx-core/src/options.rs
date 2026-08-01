@@ -147,6 +147,13 @@ impl Options {
         self.regex == Some(true)
     }
 
+    // ---------- C4 accessors ----------
+
+    /// parse.js:L1364 — `opts.noglobstar === true`.
+    pub fn noglobstar(&self) -> bool {
+        self.noglobstar == Some(true)
+    }
+
     // ---------- builder (tests + adapters; one knob per field) ----------
 
     pub fn with_windows(mut self, v: bool) -> Self {
@@ -167,6 +174,10 @@ impl Options {
     }
     pub fn with_fastpaths(mut self, v: bool) -> Self {
         self.fastpaths = Some(v);
+        self
+    }
+    pub fn with_noglobstar(mut self, v: bool) -> Self {
+        self.noglobstar = Some(v);
         self
     }
     pub fn with_strict_brackets(mut self, v: bool) -> Self {

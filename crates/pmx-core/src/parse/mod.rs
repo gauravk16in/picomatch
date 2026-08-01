@@ -4,12 +4,14 @@
 //! maybe_slash → rebuild). The inline fastpath returns the state EARLY;
 //! finish() must NOT run on that route (L654).
 
+mod fastpath;
 mod fragments;
 mod inline_fastpath;
 mod main_loop;
 mod parser;
 mod state;
 
+pub use fastpath::fastpaths;
 pub use state::{ParseState, Token, TokenKind};
 
 use crate::constants;
