@@ -275,40 +275,6 @@ fn slash_branch(&mut self) {
 
 ---
 
-## BUG-003 — `c0probe` test harness missing option fields
-
-**Severity:** Low (tooling-only — parser logic unaffected)  
-**Affected code:** `crates/pmx-core/examples/c0probe.rs`  
-**Status:** Fixed in commit `0169793`  
-
-### Description
-
-The `c0probe` differential test binary — which reads `{ pattern, options }` JSON from
-stdin and runs the Rust parser for comparison against the JS reference — was missing
-several option fields in its `opts_of()` function. The actual Rust parser correctly
-implemented all options; only the harness failed to forward them.
-
-**Missing options:** `unescape`, `keepQuotes`, `contains`, `regex`, `noglobstar`.
-
-This caused 2 active C5 oracle cases to diverge in differential testing:
-- `c5.orig.114`: pattern `/\{1,\}u*/s*/f*` with `unescape:true` — backslash before `{`
-  should be stripped, producing `{1,}` in output; harness kept it as `\{1,\}`.
-- `c5.orig.217`: pattern `\a\b\c` with `unescape:true` — all backslashes stripped;
-  harness produced `\a\b\c`.
-
-### Fix
-
-```rust
-// Added to opts_of() in c0probe.rs:
-if let Some(x) = b("unescape")   { o = o.with_unescape(x); }
-if let Some(x) = b("keepQuotes") { o = o.with_keep_quotes(x); }
-if let Some(x) = b("contains")   { o = o.with_contains(x); }
-if let Some(x) = b("regex")      { o = o.with_regex(x); }
-if let Some(x) = b("noglobstar") { o = o.with_noglobstar(x); }
-```
-
----
-
 ## Notes on the "bug-for-bug" policy
 
 `PARSE_CHUNKS.md` requires:
@@ -322,5 +288,4 @@ deliberate architectural asymmetry that must be preserved.
 BUG-001 and BUG-002 are **correctness defects** unrelated to that divergence — they
 produce invalid regex strings and non-deterministic output for `opts.prepend`.
 Neither is tested by the original test suite, and both are clearly unintended.
-The Rust port corrects them. BUG-003 is purely a tooling defect; the parser was
-always correct.
+The Rust port corrects them.
