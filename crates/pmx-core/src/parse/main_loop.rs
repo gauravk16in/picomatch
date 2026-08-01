@@ -682,4 +682,33 @@ mod tests {
         })).unwrap();
         assert_eq!(res_custom.output, "(1,100)".encode_utf16().collect::<Vec<_>>());
     }
+
+    #[test]
+    fn test_bug001_unclosed_brace_recovery() {
+        let opts = Options::default().with_fastpaths(false);
+
+        // Simple unclosed brace: should emit \(abc not (abc
+        let res1 = parse("{abc", &opts).unwrap();
+        assert_eq!(res1.output, "\\(abc".encode_utf16().collect::<Vec<_>>());
+
+        // Unclosed brace with range inside (triggers backtrack + recovery): should emit \([a-z]
+        let res2 = parse("{{a..z}", &opts).unwrap();
+        assert_eq!(res2.output, "\\([a-z]".encode_utf16().collect::<Vec<_>>());
+    }
+
+    #[test]
+    fn test_bug002_prepend_dotslash_collapse() {
+        let opts = Options::default().with_fastpaths(false).with_prepend("PFX");
+
+        // ./foo with prepend (no backtrack): output is "foo" (documented bug-for-bug JS behavior)
+        let res = parse("./foo", &opts).unwrap();
+        assert_eq!(res.output, "foo".encode_utf16().collect::<Vec<_>>());
+
+        // ./src/{a..z}.js with prepend (backtrack=true): output has PFX
+        let res2 = parse("./src/{a..z}.js", &opts).unwrap();
+        assert_eq!(
+            res2.output,
+            "PFXsrc\\/[a-z]\\.js".encode_utf16().collect::<Vec<_>>()
+        );
+    }
 }

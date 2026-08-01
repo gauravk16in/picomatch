@@ -232,6 +232,18 @@ impl Parser {
     /// Recovery ("unbalanced constructs"), then `maybe_slash`, then the
     /// backtrack rebuild. Mirrors the source order exactly.
     pub(crate) fn finish(mut self) -> Result<ParseState, PmxError> {
+        // L1308-L1319 — rebuild from the token journal when dirty
+        if self.state.backtrack {
+            self.state.output.clear();
+            for token in &self.state.tokens {
+                let piece = token.output.as_deref().unwrap_or(&token.value);
+                self.state.output.extend_from_slice(piece);
+                if let Some(suffix) = &token.suffix {
+                    self.state.output.extend_from_slice(suffix);
+                }
+            }
+        }
+
         self.recovery()?;
 
         // L1304-L1306 — maybe_slash
@@ -247,18 +259,6 @@ impl Parser {
             self.push(Token::units(TokenKind::MaybeSlash, &[], Some(output)));
         }
 
-        // L1308-L1319 — rebuild from the token journal when dirty
-        if self.state.backtrack {
-            self.state.output.clear();
-            for token in &self.state.tokens {
-                let piece = token.output.as_deref().unwrap_or(&token.value);
-                self.state.output.extend_from_slice(piece);
-                if let Some(suffix) = &token.suffix {
-                    self.state.output.extend_from_slice(suffix);
-                }
-            }
-        }
-
         Ok(self.state)
     }
 
@@ -268,7 +268,7 @@ impl Parser {
         for (kind, opener, closer) in [
             (CounterKind::Brackets, '[', ']'),
             (CounterKind::Parens, '(', ')'),
-            (CounterKind::Braces, '{', '}'),
+            (CounterKind::Braces, '(', '}'), // BUG-001: brace open emits '(' as output, not '{'
         ] {
             while self.counter(kind) > 0 {
                 if self.opts.strict_brackets() {
