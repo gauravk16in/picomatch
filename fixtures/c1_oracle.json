@@ -1,0 +1,2390 @@
+{
+ "meta": {
+  "corpus": "c1-dispatcher",
+  "generator": "fixtures/extract-c1.js",
+  "reference": "../picomatch (read-only checkout)",
+  "picomatchVersion": "4.0.5",
+  "fieldPolicy": "u16-unit sequences for emitted text (canon.js); assert-all when no assert list"
+ },
+ "cases": [
+  {
+   "id": "fp.literal.run",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "foo.bar,baz",
+   "options": {},
+   "note": "dots+commas: comma is \\W → escaped (L635)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 11,
+    "state": {
+     "input": "foo.bar,baz",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:foo\\.bar\\,baz)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.star.mid",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a*b",
+   "options": {},
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a*b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a[^/]*?b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.star.run",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a**b",
+   "options": {},
+   "note": "star RUN collapses to one fragment (L633)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a**b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a[^/]*?b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.star.tail",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a*",
+   "options": {},
+   "note": "fp route returns early: NO maybe_slash affix",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "a*",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a[^/]*?)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.qmark.start",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "?ab",
+   "options": {},
+   "note": "offset-0 ? ⇒ QMARK_NO_DOT (L619-621)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "?ab",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:[^.\\/]ab)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.qmark.start.dot",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "?ab",
+   "options": {
+    "dot": true
+   },
+   "note": "qmarkNoDot resolved at init with dot:true ⇒ QMARK",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "?ab",
+     "index": -1,
+     "start": 0,
+     "dot": true,
+     "consumed": "",
+     "output": "^(?:[^/]ab)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.qmark.mid",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a?b",
+   "options": {},
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a?b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a[^/]b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.qmark.run",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a??b",
+   "options": {},
+   "note": "QMARK×2 (L622)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a??b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a[^/][^/]b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.qmark.esc",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\?b",
+   "options": {},
+   "note": "esc kept (L616-618)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\?b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\?b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.qmark.escrun",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\??b",
+   "options": {},
+   "note": "escape + QMARK tail",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "a\\??b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\?[^/]b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.qmark.end",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "ab?",
+   "options": {},
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "ab?",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:ab[^/])$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.qmark.windows",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "?ab",
+   "options": {
+    "windows": true
+   },
+   "note": "QMARK windows fragment [^\\\\/]",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "?ab",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:[^.\\\\/]ab)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.dot.run",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a..b",
+   "options": {},
+   "note": "DOT_LITERAL×2 (L625-627)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a..b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\.\\.b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.dot.esc",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\.b",
+   "options": {},
+   "note": "NO escaped-dot branch: esc dropped (L625-L627 has no esc arm!)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\.b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\.b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.dot.start",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": ".git",
+   "options": {},
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": ".git",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:\\.git)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.asc.star",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\*b",
+   "options": {},
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\*b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\*b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.star.escrun",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\**b",
+   "options": {},
+   "note": "esc + star frag for tail (L630-631)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "a\\**b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\*[^/]*?b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.bs.word",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\bc",
+   "options": {},
+   "note": "word-boundary feature survives replace (regex-features.js)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\bc",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\bc)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.bs.semi",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\;b",
+   "options": {},
+   "note": "esc-any branch: backslash kept raw; NO collapse (flag unset on non-bs first)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\;b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\;b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.bs.run2",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\\\b",
+   "options": {},
+   "note": "collapse: run 2 even → 2 backslashes in OUTPUT",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\\\b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\\\b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.bs.run3",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\\\\\b",
+   "options": {},
+   "note": "run 3 odd → 1 backslash",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "a\\\\\\b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.bs.run4",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\\\\\\\b",
+   "options": {},
+   "note": "run 4 even → 2",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "a\\\\\\\\b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\\\b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.bs.trailing",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\",
+   "options": {},
+   "note": "single trailing bs: run 1 odd → 1",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "a\\",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.bs.unescape",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\*b",
+   "options": {
+    "unescape": true
+   },
+   "note": "L640: all backslashes stripped",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\*b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\*b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.dollar",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a$b",
+   "options": {},
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a$b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\$b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.caret",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a^b",
+   "options": {},
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a^b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\^b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.caret.start",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "^a",
+   "options": {},
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "^a",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:\\^a)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.comma.dash.semi",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a,b-c;d",
+   "options": {},
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 7,
+    "state": {
+     "input": "a,b-c;d",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\,b\\-c\\;d)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.pojo-protect",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "__proto__",
+   "options": {},
+   "note": "literal special keys (malicious.js)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 9,
+    "state": {
+     "input": "__proto__",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:__proto__)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.contains.noop",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "abc",
+   "options": {
+    "contains": true
+   },
+   "note": "output===input ⇒ bare state.output = input (L648-651)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "abc",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "abc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.contains.special",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a.b",
+   "options": {
+    "contains": true
+   },
+   "note": "special present ⇒ wrap WITHOUT anchors (contains drops them)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a.b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "(?:a\\.b)",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.capture.star",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a*b",
+   "options": {
+    "capture": true
+   },
+   "note": "star wrapped in () at init (L403-405)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a*b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a([^/]*?)b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "fp.astral",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a😀b",
+   "options": {},
+   "assert": [
+    "output"
+   ],
+   "note": "ILL-FORMED-16 proof: escape inserted between surrogate halves; corpus carries __u16",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": {
+      "__u16": [
+       97,
+       55357,
+       56832,
+       98
+      ]
+     },
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": {
+      "__u16": [
+       94,
+       40,
+       63,
+       58,
+       97,
+       92,
+       55357,
+       92,
+       56832,
+       98,
+       41,
+       36
+      ]
+     },
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.escape.simple",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\*b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\*b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\\*b",
+     "output": "a\\*b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\\*b",
+       "output": "a\\*b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.escape.word",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\bc",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\bc",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\\bc",
+     "output": "a\\bc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\\bc",
+       "output": "a\\bc"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.escape.run3",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\\\\\b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "main-loop collapse at L690-699 (run>2)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "a\\\\\\b",
+     "index": 4,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\\\\\\b",
+     "output": "a\\\\\\b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\\\\\\b",
+       "output": "a\\\\\\b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.escape.run2",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\\\b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "run ≤ 2: NO main-loop collapse; \\ and \\ kept",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\\\b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\\\\b",
+     "output": "a\\\\b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\\\\b",
+       "output": "a\\\\b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.escape.trailing",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "L683-687: value doubled to raw \\\\",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "a\\",
+     "index": 1,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\\\\",
+     "output": "a\\\\",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\\\\",
+       "output": "a\\\\"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.escape.dropdot",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": false,
+   "pattern": "a\\.b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "C2: bs dropped by L679, then the DOT branch emits DOT_LITERAL — NOT same bytes as C1 text fallback (proved)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\.b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a.b",
+     "output": "a\\.b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a.b",
+       "output": "a.b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.escape.dropsemi",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\;b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\;b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a;b",
+     "output": "a;b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a;b",
+       "output": "a;b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.escape.unescape",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\*b",
+   "options": {
+    "fastpaths": false,
+    "unescape": true
+   },
+   "note": "L701-702: backslash dropped, char kept",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\*b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a*b",
+     "output": "a*b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a*b",
+       "output": "a*b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.escape.bash-slash",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\\/b",
+   "options": {
+    "fastpaths": false,
+    "bash": true
+   },
+   "note": "bash keeps the backslash+slash as text (L675 skipped); non-bash slash path is C2-owned (DIFFERENT bytes — not rowed here)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\\/b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\\/b",
+     "output": "a\\/b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\\/b",
+       "output": "a\\/b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.quotes.basic",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\"bc\"d",
+   "options": {},
+   "note": "routing forces slow loop (\")",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "a\"bc\"d",
+     "index": 5,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\"bc\"d",
+     "output": "a\"bc\"d",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\"bc\"d",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.quotes.special",
+   "chunk": 3,
+   "layer": "core",
+   "jsOnly": false,
+   "active": false,
+   "pattern": "a\"+*^\"b",
+   "options": {},
+   "note": "C3-owned: contains an unguarded * (star branch) — see staging note below",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 7,
+    "state": {
+     "input": "a\"+*^\"b",
+     "index": 6,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\"\\+*\\^\"b",
+     "output": "a\"\\+[^/]*?\\^\"b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\"",
+       "output": null
+      },
+      {
+       "type": "plus",
+       "value": "\\+",
+       "output": null
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": "\\^\"b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.quotes.keep",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\"bc\"d",
+   "options": {
+    "keepQuotes": true
+   },
+   "note": "quote chars emitted as text (L778-780)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "a\"bc\"d",
+     "index": 5,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\"bc\"d",
+     "output": "a\"bc\"d",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\"bc\"d",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.quotes.unclosed",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\"bc",
+   "options": {},
+   "note": "quotes counter left at 1; no recovery handles it",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\"bc",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\"bc",
+     "output": "a\"bc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\"bc",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.quotes.empty",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\"\"b",
+   "options": {},
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a\"\"b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\"\"b",
+     "output": "a\"\"b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\"\"b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.quotes.astral",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\"😀\"b",
+   "options": {},
+   "note": "paired halves recombine inside quotes (still well-formed)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": {
+      "__u16": [
+       97,
+       34,
+       55357,
+       56832,
+       34,
+       98
+      ]
+     },
+     "index": 5,
+     "start": 0,
+     "dot": false,
+     "consumed": {
+      "__u16": [
+       97,
+       34,
+       55357,
+       56832,
+       34,
+       98
+      ]
+     },
+     "output": {
+      "__u16": [
+       97,
+       34,
+       55357,
+       56832,
+       34,
+       98
+      ]
+     },
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": {
+        "__u16": [
+         97,
+         34,
+         55357,
+         56832,
+         34,
+         98
+        ]
+       },
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.quotes.special-staging",
+   "chunk": 3,
+   "layer": "core",
+   "jsOnly": false,
+   "active": false,
+   "pattern": "a\"+*^\"b",
+   "options": {},
+   "note": "C3: JS text-run eats the quote before it can toggle, so unguarded * hits the STAR branch even \"inside quotes\" — C1 text-fallback diverges by design",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 7,
+    "state": {
+     "input": "a\"+*^\"b",
+     "index": 6,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\"\\+*\\^\"b",
+     "output": "a\"\\+[^/]*?\\^\"b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\"",
+       "output": null
+      },
+      {
+       "type": "plus",
+       "value": "\\+",
+       "output": null
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": "\\^\"b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.quotes.dotstar-staging",
+   "chunk": 3,
+   "layer": "core",
+   "jsOnly": false,
+   "active": false,
+   "pattern": "a\".*\"b",
+   "options": {},
+   "note": "C3: same staging class (star branch), not C1-comparable",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "a\".*\"b",
+     "index": 5,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\".*b",
+     "output": "a\"\\.[^/]*?b\\/?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 1,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\".",
+       "output": "a\"."
+      },
+      {
+       "type": "star",
+       "value": "*b",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "maybe_slash",
+       "value": "",
+       "output": "\\/?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.nul",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\u0000b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "NUL silently skipped (L664)",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a\u0000b",
+     "index": 2,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\u0000b",
+     "output": "a\u0000b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\u0000b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.nul.fp",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a\u0000b",
+   "options": {},
+   "note": "fp route: NUL is \\W → escaped to BS+NUL",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "a\u0000b",
+     "index": -1,
+     "start": 0,
+     "dot": false,
+     "consumed": "",
+     "output": "^(?:a\\\u0000b)$",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.dollar.caret",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "^a$b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "^a$b",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "\\^a\\$b",
+     "output": "\\^a\\$b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "\\^a\\$b",
+       "output": "\\^a\\$b"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.merge.esc-prev",
+   "chunk": 1,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "a$bC",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "merge: prev.output = prev-output + tok.VALUE (raw-escape pair), not tok.output",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "a$bC",
+     "index": 3,
+     "start": 0,
+     "dot": false,
+     "consumed": "a\\$bC",
+     "output": "a\\$bC",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a\\$bC",
+       "output": "a\\$bC"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "sl.text.astral-merge",
+   "chunk": 2,
+   "layer": "core",
+   "jsOnly": false,
+   "active": false,
+   "pattern": "a😀.b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "C2: dot branch present ⇒ divergent until C2",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": {
+      "__u16": [
+       97,
+       55357,
+       56832,
+       46,
+       98
+      ]
+     },
+     "index": 4,
+     "start": 0,
+     "dot": false,
+     "consumed": {
+      "__u16": [
+       97,
+       55357,
+       56832,
+       46,
+       98
+      ]
+     },
+     "output": {
+      "__u16": [
+       97,
+       55357,
+       56832,
+       92,
+       46,
+       98
+      ]
+     },
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": {
+        "__u16": [
+         97,
+         55357,
+         56832,
+         46,
+         98
+        ]
+       },
+       "output": {
+        "__u16": [
+         97,
+         55357,
+         56832,
+         46,
+         98
+        ]
+       }
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

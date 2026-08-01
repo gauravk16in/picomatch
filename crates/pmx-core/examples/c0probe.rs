@@ -97,7 +97,7 @@ fn main() {
                 "dot": s.dot,
                 "index": s.index,
                 "start": s.start,
-                "consumedUnits": units(&s.consumed).len(),
+                "consumedUnits": s.consumed.len(),
                 "negated": s.negated,
                 "backtrack": s.backtrack,
                 "brackets": s.brackets,
@@ -108,8 +108,8 @@ fn main() {
                 "negatedExtglob": s.negated_extglob,
                 "tokens": s.tokens.iter().map(|t| json!({
                     "type": t.kind.to_js_str(),
-                    "value": units(&t.value),
-                    "output": t.output.as_deref().map(units)
+                    "value": t.value,
+                    "output": t.output
                 })).collect::<Vec<_>>()
             }),
             Err(e) => json!({

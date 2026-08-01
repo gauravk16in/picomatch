@@ -519,7 +519,7 @@
    "chunk": 1,
    "layer": "core",
    "jsOnly": false,
-   "active": false,
+   "active": true,
    "pattern": "",
    "options": {},
    "note": "I-7: returns (not throws). Output \"^(?:)$\" comes via the INLINE FASTPATH intercept + wrapOutput anchors (L606-655) — so this row activates with C1, not C0",
@@ -608,7 +608,7 @@
    "chunk": 1,
    "layer": "core",
    "jsOnly": false,
-   "active": false,
+   "active": true,
    "pattern": "abc",
    "options": {},
    "note": "full 16-field shape AS the inline fastpath leaves it: output \"^(?:abc)$\", tokens [bos] only, index stays -1",
@@ -775,7 +775,7 @@
    "chunk": 1,
    "layer": "core",
    "jsOnly": false,
-   "active": false,
+   "active": true,
    "pattern": "abc",
    "options": {
     "fastpaths": false
@@ -820,7 +820,7 @@
    "chunk": 1,
    "layer": "core",
    "jsOnly": false,
-   "active": false,
+   "active": true,
    "pattern": "abc",
    "options": {},
    "note": "same pattern via inline fastpath — byte-DIFFERENT route, wrapOutput-anchored; both routes must be ported",
@@ -855,7 +855,7 @@
   },
   {
    "id": "text.merge",
-   "chunk": 1,
+   "chunk": 2,
    "layer": "core",
    "jsOnly": false,
    "active": false,
@@ -863,7 +863,7 @@
    "options": {
     "fastpaths": false
    },
-   "note": "dot lands as text inside a literal run (parse.js:L1008-1011)",
+   "note": "C2 boundary: dot branch (L1008-1011) emits DOT_LITERAL on append — NOT C1-comparable; the merged token output ≠ state.output",
    "expect": {
     "kind": "ok",
     "utf16Length": 3,
@@ -903,7 +903,7 @@
    "chunk": 1,
    "layer": "core",
    "jsOnly": false,
-   "active": false,
+   "active": true,
    "pattern": "a$b^c",
    "options": {
     "fastpaths": false
@@ -948,7 +948,7 @@
    "chunk": 1,
    "layer": "core",
    "jsOnly": false,
-   "active": false,
+   "active": true,
    "pattern": "a😀",
    "options": {
     "fastpaths": false
@@ -1021,7 +1021,7 @@
    "chunk": 1,
    "layer": "core",
    "jsOnly": false,
-   "active": false,
+   "active": true,
    "pattern": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
    "options": {
     "maxLength": 501

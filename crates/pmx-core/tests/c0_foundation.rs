@@ -1,15 +1,10 @@
-//! C0 acceptance tests — port: lib/parse.js:L356-L437 (init/guards) + L439-L521
-//! (token machinery) + L1286-L1322 (recovery/rebuild).
+//! Chunk acceptance tests — port: lib/parse.js (C0: L356-L437+L1286-L1322;
+//! C1: L606-L655+L661-L711+L765-L782+L1109-L1122).
 //!
-//! These tests compile and run only after C0 lands (they reference the public
-//! API from the approved C0 design: `pmx_core::parse`, `Options`, `ParseState`,
-//! `PmxError`, `Token`, `TokenKind`). Cargo manifests arrive with the C0
-//! implementation loop. Until then this file is the executable acceptance gate.
-//!
-//! Corpus: ../../fixtures/c0_oracle.json, extracted from the reference checkout
-//! by fixtures/extract-c0.js and frozen at sha256 8518c24b… (iter.2 value; see
-//! fixtures log). Rows have an `assert` key list; rows without one assert all
-//! recorded fields.
+//! Corpora: ../../fixtures/c0_oracle.json (C0/staged, frozen sha 0825842b…)
+//! and ../../fixtures/c1_oracle.json (C1, frozen sha 37488f17…), extracted by
+//! fixtures/extract-c*.js from the reference checkout. Rows have an `assert`
+//! key list; rows without one assert all recorded fields.
 
 #![cfg(test)]
 
@@ -52,12 +47,19 @@ struct Doc {
 }
 
 fn corpus() -> Vec<Case> {
-    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../fixtures/c0_oracle.json")
-        .canonicalize()
-        .expect("fixtures/c0_oracle.json missing — run fixtures/extract-c0.js");
-    let doc: Doc = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
-    doc.cases
+    let mut cases = Vec::new();
+    for file in ["c0_oracle.json", "c1_oracle.json"] {
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../../fixtures")
+            .join(file)
+            .canonicalize()
+            .unwrap_or_else(|e| {
+                panic!("fixtures/{file} missing ({e}) — run fixtures/extract-c*.js")
+            });
+        let doc: Doc = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+        cases.extend(doc.cases);
+    }
+    cases
 }
 
 /// JSON has no Infinity/NaN literals; canon encOptions stores them as { "__num": "..." }.
@@ -96,8 +98,20 @@ fn options_of(v: &serde_json::Value) -> Options {
     if let Some(b) = v.get("capture").and_then(|x| x.as_bool()) {
         o = o.with_capture(b);
     }
+    if let Some(b) = v.get("bash").and_then(|x| x.as_bool()) {
+        o = o.with_bash(b);
+    }
     if let Some(b) = v.get("fastpaths").and_then(|x| x.as_bool()) {
         o = o.with_fastpaths(b);
+    }
+    if let Some(b) = v.get("unescape").and_then(|x| x.as_bool()) {
+        o = o.with_unescape(b);
+    }
+    if let Some(b) = v.get("keepQuotes").and_then(|x| x.as_bool()) {
+        o = o.with_keep_quotes(b);
+    }
+    if let Some(b) = v.get("contains").and_then(|x| x.as_bool()) {
+        o = o.with_contains(b);
     }
     o
 }
@@ -128,19 +142,28 @@ fn units_of(v: &serde_json::Value) -> Vec<u16> {
     }
 }
 
-fn assert_units(case: &Case, actual: &str, expect: &serde_json::Value, what: &str) {
-    let actual_units: Vec<u16> = actual.encode_utf16().collect();
+/// Compares emitted-text fields on the C-1 basis: UTF-16 unit sequences.
+/// Port fields ARE `Vec<u16>` (ill-formed-safe); `input`/`prefix` stay
+/// Strings, so those call sites encode once before passing.
+fn assert_units(case: &Case, actual: &[u16], expect: &serde_json::Value, what: &str) {
     let expect_units = units_of(expect);
     assert_eq!(
-        actual_units, expect_units,
+        actual,
+        expect_units.as_slice(),
         "{}: {} UNITS differ",
-        case.id, what
+        case.id,
+        what
     );
 }
 
 fn assert_field(case: &Case, state: &pmx_core::ParseState, expect: &serde_json::Value, key: &str) {
     match key {
-        "input" => assert_units(case, &state.input, &expect["input"], "input"),
+        "input" => assert_units(
+            case,
+            &state.input.encode_utf16().collect::<Vec<u16>>(),
+            &expect["input"],
+            "input",
+        ),
         "index" => assert_eq!(
             state.index,
             expect["index"].as_i64().unwrap() as isize,
@@ -159,7 +182,12 @@ fn assert_field(case: &Case, state: &pmx_core::ParseState, expect: &serde_json::
             "{}: dot",
             case.id
         ),
-        "prefix" => assert_units(case, &state.prefix, &expect["prefix"], "prefix"),
+        "prefix" => assert_units(
+            case,
+            &state.prefix.encode_utf16().collect::<Vec<u16>>(),
+            &expect["prefix"],
+            "prefix",
+        ),
         "backtrack" => assert_eq!(
             state.backtrack,
             expect["backtrack"].as_bool().unwrap(),

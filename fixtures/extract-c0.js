@@ -61,7 +61,7 @@ const CASES = [
   // --- staged: text branch (activates C1) ---
   { id: 'text.literal', chunk: 1, pattern: 'abc', options: { fastpaths: false }, note: 'slow loop: text branch; tokens [bos, text]; output unanchored "abc"' },
   { id: 'text.inline', chunk: 1, pattern: 'abc', options: {}, note: 'same pattern via inline fastpath — byte-DIFFERENT route, wrapOutput-anchored; both routes must be ported' },
-  { id: 'text.merge', chunk: 1, pattern: 'a.b', options: { fastpaths: false }, note: 'dot lands as text inside a literal run (parse.js:L1008-1011)' },
+  { id: 'text.merge', chunk: 2, pattern: 'a.b', options: { fastpaths: false }, note: 'C2 boundary: dot branch (L1008-1011) emits DOT_LITERAL on append — NOT C1-comparable; the merged token output ≠ state.output' },
   { id: 'text.dollar-caret', chunk: 1, pattern: 'a$b^c', options: { fastpaths: false }, note: '$ and ^ escaped at emission (parse.js:L1110-1112)' },
   { id: 'text.astral-index', chunk: 1, pattern: 'a' + emoji, options: { fastpaths: false }, assert: ['output', 'index'], note: 'slow loop, so the inline fastpath cannot hide index movement: end index is len-1 == 2 in UTF-16 units' },
   { id: 'guard.len.astral.ok', chunk: 1, pattern: emoji.repeat(250), options: { maxLength: 501 }, assert: ['utf16Length'], note: 'exactly 500 UTF-16 units under the 501 limit — no throw' },
@@ -104,7 +104,8 @@ const rows = CASES.map(c => ({
   chunk: c.chunk,
   layer: c.layer || 'core',
   jsOnly: c.jsOnly === true,
-  active: (c.chunk || 0) === 0 && c.jsOnly !== true,
+  // activation threshold: rows unlock when their owning chunk lands (C1 now)
+  active: (c.chunk || 0) <= 1 && c.jsOnly !== true,
   pattern: c.jsOnly ? undefined : c.pattern,
   options: encOptions(c.options || {}),
   assert: c.assert,
