@@ -83,8 +83,20 @@ impl Parser {
                 continue;
             }
 
+            // L975-L991 — slashes
+            if value == FSLASH {
+                self.slash_branch();
+                continue;
+            }
+
+            // L997-L1015 — dots
+            if value == DOT {
+                self.dot_branch();
+                continue;
+            }
+
             // (C7 parens, C6 brackets, C5 braces, C7 pipe, C5 comma,
-            //  C2 slash+dot, C3 qmark, C7/C9 '!', C7 '+', C7 '@': not present.)
+            //  C3 qmark, C7/C9 '!', C7 '+', C7 '@': not present.)
 
             // L1109-L1122 — plain text.
             // STAGING (removed in C3): the source guards `value !== '*'`
@@ -93,6 +105,48 @@ impl Parser {
             // contain no slow-path '*' cases (C1_DESIGN.md §7).
             self.text_branch(value);
         }
+    }
+
+    /// L975-L991 — slash branch
+    fn slash_branch(&mut self) {
+        // L980 — if the beginning of the glob is "./", advance start to current index,
+        // don't add "./" to state.
+        let prev_kind = self.state.tokens.get(self.prev).map(|t| t.kind);
+        let start_plus_1 = isize::try_from(self.state.start + 1).unwrap_or(-1);
+        if prev_kind == Some(TokenKind::Dot) && self.state.index == start_plus_1 {
+            if let Ok(next_start) = usize::try_from(self.state.index + 1) {
+                self.state.start = next_start;
+            }
+            self.state.consumed.clear();
+            self.state.output.clear();
+            self.state.tokens.pop();
+            self.prev = 0; // reset prev to bos (token at index 0)
+            return;
+        }
+
+        let slash_lit = self.platform.slash_literal.encode_utf16().collect();
+        self.push(Token::units(TokenKind::Slash, &[FSLASH], Some(slash_lit)));
+    }
+
+    /// L997-L1015 — dot branch
+    fn dot_branch(&mut self) {
+        // L998-L1006 — (C5 brace dots hook: state.braces > 0 && prev.type === 'dot')
+        // In C2 state.braces is 0, so this condition is skipped.
+
+        // L1008-L1011 — text dot when not adjacent to bos/slash and outside braces/parens
+        let prev_kind = self.state.tokens.get(self.prev).map(|t| t.kind);
+        if (self.state.braces + self.state.parens) == 0
+            && prev_kind != Some(TokenKind::Bos)
+            && prev_kind != Some(TokenKind::Slash)
+        {
+            let dot_lit = self.platform.dot_literal.encode_utf16().collect();
+            self.push(Token::units(TokenKind::Text, &[DOT], Some(dot_lit)));
+            return;
+        }
+
+        // L1013 — dot token
+        let dot_lit = self.platform.dot_literal.encode_utf16().collect();
+        self.push(Token::units(TokenKind::Dot, &[DOT], Some(dot_lit)));
     }
 
     /// L672-L711. Backslash already consumed when this is called.
@@ -173,4 +227,41 @@ impl Parser {
 
 fn count_run(units: &[u16], u: u16) -> usize {
     units.iter().take_while(|&&x| x == u).count()
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::options::Options;
+    use crate::parse::parse;
+
+    #[test]
+    fn test_leading_dotslash_collapse() {
+        let opts = Options::default().with_fastpaths(false);
+        let res = parse("./a/b", &opts).unwrap();
+        assert_eq!(res.prefix, "./");
+        assert_eq!(res.output, "a\\/b".encode_utf16().collect::<Vec<_>>());
+        assert_eq!(res.start, 0);
+        assert_eq!(res.tokens.len(), 4); // bos, text("a"), slash("/"), text("b")
+    }
+
+    #[test]
+    fn test_dots_and_slashes() {
+        let opts = Options::default().with_fastpaths(false);
+        let res = parse("a.b/c..d", &opts).unwrap();
+        assert_eq!(
+            res.output,
+            "a\\.b\\/c\\.\\.d".encode_utf16().collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn test_dot_token_types() {
+        let opts = Options::default().with_fastpaths(false);
+        let res = parse(".", &opts).unwrap();
+        assert_eq!(res.tokens[1].kind.to_js_str(), "dot");
+
+        let res2 = parse("..", &opts).unwrap();
+        assert_eq!(res2.tokens[1].kind.to_js_str(), "dot");
+        assert_eq!(res2.tokens[2].kind.to_js_str(), "text");
+    }
 }

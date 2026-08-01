@@ -48,7 +48,7 @@ struct Doc {
 
 fn corpus() -> Vec<Case> {
     let mut cases = Vec::new();
-    for file in ["c0_oracle.json", "c1_oracle.json"] {
+    for file in ["c0_oracle.json", "c1_oracle.json", "c2_oracle.json"] {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../fixtures")
             .join(file)

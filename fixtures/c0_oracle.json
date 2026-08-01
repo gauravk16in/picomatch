@@ -858,7 +858,7 @@
    "chunk": 2,
    "layer": "core",
    "jsOnly": false,
-   "active": false,
+   "active": true,
    "pattern": "a.b",
    "options": {
     "fastpaths": false
