@@ -34,8 +34,10 @@ port/
 | Ref | SHA |
 |---|---|
 | `Main` HEAD == `origin/main` | `00cf02c251c3bcd498448e7c313e5eaf8e27d8f2` |
-| `origin/rust-port` (base of working branch) | `838d26a0d2a65f3cb8b623c4850ebf470dbed4a5` |
+| `origin/rust-port` at checkout (base of working branch) | `838d26a0d2a65f3cb8b623c4850ebf470dbed4a5` |
+| `origin/rust-port` at PR time (Teammate 1's C2 merge, PR #1, landed mid-chunk) | `bdd0a84` (merge of `ee55156`) |
 | `origin/chirag` (legacy, archived) | `019721f011053e184a8fe054d7f3151b215e512a` |
+| `chirag-rust-port` tip (this PR) | `0a0d21e` + audit-update commit (see §26) |
 | Main HEAD tree | `49927ff4b4861603074017a4f84da9f3157f0899` |
 
 ## 5. Branch parent / merge-base result
@@ -184,26 +186,28 @@ Scanner futures (Chunk 2): scan consumes the 15 `CHAR_*` codes + `remove_backsla
 
 ## 20. C0 review-debt dispositions (reviews/c0-2.md)
 
-1. **MAJOR-1 number transport → RESOLVED**: root `DECISIONS.md` **D-014** (+ `Rust/AGENTS.md` convention bullet; spec.md §5.3 line). Constraint lands BEFORE the §4b adapter is built, as the review demanded.
+1. **MAJOR-1 number transport → RESOLVED (twice, reconciled)**: tracked `DECISIONS.md` **D-01** (JSON/f64 transport rounding — landed in the C2 merge, PR #1) **and** workspace-root `DECISIONS.md` **D-014** (decimal-string transport rule + §4b adapter constraint + citations; `AGENTS.md` convention bullet; spec.md §5.3 line). Both recorded in `.loop/review-ledger.md` — no duplication conflict (Rust-workspace record vs project ADR log). Constraint landed BEFORE the §4b adapter is built, as the review demanded.
 2. **Windows globstar byte-pins → RESOLVED (pre-existing, verified)**: `fragments.rs:85-102` windows test present and green.
-3. **Stale corpus-hash comment → RESOLVED**: recomputed after regeneration; comments cite `663115f8d935…`/`de692974eebd…`.
-4. **Review-ledger truthfulness**: `Rust/.loop/review-ledger.md` gained a dated dispositions section; the two historical review rows untouched; `reviews/c0-1.md`/`c0-2.md` not rewritten.
-5. (I-1 `braces`/`len` declaration — already present in `Rust/C0_DESIGN.md:17`; verified, recorded.)
+3. **Stale corpus-hash comment → RESOLVED**: recomputed after each regeneration; comments cite the current computed hashes (post-merge: c0 `42d839b2264c…`, c1 `f49fb7ae5b87…`, c2 `415229b89081…`).
+4. **Review-ledger truthfulness**: `.loop/review-ledger.md` gained a dated dispositions section; the historical review rows untouched (the C1/C2 ACCEPT rows added by the C2 merge were kept on merge); `reviews/c0-1.md`/`c0-2.md` not rewritten.
+5. (I-1 `braces`/`len` declaration — already present in `C0_DESIGN.md:17`; verified, recorded.)
 
-## 21. Rust gates (final, post-everything)
+## 21. Rust gates (final, post-merge)
 
 - `cargo fmt --check` → exit 0.
 - `cargo clippy --workspace --all-targets --all-features -- -D warnings` → exit 0 (one `doc_lazy_continuation` warning appeared mid-chunk and was fixed by reformatting the doc comment).
-- `cargo test --workspace --all-features` → **18 unit + 2 integration + 0 doc tests, all pass, 0 failed** (unit: 3 pre-existing + 7 constants + 8 utils).
+- `cargo test --workspace --all-features` → **21 unit + 2 integration + 0 doc tests, all pass, 0 failed** (unit: 3 pre-C2 + 7 constants + 8 utils + 3 from the C2 merge; integration: `c0_active_rows_match_reference` over all three corpora + `c0_staged_rows_pending_count`).
 
 ## 22. Differential / fixture determinism evidence
 
-- `node fixtures/verify-c0.js` → `39/39 cases deterministic, corpus sha256 663115f8d935…`
-- `node fixtures/verify-c1.js` → `55/55 cases deterministic, corpus sha256 de692974eebd…`
-- Regeneration determinism: `extract-c0`/`extract-c1` run twice → byte-identical SHA-256 both runs (§final gates).
+- `node fixtures/verify-c0.js` → `39/39 cases deterministic, corpus sha256 42d839b2264c…`
+- `node fixtures/verify-c1.js` → `55/55 cases deterministic, corpus sha256 f49fb7ae5b87…`
+- `node fixtures/verify-c2.js` → `18/18 cases deterministic, corpus sha256 415229b89081…`
+- Regeneration determinism: `extract-c0`/`extract-c1` run twice → byte-identical SHA-256 both runs.
 - `node fixtures/attack-c0.js` → `inputs: 220 | compared-1:1: 213 | staged(loop-owned): 91 | divergences: 0` (0 panics).
 - `node fixtures/attack-c0-2.js` → `inputs: 340 | compared-1:1: 340 | staged(loop-owned): 118 | divergences: 0` (0 panics).
-- Old-vs-new corpus semantic comparison: identical except `meta.reference` (script-proven).
+- `node fixtures/attack-c2.js` → `85/85 passed, 0 failed` (C2 harness, post-merge, repointed to `../Main`).
+- Old-vs-new corpus semantic comparison (pre-merge): identical except `meta.reference` (script-proven); post-merge regeneration adds exactly the C2-threshold activations (c0 27→28 active, c1 50→52 active) on top.
 - No hidden fallback to JavaScript anywhere in Rust results (the probes execute `target/debug/examples/c0probe`, a Rust binary; verifiers re-drive the JS reference against frozen JSON).
 
 ## 23. Self-review findings (severity-classified; review performed over the complete `git diff origin/rust-port`)
@@ -219,29 +223,40 @@ Root: `WORKSPACE.md` (new verified map), `DECISIONS.md` (**D-014**), `CLAUDE.md`
 
 ## 25. Exact diff against origin/rust-port
 
-`git diff --name-status origin/rust-port` (working tree, pre-commit):
+Final PR diff (`git diff --name-status origin/rust-port...HEAD` after the C2 integration merge — the base now contains `bdd0a84`, so this is exactly Chunk 1's work; the C2 merge's own files are in the base and do not appear):
 
 ```text
 M  .loop/review-ledger.md
 M  AGENTS.md
 M  C0_DESIGN.md
-M  crates/pmx-core/src/constants.rs       (+225)
-M  crates/pmx-core/src/utils.rs           (+285/−3)
-M  crates/pmx-core/tests/c0_foundation.rs (comment)
-M  fixtures/c0_oracle.json                (1 meta line)
-M  fixtures/c1_oracle.json                (1 meta line)
-M  fixtures/extract-c0.js                 (path ×2)
-M  fixtures/extract-c1.js                 (path ×2)
-M  fixtures/probe-c0.js                   (path ×1)
-M  fixtures/verify-c0.js                  (path ×1)
-M  fixtures/verify-c1.js                  (path ×1)
-?? rust-toolchain.toml
-= 14 files, +537 insertions, −20 deletions. No Main-tree content. `git diff --check` clean.
+A  audits/2026-08-02-0011-teammate2-chunk1-constants-utils.md
+M  crates/pmx-core/src/constants.rs
+M  crates/pmx-core/src/utils.rs
+M  crates/pmx-core/tests/c0_foundation.rs
+M  fixtures/attack-c2.js       (repointed to ../Main)
+M  fixtures/c0_oracle.json
+M  fixtures/c1_oracle.json
+M  fixtures/c2_oracle.json     (regenerated from ../Main)
+M  fixtures/extract-c0.js
+M  fixtures/extract-c1.js
+M  fixtures/extract-c2.js      (repointed to ../Main)
+M  fixtures/probe-c0.js
+M  fixtures/verify-c0.js
+M  fixtures/verify-c1.js
+M  fixtures/verify-c2.js       (repointed to ../Main)
+A  rust-toolchain.toml
+= 19 files, +822 insertions, −25 deletions (verified by command). No Main-tree content. `git diff --check` clean.
 ```
+
+Pre-merge standalone chunk diff was 14 files, +817/−20 (commit `2ab4984`); the merge commit adds only the three C2-fixture repoints, the regenerated corpora, and the ledger conflict resolution.
 
 ## 26. Commits / push / PR
 
-Recorded post-push in the final section below (completed before PR opening; non-force).
+- `2ab4984` — feat(constants,utils): complete Teammate 2 Chunk 1 (15 files, +817/−20; gate output in body).
+- `0a0d21e` — merge: integrate `origin/rust-port` C2 (PR #1, `bdd0a84`, landed mid-chunk) into `chirag-rust-port`; one content conflict (`.loop/review-ledger.md`) resolved keeping both sides; C2 fixtures repointed to `../Main`; corpora regenerated from merged extractors; all gates re-run green post-merge.
+- Push: `git push -u origin chirag-rust-port` — **non-force**, new branch accepted; push after merge also non-force.
+- PR: **https://github.com/gauravk16in/picomatch/pull/2** — base `rust-port`, head `chirag-rust-port`, opened via REST API (`gh pr create` misreported "No commits between" while GitHub's compare API showed diverged +1/−2; the direct `gh api .../pulls` call succeeded). Not merged by the author (team review pending).
+- Post-merge branch relationship: `chirag-rust-port` contains `bdd0a84` (C2 merge) — the PR diff is exactly Chunk 1's work on top of current `rust-port`.
 
 ## 27. Blockers (no euphemisms)
 
