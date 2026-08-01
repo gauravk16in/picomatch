@@ -1,9 +1,9 @@
 //! Chunk acceptance tests — port: lib/parse.js (C0: L356-L437+L1286-L1322;
 //! C1: L606-L655+L661-L711+L765-L782+L1109-L1122).
 //!
-//! Corpora: ../../fixtures/c0_oracle.json (C0/staged, frozen sha 0825842b…)
-//! and ../../fixtures/c1_oracle.json (C1, frozen sha 37488f17…), extracted by
-//! fixtures/extract-c*.js from the reference checkout. Rows have an `assert`
+//! Corpora: ../../fixtures/c0_oracle.json (C0/staged, frozen sha 663115f8d935…)
+//! and ../../fixtures/c1_oracle.json (C1, frozen sha de692974eebd…), extracted by
+//! fixtures/extract-c*.js from the reference checkout (../Main at 00cf02c). Rows have an `assert`
 //! key list; rows without one assert all recorded fields.
 
 #![cfg(test)]

@@ -18,7 +18,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-const REF = path.join(__dirname, '..', '..', 'picomatch');
+const REF = path.join(__dirname, '..', '..', 'Main');
 const parse = require(path.join(REF, 'lib', 'parse'));
 const pm = require(REF);
 
@@ -117,7 +117,7 @@ const doc = {
   meta: {
     corpus: 'c0-foundation',
     generator: 'fixtures/extract-c0.js',
-    reference: path.join('..', 'picomatch') + ' (read-only checkout)',
+    reference: path.join('..', 'Main') + ' (read-only checkout)',
     picomatchVersion: require(path.join(REF, 'package.json')).version,
     assertKeys: ['input', 'index', 'start', 'dot', 'prefix', 'backtrack', 'negated', 'brackets', 'braces', 'parens', 'quotes', 'globstar', 'negatedExtglob', 'output', 'consumed', 'tokens', 'tokens0', 'utf16Length', 'kind'],
     fieldPolicy: 'JSON field order = construction order; errors as {class,message}; tokens drop prev frames; dropped state fns: peek,advance; no default assert == all fields'
