@@ -53,6 +53,7 @@ fn corpus() -> Vec<Case> {
         "c1_oracle.json",
         "c2_oracle.json",
         "c3_oracle.json",
+        "c5_oracle.json",
     ] {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../fixtures")
@@ -123,6 +124,9 @@ fn options_of(v: &serde_json::Value) -> Options {
     }
     if let Some(b) = v.get("regex").and_then(|x| x.as_bool()) {
         o = o.with_regex(b);
+    }
+    if let Some(b) = v.get("nobrace").and_then(|x| x.as_bool()) {
+        o = o.with_nobrace(b);
     }
     o
 }
@@ -269,12 +273,22 @@ fn assert_tokens(case: &Case, state: &pmx_core::ParseState, expect: &serde_json:
         assert_units(case, &t.value, &e["value"], &format!("tokens[{i}].value"));
         // JS: output === undefined -> null; Some("") is a real empty output.
         match &t.output {
-            Some(o) => assert_units(case, o, &e["output"], &format!("tokens[{i}].output")),
-            None => assert!(
-                e["output"].is_null(),
-                "{}: tokens[{i}].output should be null",
-                case.id
-            ),
+            Some(o) => {
+                if e["output"].is_null() {
+                    eprintln!("{}: token {i} ({}) rust_output={:?} js_output=null", case.id, t.kind.to_js_str(), String::from_utf16_lossy(o));
+                }
+                assert_units(case, o, &e["output"], &format!("tokens[{i}].output"));
+            }
+            None => {
+                if !e["output"].is_null() {
+                    eprintln!("{}: token {i} ({}) rust_output=None js_output={:?}", case.id, t.kind.to_js_str(), e["output"]);
+                }
+                assert!(
+                    e["output"].is_null(),
+                    "{}: tokens[{i}].output should be null",
+                    case.id
+                );
+            }
         }
     }
 }

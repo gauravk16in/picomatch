@@ -31,6 +31,9 @@ fn opts_of(v: &Value) -> Options {
     if let Some(x) = b("fastpaths") {
         o = o.with_fastpaths(x);
     }
+    if let Some(x) = b("nobrace") {
+        o = o.with_nobrace(x);
+    }
     if let Some(x) = b("strictBrackets") {
         o = o.with_strict_brackets(x);
     }
@@ -94,6 +97,7 @@ fn main() {
                 "kind": "ok",
                 "input": units(&s.input),
                 "prefix": s.prefix,
+                "output": s.output,
                 "dot": s.dot,
                 "index": s.index,
                 "start": s.start,
