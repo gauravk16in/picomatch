@@ -1,0 +1,12 @@
+[package]
+name = "pmx-core"
+version = "0.1.0"
+edition = "2021"
+description = "Pure-Rust port of picomatch v4.0.5 (bug-for-bug parity). Core compiler: pattern -> JS-RegExp source string."
+
+[dependencies]
+thiserror = "2"
+
+[dev-dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
