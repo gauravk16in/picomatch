@@ -6,7 +6,12 @@
 //! windows/dot/bash/capture/prepend/max_length/strict_brackets/strict_slashes,
 //! plus the `noext`→`noextglob` alias fold (all chunks read through it).
 
+use std::sync::Arc;
+
 use crate::constants::MAX_LENGTH;
+
+/// Custom range expansion function signature for `opts.expandRange`.
+pub type ExpandRangeFn = Arc<dyn Fn(&[String], &Options) -> String + Send + Sync>;
 
 /// JS `typeof opts.maxExtglobRecursion === 'number'` vs `=== false`
 /// (parse.js:L288-L295). Typed now so C7 doesn't re-shape Options.
@@ -21,7 +26,7 @@ pub enum ExtglobRecursion {
 /// One `Option<T>` per JS option, mirroring "field present vs unset"
 /// (JS `undefined`), so coercions like `opts.x === true` vs `x !== false`
 /// stay distinguishable (BEHAVIORAL_ORACLE.md §8; ARCHITECTURE.md §5 table).
-#[derive(Debug, Clone, Default)]
+#[derive(Clone, Default)]
 pub struct Options {
     pub windows: Option<bool>,
     pub dot: Option<bool>,
@@ -52,6 +57,44 @@ pub struct Options {
     pub prepend: Option<String>,
     pub max_length: Option<f64>, // JS: maxLength — number coercion, floats allowed
     pub max_extglob_recursion: ExtglobRecursion,
+    pub expand_range: Option<ExpandRangeFn>,
+}
+
+impl std::fmt::Debug for Options {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Options")
+            .field("windows", &self.windows)
+            .field("dot", &self.dot)
+            .field("bash", &self.bash)
+            .field("capture", &self.capture)
+            .field("contains", &self.contains)
+            .field("fastpaths", &self.fastpaths)
+            .field("noext", &self.noext)
+            .field("noextglob", &self.noextglob)
+            .field("nonegate", &self.nonegate)
+            .field("unescape", &self.unescape)
+            .field("posix", &self.posix)
+            .field("nobrace", &self.nobrace)
+            .field("nobracket", &self.nobracket)
+            .field("noparen", &self.noparen)
+            .field("noglobstar", &self.noglobstar)
+            .field("strict_brackets", &self.strict_brackets)
+            .field("strict_slashes", &self.strict_slashes)
+            .field("literal_brackets", &self.literal_brackets)
+            .field("keep_quotes", &self.keep_quotes)
+            .field("regex", &self.regex)
+            .field("nocase", &self.nocase)
+            .field("flags", &self.flags)
+            .field("debug", &self.debug)
+            .field("match_base", &self.match_base)
+            .field("basename", &self.basename)
+            .field("ignore", &self.ignore)
+            .field("prepend", &self.prepend)
+            .field("max_length", &self.max_length)
+            .field("max_extglob_recursion", &self.max_extglob_recursion)
+            .field("expand_range", &self.expand_range.as_ref().map(|_| "<fn>"))
+            .finish()
+    }
 }
 
 impl Options {
@@ -154,6 +197,13 @@ impl Options {
         self.noglobstar == Some(true)
     }
 
+    // ---------- C5 accessors ----------
+
+    /// parse.js:L881 — `opts.nobrace === true`.
+    pub fn nobrace(&self) -> bool {
+        self.nobrace == Some(true)
+    }
+
     // ---------- builder (tests + adapters; one knob per field) ----------
 
     pub fn with_windows(mut self, v: bool) -> Self {
@@ -178,6 +228,10 @@ impl Options {
     }
     pub fn with_noglobstar(mut self, v: bool) -> Self {
         self.noglobstar = Some(v);
+        self
+    }
+    pub fn with_nobrace(mut self, v: bool) -> Self {
+        self.nobrace = Some(v);
         self
     }
     pub fn with_strict_brackets(mut self, v: bool) -> Self {
@@ -210,6 +264,13 @@ impl Options {
     }
     pub fn with_regex(mut self, v: bool) -> Self {
         self.regex = Some(v);
+        self
+    }
+    pub fn with_expand_range<F>(mut self, f: F) -> Self
+    where
+        F: Fn(&[String], &Options) -> String + Send + Sync + 'static,
+    {
+        self.expand_range = Some(Arc::new(f));
         self
     }
 }

@@ -4,8 +4,9 @@
 //! JS when all its preceding ifs miss. Corpus rows only ever contain
 //! characters whose two interpretations agree (C1_DESIGN.md §6).
 
-use super::parser::Parser;
+use super::parser::{BraceFrame, CounterKind, Parser};
 use super::state::{Token, TokenKind};
+use crate::options::Options;
 use crate::utils;
 
 const NUL: u16 = 0;
@@ -20,6 +21,13 @@ const CARET: u16 = b'^' as u16;
 const QMARK: u16 = b'?' as u16;
 const STAR: u16 = b'*' as u16;
 const PLUS: u16 = b'+' as u16;
+
+const LBRACE: u16 = b'{' as u16;
+const RBRACE: u16 = b'}' as u16;
+const COMMA: u16 = b',' as u16;
+const LPAREN: u16 = b'(' as u16;
+const RPAREN: u16 = b')' as u16;
+const PIPE: u16 = b'|' as u16;
 
 /// REGEX_NON_SPECIAL_CHARS set (constants.js:L98): chars that STOP a literal
 /// run — `@ ! [ \ ] . , $ * + ? ^ { } ( ) | \ /`
@@ -87,6 +95,24 @@ impl Parser {
                 continue;
             }
 
+            // L881 — brace open
+            if value == LBRACE && !self.opts.nobrace() {
+                self.open_brace_branch();
+                continue;
+            }
+
+            // L897 — brace close
+            if value == RBRACE {
+                self.close_brace_branch();
+                continue;
+            }
+
+            // L958 — comma
+            if value == COMMA {
+                self.comma_branch();
+                continue;
+            }
+
             // L975-L991 — slashes
             if value == FSLASH {
                 self.slash_branch();
@@ -111,9 +137,6 @@ impl Parser {
                 continue;
             }
 
-            // (C7 parens, C6 brackets, C5 braces, C7 pipe, C5 comma,
-            //  C7 '!', C7 '@': not present.)
-
             // L1109-L1122 — plain text
             if value != STAR {
                 self.text_branch(value);
@@ -126,6 +149,95 @@ impl Parser {
                 continue;
             }
         }
+    }
+
+    /// L881-L895 — brace open branch
+    fn open_brace_branch(&mut self) {
+        self.increment(CounterKind::Braces);
+
+        let open = BraceFrame {
+            output_index: self.state.output.len(),
+            tokens_index: self.state.tokens.len(),
+            dots: false,
+            comma: false,
+        };
+
+        self.braces.push(open);
+        self.push(Token::units(
+            TokenKind::Brace,
+            &[LBRACE],
+            Some(vec![LPAREN]),
+        ));
+    }
+
+    /// L897-L940 — brace close branch
+    fn close_brace_branch(&mut self) {
+        let brace = self.braces.last().cloned();
+
+        if self.opts.nobrace() || brace.is_none() {
+            self.push(Token::units(TokenKind::Text, &[RBRACE], Some(vec![RBRACE])));
+            return;
+        }
+
+        let brace = brace.unwrap();
+        let mut value = vec![RBRACE];
+        let mut output = vec![RPAREN];
+
+        if brace.dots {
+            let arr = self.state.tokens.clone();
+            let mut range = Vec::new();
+
+            for i in (0..arr.len()).rev() {
+                self.state.tokens.pop();
+                if arr[i].kind == TokenKind::Brace {
+                    break;
+                }
+                if arr[i].kind != TokenKind::Dots {
+                    range.push(arr[i].value.clone());
+                }
+            }
+
+            range.reverse();
+            output = expand_range(&range, &self.opts);
+            self.state.backtrack = true;
+        }
+
+        if !brace.comma && !brace.dots {
+            let out = self.state.output[..brace.output_index].to_vec();
+
+            if brace.tokens_index < self.state.tokens.len() {
+                self.state.tokens[brace.tokens_index].value = vec![BS, LBRACE];
+                self.state.tokens[brace.tokens_index].output = Some(vec![BS, LBRACE]);
+            }
+
+            let toks = self.state.tokens[brace.tokens_index..].to_vec();
+            value = vec![BS, RBRACE];
+            output = vec![BS, RBRACE];
+
+            self.state.output = out;
+            for t in &toks {
+                let piece = t.output.as_deref().unwrap_or(&t.value);
+                self.state.output.extend_from_slice(piece);
+            }
+        }
+
+        self.push(Token::units(TokenKind::Brace, &value, Some(output)));
+        self.decrement(CounterKind::Braces);
+        self.braces.pop();
+    }
+
+    /// L958-L969 — comma branch
+    fn comma_branch(&mut self) {
+        let mut output = vec![COMMA];
+
+        if let Some(brace) = self.braces.last_mut() {
+            if self.stack.last() == Some(&CounterKind::Braces) {
+                brace.comma = true;
+                output = vec![PIPE];
+            }
+        }
+
+        self.push(Token::units(TokenKind::Comma, &[COMMA], Some(output)));
     }
 
     /// L975-L991 — slash branch
@@ -151,11 +263,27 @@ impl Parser {
 
     /// L997-L1015 — dot branch
     fn dot_branch(&mut self) {
-        // L998-L1006 — (C5 brace dots hook: state.braces > 0 && prev.type === 'dot')
-        // In C2 state.braces is 0, so this condition is skipped.
+        // L998-L1006 — brace dots hook: state.braces > 0 && prev.type === 'dot'
+        let prev_kind = self.state.tokens.get(self.prev).map(|t| t.kind);
+        if self.state.braces > 0 && prev_kind == Some(TokenKind::Dot) {
+            if let Some(prev_tok) = self.state.tokens.get_mut(self.prev) {
+                if prev_tok.value == [DOT] {
+                    let dot_lit = self.platform.dot_literal.encode_utf16().collect();
+                    prev_tok.output = Some(dot_lit);
+                }
+                prev_tok.kind = TokenKind::Dots;
+                let mut out = prev_tok.output.take().unwrap_or_else(|| prev_tok.value.clone());
+                out.push(DOT);
+                prev_tok.output = Some(out);
+                prev_tok.value.push(DOT);
+            }
+            if let Some(brace) = self.braces.last_mut() {
+                brace.dots = true;
+            }
+            return;
+        }
 
         // L1008-L1011 — text dot when not adjacent to bos/slash and outside braces/parens
-        let prev_kind = self.state.tokens.get(self.prev).map(|t| t.kind);
         if (self.state.braces + self.state.parens) == 0
             && prev_kind != Some(TokenKind::Bos)
             && prev_kind != Some(TokenKind::Slash)
@@ -396,6 +524,71 @@ fn count_run(units: &[u16], u: u16) -> usize {
     units.iter().take_while(|&&x| x == u).count()
 }
 
+/// Helper: parse.js:L22-L38 — `expandRange(args, options)`
+pub(crate) fn expand_range(args: &[Vec<u16>], options: &Options) -> Vec<u16> {
+    if let Some(ref expand_fn) = options.expand_range {
+        let args_str: Vec<String> = args
+            .iter()
+            .map(|u| String::from_utf16_lossy(u))
+            .collect();
+        let res_str = expand_fn(&args_str, options);
+        return res_str.encode_utf16().collect();
+    }
+
+    let mut sorted = args.to_vec();
+    sorted.sort();
+
+    if validate_js_range_class(&sorted) {
+        let mut out = vec![b'[' as u16];
+        for (i, item) in sorted.iter().enumerate() {
+            if i > 0 {
+                out.push(b'-' as u16);
+            }
+            out.extend_from_slice(item);
+        }
+        out.push(b']' as u16);
+        out
+    } else {
+        let mut out = Vec::new();
+        for (i, item) in sorted.iter().enumerate() {
+            if i > 0 {
+                out.push(b'.' as u16);
+                out.push(b'.' as u16);
+            }
+            let escaped = utils::escape_regex(item);
+            out.extend_from_slice(&escaped);
+        }
+        out
+    }
+}
+
+fn validate_js_range_class(args: &[Vec<u16>]) -> bool {
+    for i in 0..args.len().saturating_sub(1) {
+        let last_a = match args[i].last() {
+            Some(&c) => c,
+            None => continue,
+        };
+        let first_b = match args[i + 1].first() {
+            Some(&c) => c,
+            None => continue,
+        };
+        if last_a > first_b {
+            return false;
+        }
+    }
+    if let Some(last_arg) = args.last() {
+        let num_trailing_slashes = last_arg
+            .iter()
+            .rev()
+            .take_while(|&&c| c == b'\\' as u16)
+            .count();
+        if num_trailing_slashes % 2 == 1 {
+            return false;
+        }
+    }
+    true
+}
+
 #[cfg(test)]
 mod tests {
     use crate::options::Options;
@@ -456,5 +649,37 @@ mod tests {
             res_bos.output,
             "(?!\\.)(?=.)[^/]*?\\/?".encode_utf16().collect::<Vec<_>>()
         );
+    }
+
+    #[test]
+    fn test_brace_alternation_and_ranges() {
+        let opts = Options::default().with_fastpaths(false);
+
+        // Plain alternation
+        let res = parse("{a,b,c}", &opts).unwrap();
+        assert_eq!(res.output, "(a|b|c)".encode_utf16().collect::<Vec<_>>());
+        assert_eq!(res.tokens[1].kind.to_js_str(), "brace");
+
+        // Range expansion
+        let res_range = parse("{a..z}", &opts).unwrap();
+        assert_eq!(res_range.output, "[a-z]".encode_utf16().collect::<Vec<_>>());
+
+        // Range expansion reverse order
+        let res_rev = parse("{9..0}", &opts).unwrap();
+        assert_eq!(res_rev.output, "[0-9]".encode_utf16().collect::<Vec<_>>());
+
+        // Single brace without comma/dots -> literal escape
+        let res_lit = parse("{abc}", &opts).unwrap();
+        assert_eq!(res_lit.output, "\\{abc\\}".encode_utf16().collect::<Vec<_>>());
+
+        // nobrace option
+        let res_nobrace = parse("{a,b}", &opts.clone().with_nobrace(true)).unwrap();
+        assert_eq!(res_nobrace.output, "{a,b}".encode_utf16().collect::<Vec<_>>());
+
+        // custom expand_range
+        let res_custom = parse("{1..100}", &opts.clone().with_expand_range(|args, _| {
+            format!("({},{})", args[0], args[1])
+        })).unwrap();
+        assert_eq!(res_custom.output, "(1,100)".encode_utf16().collect::<Vec<_>>());
     }
 }

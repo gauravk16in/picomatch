@@ -128,3 +128,13 @@ pub(crate) fn strip_suffix(buf: &mut Vec<u16>, suffix: &[u16]) {
         buf.truncate(buf.len() - suffix.len());
     }
 }
+
+/// lib/utils.js:L14 — `escapeRegex(str)` over a u16 unit slice.
+pub(crate) fn escape_regex(units: &[u16]) -> Vec<u16> {
+    let mut out = Vec::with_capacity(units.len());
+    for &u in units {
+        push_escape_regex_unit(&mut out, u);
+    }
+    out
+}
+

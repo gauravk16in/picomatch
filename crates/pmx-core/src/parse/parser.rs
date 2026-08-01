@@ -27,6 +27,15 @@ pub(crate) struct ExtglobFrame {
     // C7 adds: conditions, parens, output-snapshot, startIndex, tokensIndex
 }
 
+/// Brace open frame (parse.js:L884-L890).
+#[derive(Debug, Clone)]
+pub(crate) struct BraceFrame {
+    pub output_index: usize,
+    pub tokens_index: usize,
+    pub dots: bool,
+    pub comma: bool,
+}
+
 pub(crate) struct Parser {
     pub state: ParseState,
     /// input buffer as UTF-16 code units — JS string semantics (C-1).
@@ -35,7 +44,8 @@ pub(crate) struct Parser {
     /// index arena link for `prev` (design §6.2); mutated only via push.
     pub(crate) prev: usize,
     extglobs: Vec<ExtglobFrame>,
-    stack: Vec<CounterKind>,
+    pub(crate) braces: Vec<BraceFrame>,
+    pub(crate) stack: Vec<CounterKind>,
     /// platform fragment table — selected once at init (parse.js:L377).
     pub(crate) platform: &'static PlatformChars,
     /// per-call fragment bundle — now read by C1's fastpath/text paths.
@@ -85,6 +95,7 @@ impl Parser {
             input_chars: body.encode_utf16().collect(),
             prev: 0,
             extglobs: Vec::new(),
+            braces: Vec::new(),
             stack: Vec::new(),
             platform,
             fragments,
