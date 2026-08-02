@@ -1,0 +1,5211 @@
+{
+ "meta": {
+  "corpus": "c4-fastpaths",
+  "generator": "fixtures/extract-c4.js",
+  "reference": "../../picomatch-original (read-only checkout)",
+  "picomatchVersion": "4.0.5"
+ },
+ "cases": [
+  {
+   "id": "c4.orig.0",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.1",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.2",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.).*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.3",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)([^/]*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.4",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.5",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?"
+   }
+  },
+  {
+   "id": "c4.orig.6",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.7",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.8",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)(.*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.9",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.10",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.11",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.12",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.13",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.).*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.14",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)([^/]*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.15",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.16",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?"
+   }
+  },
+  {
+   "id": "c4.orig.17",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.18",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.19",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)(.*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.20",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.21",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.22",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.23",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))[^/]*?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.24",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.).*?\\.(?=.).*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.25",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)([^/]*?)\\.(?=.)([^/]*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.26",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.27",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\.(?=.)[^/]*?"
+   }
+  },
+  {
+   "id": "c4.orig.28",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^\\\\/]*?\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.29",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))[^\\\\/]*?\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.30",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(.*?)\\.(?=.)(.*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.31",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^\\\\/]*?\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.32",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.33",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\/(?=.)(?!\\.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.34",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))[^/]*?\\/(?=.)(?!\\.{1,2}(?:\\/|$))[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.35",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.).*?\\/(?=.)(?!\\.).*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.36",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)([^/]*?)\\/(?=.)(?!\\.)([^/]*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.37",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\/(?=.)(?!\\.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.38",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\/(?=.)(?!\\.)[^/]*?"
+   }
+  },
+  {
+   "id": "c4.orig.39",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^\\\\/]*?[\\\\/](?=.)(?!\\.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.40",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))[^\\\\/]*?[\\\\/](?=.)(?!\\.{1,2}(?:[\\\\/]|$))[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.41",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(.*?)\\/(?=.)(?!\\.)(.*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.42",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^\\\\/]*?[\\\\/](?=.)(?!\\.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.43",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\/(?=.)(?!\\.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.44",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.45",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.46",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.47",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.48",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.49",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)"
+   }
+  },
+  {
+   "id": "c4.orig.50",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.51",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?:(?:(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$)).)*?)[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.52",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.53",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.54",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.55",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.56",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/)?(?!\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.57",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)(?=.).*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.58",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)(?=.)([^/]*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.59",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)[^/]*?\\/)?(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.60",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)(?=.)[^/]*?"
+   }
+  },
+  {
+   "id": "c4.orig.61",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/])?(?!\\.)(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.62",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?:(?:(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$)).)*?)[\\\\/])?(?!\\.{1,2}(?:[\\\\/]|$))(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.63",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)(?=.)(.*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.64",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)[^\\\\/]*?[\\\\/])?(?!\\.)(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.65",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.66",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)[^/]*?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.67",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/)?(?!\\.{1,2}(?:\\/|$))[^/]*?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.68",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.).*?\\.(?=.).*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.69",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)([^/]*?)\\.(?=.)([^/]*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.70",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)[^/]*?\\/)?(?!\\.)[^/]*?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.71",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)[^/]*?\\.(?=.)[^/]*?"
+   }
+  },
+  {
+   "id": "c4.orig.72",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/])?(?!\\.)[^\\\\/]*?\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.73",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?:(?:(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$)).)*?)[\\\\/])?(?!\\.{1,2}(?:[\\\\/]|$))[^\\\\/]*?\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.74",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)(.*?)\\.(?=.)(.*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.75",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)[^\\\\/]*?[\\\\/])?(?!\\.)[^\\\\/]*?\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.76",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.*",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "error",
+    "class": "SyntaxError",
+    "message": "Input length: 6, exceeds maximum allowed length: 5"
+   }
+  },
+  {
+   "id": "c4.orig.77",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.78",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/)?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.79",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?\\.(?=.).*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.80",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/)?\\.(?=.)([^/]*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.81",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)[^/]*?\\/)?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.82",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?\\.(?=.)[^/]*?"
+   }
+  },
+  {
+   "id": "c4.orig.83",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/])?\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.84",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?:(?:(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$)).)*?)[\\\\/])?\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.85",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/)?\\.(?=.)(.*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.86",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)[^\\\\/]*?[\\\\/])?\\.(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.87",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.88",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.89",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.90",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.).*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.91",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)([^/]*?)\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.92",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.93",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.js"
+   }
+  },
+  {
+   "id": "c4.orig.94",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.js[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.95",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?=.)[^\\\\/]*?\\.js[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.96",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)(.*?)\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.97",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.js[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.98",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.99",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.tar\\.gz\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.100",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\.tar\\.gz\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.101",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.).*?\\.tar\\.gz\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.102",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)([^/]*?)\\.tar\\.gz\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.103",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.tar\\.gz\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.104",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.tar\\.gz"
+   }
+  },
+  {
+   "id": "c4.orig.105",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.tar\\.gz[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.106",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?=.)[^\\\\/]*?\\.tar\\.gz[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.107",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)(.*?)\\.tar\\.gz\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.108",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.tar\\.gz[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.109",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.tar.gz",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "error",
+    "class": "SyntaxError",
+    "message": "Input length: 8, exceeds maximum allowed length: 5"
+   }
+  },
+  {
+   "id": "c4.orig.110",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.a\\.b\\.c\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.111",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\.a\\.b\\.c\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.112",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.).*?\\.a\\.b\\.c\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.113",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)([^/]*?)\\.a\\.b\\.c\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.114",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.a\\.b\\.c\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.115",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.a\\.b\\.c"
+   }
+  },
+  {
+   "id": "c4.orig.116",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.a\\.b\\.c[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.117",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?=.)[^\\\\/]*?\\.a\\.b\\.c[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.118",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)(.*?)\\.a\\.b\\.c\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.119",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.a\\.b\\.c[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.120",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.a.b.c",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "error",
+    "class": "SyntaxError",
+    "message": "Input length: 7, exceeds maximum allowed length: 5"
+   }
+  },
+  {
+   "id": "c4.orig.121",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.122",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.123",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.124",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.125",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.126",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.127",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.128",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.129",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.130",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.131",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "foo.js",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "error",
+    "class": "SyntaxError",
+    "message": "Input length: 6, exceeds maximum allowed length: 5"
+   }
+  },
+  {
+   "id": "c4.orig.132",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.133",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.134",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.135",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.136",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.137",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.138",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.139",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.140",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.141",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.142",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "a/b/c",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.143",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.144",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.145",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.146",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.147",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.148",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.149",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.150",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.151",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.152",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.153",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js/bar",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "error",
+    "class": "SyntaxError",
+    "message": "Input length: 8, exceeds maximum allowed length: 5"
+   }
+  },
+  {
+   "id": "c4.orig.154",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.155",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.156",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.157",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.158",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.159",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.160",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.161",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.162",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.163",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.164",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/b",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.165",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.166",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.167",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.).*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.168",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)([^/]*?)\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.169",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.170",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.js"
+   }
+  },
+  {
+   "id": "c4.orig.171",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.js[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.172",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?=.)[^\\\\/]*?\\.js[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.173",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)(.*?)\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.174",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.js[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.175",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*.js",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "error",
+    "class": "SyntaxError",
+    "message": "Input length: 6, exceeds maximum allowed length: 5"
+   }
+  },
+  {
+   "id": "c4.orig.176",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.177",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.178",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.).*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.179",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)([^/]*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.180",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.181",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?"
+   }
+  },
+  {
+   "id": "c4.orig.182",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.183",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.184",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)(.*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.185",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.186",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "***",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.187",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.188",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.189",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.190",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.191",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.192",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)"
+   }
+  },
+  {
+   "id": "c4.orig.193",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.194",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?:(?:(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$)).)*?)[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.195",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.196",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.197",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.198",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {},
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.199",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.200",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {
+    "bash": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.201",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.202",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {
+    "noglobstar": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.203",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)"
+   }
+  },
+  {
+   "id": "c4.orig.204",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.205",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {
+    "dot": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$))(?:(?:(?!(?:^|[\\\\/])\\.{1,2}(?:[\\\\/]|$)).)*?)[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.206",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {
+    "bash": true,
+    "capture": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)((?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.207",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {
+    "noglobstar": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.208",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/**",
+   "options": {
+    "maxLength": 5
+   },
+   "note": "fastpaths test case from systematic",
+   "expect": {
+    "kind": "error",
+    "class": "SyntaxError",
+    "message": "Input length: 8, exceeds maximum allowed length: 5"
+   }
+  },
+  {
+   "id": "c4.orig.209",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*z.js",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.210",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/z*.js",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.211",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*r",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.212",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*c",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.213",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*abc*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.214",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*a*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.215",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*-bc-*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.216",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*-*.*-*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.217",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*-b*c-*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.218",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*-b.c-*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.219",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*-*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.220",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*-d",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.221",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.c-*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.222",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*b.*d",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.223",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.b",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.b\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.224",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**-bc-**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.225",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**-**.**-**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.226",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**-b**c-**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.227",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**-b.c-**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.228",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**.**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.229",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**.**-**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.230",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**.**-d",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.231",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**.c-**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.232",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**b.**d",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.233",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**.b",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\.b\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.234",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.235",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.236",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/a",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.237",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.238",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*jk*/*i",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.239",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*z*/*/*i",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.240",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*j*i",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.241",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/*/*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.242",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/*/*/*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.243",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/**/a",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.244",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*{,/}",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.245",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.txt",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.txt\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.246",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.247",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.248",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*/",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.249",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.250",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/..",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.251",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/a",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.252",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/a/**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.253",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/foo",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.254",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/bar/*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.255",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/bar/**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.256",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/bar*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.257",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/bar**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.258",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/foo",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.259",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/bar/**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.260",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/bar/*/*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.261",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.262",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*/",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.263",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*{,/}",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.264",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.265",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.266",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.md",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.267",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.268",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.269",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*.md",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?\\.(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.270",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*",
+   "options": {
+    "dot": true,
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.271",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**",
+   "options": {
+    "dot": true,
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.272",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".dotfile",
+   "options": {
+    "dot": true,
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.273",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*.md",
+   "options": {
+    "dot": true,
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.274",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*",
+   "options": {
+    "dot": true,
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))[^/]*?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.275",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.md",
+   "options": {
+    "dot": true,
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.276",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.md",
+   "options": {
+    "dot": true,
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/)?(?!\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.277",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*",
+   "options": {
+    "dot": false,
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?\\.(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.278",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*.md",
+   "options": {
+    "dot": false,
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?\\.(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.279",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.md",
+   "options": {
+    "dot": false,
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.280",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*dot",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.281",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*dot",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.282",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*.js",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.283",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.[d]ot",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.284",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/?dot",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.285",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*dot",
+   "options": {
+    "dot": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.286",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/?dot",
+   "options": {
+    "dot": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.287",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*dot",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.288",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/?dot",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.289",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "../*.js",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.290",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "../*.js",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.291",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*a*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.292",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*a*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.293",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*a*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.294",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".b*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.295",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*r",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.296",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*dot",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.297",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/?dot",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.298",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*dot",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.299",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/../*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.300",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/../*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.301",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "../*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.302",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "..",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.303",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "../../*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.304",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "../../..",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.305",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/abc",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.306",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/abc/**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.307",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*/*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.308",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/abc/**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.309",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/abc/**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.310",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*/abc",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.311",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/**/*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.312",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.313",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/abc",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.314",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/**/abc/**",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.315",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/abc/**",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.316",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/abc/**",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.317",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*/*",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.318",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/*",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.319",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/**/*",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.320",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.abc/**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.321",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.abc",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.322",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.dot*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.323",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/.dot*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.324",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*.*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.325",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*.*",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.326",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*.*/",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.327",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*.*{,/}",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.328",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*.bbb",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?\\.bbb\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.329",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*.js",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.330",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*ot",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.331",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*ot.*.*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.332",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".d?t",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.333",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".dot*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.334",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.[d]ot",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.335",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/.[d]ot",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.336",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".[d]ot",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.337",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.md",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.md[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.338",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.md",
+   "options": {
+    "matchBase": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.md[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.339",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.js",
+   "options": {
+    "matchBase": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?\\.js[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.340",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.js",
+   "options": {
+    "matchBase": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/])?(?!\\.)(?=.)[^\\\\/]*?\\.js[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.341",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.*(j).js",
+   "options": {
+    "noextglob": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.342",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*(z)",
+   "options": {
+    "noextglob": true,
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.343",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.md",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/])?(?!\\.)(?=.)[^\\\\/]*?\\.md[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.344",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.md",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.345",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/a/**",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.346",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.347",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/*/*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.348",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/*/*/*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.349",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^\\\\/]*?[\\\\/]?"
+   }
+  },
+  {
+   "id": "c4.orig.350",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./**/a/**",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.351",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/*/a",
+   "options": {
+    "windows": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.352",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/a/**",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.353",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)[^/]*?\\/(?=.)(?!\\.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.354",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/*",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.355",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/*/*",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.356",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*/*/*/*/*",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.357",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./*",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.358",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./**/a/**",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.359",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "./a/*/a",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.360",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*b",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.361",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.md",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!\\.)(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.362",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".c.",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.363",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".md",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.364",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".m",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.365",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*.md",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.366",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.md",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.367",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*(a|b)",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.368",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*[a]",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.369",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*[a]*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.370",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*a",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.371",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".a",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.372",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".a*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.373",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": ".*.md",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "\\.(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.374",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "*.md",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.375",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.md",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/)?(?!\\.{1,2}(?:\\/|$))(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.376",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/.*.md",
+   "options": {
+    "dot": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)\\/)?\\.(?=.)[^/]*?\\.md\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.377",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/*.js",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": "(?:(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)?(?!\\.)(?=.)[^/]*?\\.js\\/?"
+   }
+  },
+  {
+   "id": "c4.orig.378",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/z*",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.379",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/z*.js",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.380",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/b/**",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.381",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/bar/*/",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.382",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/bar/*",
+   "options": {
+    "strictSlashes": true
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.383",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**/bar/*{,/}",
+   "options": {},
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  },
+  {
+   "id": "c4.orig.384",
+   "chunk": 4,
+   "layer": "core",
+   "pattern": "**!(abc)",
+   "options": {
+    "windows": false
+   },
+   "note": "fastpaths test case from mocha",
+   "expect": {
+    "kind": "ok",
+    "output": null
+   }
+  }
+ ]
+}

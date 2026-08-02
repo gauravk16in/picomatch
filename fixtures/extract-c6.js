@@ -1,14 +1,15 @@
 'use strict';
 
 /**
- * C2 corpus extractor — segment semantics: slash handling, dot handling,
- * and leading "./" collapse (lib/parse.js:L975-L991, L997-L1015).
- * Extracts test cases directly from original test files in picomatch:
- *   - test/slashes-posix.js
- *   - test/dots-invalid.js
- *   - test/api.picomatch.js
+ * C6 corpus extractor — Brackets and POSIX classes
+ * (lib/parse.js:L718-L758, L814-L875).
+ * Extracts test cases directly from original test files in picomatch-original:
+ *   - test/posix-classes.js
+ *   - test/brackets.js
+ *   - test/special-characters.js
+ *   - test/malicious.js
  *
- * node fixtures/extract-c2.js → fixtures/c2_oracle.json
+ * node fixtures/extract-c6.js → fixtures/c6_oracle.json
  */
 
 const path = require('path');
@@ -16,11 +17,11 @@ const fs = require('fs');
 const crypto = require('crypto');
 const Mocha = require('mocha');
 
-const REF = path.join(__dirname, '..', '..', 'picomatch');
+const REF = path.join(__dirname, '..', '..', 'picomatch-original');
 const parsePath = require.resolve(path.join(REF, 'lib', 'parse'));
 const origParse = require(parsePath);
 
-const { canonState } = require('./canon');
+const { canonState, encOptions } = require('./canon');
 
 const captured = [];
 const seen = new Set();
@@ -30,9 +31,9 @@ function requiredChunk(pattern) {
   if (pattern.length > 65536) return 0;
   if (pattern.includes('**')) return 8;
   if (pattern.startsWith('!')) return 9;
-  if (/[?*+@!]\(|[()]/.test(pattern)) return 7;
+  if (/[?*+@!]\(|[()]|\|/.test(pattern)) return 7;
   if (/[\[\]]/.test(pattern)) return 6;
-  if (/[\{\}]/.test(pattern)) return 5;
+  if (/[\{\},]/.test(pattern)) return 5;
   if (/[*?+@]/.test(pattern)) return 3;
   if (/[.\/]/.test(pattern)) return 2;
   if (/["'\\]/.test(pattern)) return 1;
@@ -58,7 +59,12 @@ Object.assign(require.cache[parsePath].exports, origParse);
 function SilentReporter(runner) {}
 
 const mocha = new Mocha({ reporter: SilentReporter });
-const testFiles = ['slashes-posix.js', 'dots-invalid.js', 'api.picomatch.js'];
+const testFiles = [
+  'posix-classes.js',
+  'brackets.js',
+  'special-characters.js',
+  'malicious.js'
+];
 testFiles.forEach(file => {
   const filePath = path.join(REF, 'test', file);
   if (fs.existsSync(filePath)) {
@@ -80,15 +86,15 @@ mocha.run(() => {
   };
 
   const rows = captured.map((c, idx) => {
-    const chunk = requiredChunk(c.pattern, c.options);
+    const chunk = requiredChunk(c.pattern);
     return {
-      id: `c2.orig.${idx}`,
+      id: `c6.orig.${idx}`,
       chunk: chunk,
       layer: 'core',
       jsOnly: false,
-      active: chunk <= 3,
+      active: chunk <= 6,
       pattern: c.pattern,
-      options: c.options || {},
+      options: encOptions(c.options || {}),
       note: `extracted from original test file ${c.sourceFile}`,
       expect: runCase(c)
     };
@@ -96,9 +102,9 @@ mocha.run(() => {
 
   const doc = {
     meta: {
-      corpus: 'c2-segments',
-      generator: 'fixtures/extract-c2.js',
-      reference: path.join('..', '..', 'picomatch') + ' (read-only checkout)',
+      corpus: 'c6-brackets',
+      generator: 'fixtures/extract-c6.js',
+      reference: path.join('..', '..', 'picomatch-original') + ' (read-only checkout)',
       picomatchVersion: require(path.join(REF, 'package.json')).version,
       fieldPolicy: 'u16-unit sequences for emitted text (canon.js); assert-all when no assert list'
     },
@@ -106,7 +112,7 @@ mocha.run(() => {
   };
 
   const json = JSON.stringify(doc, null, 1) + '\n';
-  const out = path.join(__dirname, 'c2_oracle.json');
+  const out = path.join(__dirname, 'c6_oracle.json');
   fs.writeFileSync(out, json);
   const sha = crypto.createHash('sha256').update(json).digest('hex');
   const activeCount = rows.filter(r => r.active).length;

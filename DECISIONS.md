@@ -44,6 +44,32 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 
 ---
 
+### D-06: Extglob & ReDoS Triage Parity
+
+- **Original**: `lib/parse.js` L48-L347 & L523-L600 handles ReDoS vulnerability analysis for repeated extglobs (`analyzeRepeatedExtglob`), single-character star extglob consolidation, `!(...)` magic suffix parsing via sub-`parse(rest, { fastpaths: false })`, and `opts.maxExtglobRecursion`.
+- **Port**: Ported ReDoS triage static analysis helpers and `extglobOpen`/`extglobClose` routines in `extglob.rs`.
+- **Why**: Ensures ReDoS mitigation logic matches V8 output byte-for-byte without breaking nested extglob expressions.
+- **Cost**: None; verified across 841 oracle cases and 61 adversarial cases.
+
+---
+
+### D-07: Globstar Machine & `push` Demotion Parity
+
+- **Original**: `lib/parse.js` L493-L505 & L1128-L1244 implements `**` second-star context transitions, consecutive `/**/` stripping, `push()` demotion of `globstar` to `star` for non-slash tokens, and `bash` mode empty-output star semantics.
+- **Port**: Implemented `push()` demotion in `parser.rs` and the 6 globstar context branches in `main_loop.rs`.
+- **Why**: Guarantees byte-identical regex output for `**`, `a/**/b`, `a/**`, `/**/a`, and `a**b` across POSIX and Windows.
+
+---
+
+### D-08: Pattern Negation (`!`) & `negate()` Parity
+
+- **Original**: `lib/parse.js` L457-L473 & L1053-L1065 implements leading `!` parity counting (`negate()`), double-negation folding (`count % 2 === 0`), `state.start` pointer advancement, extglob opener disambiguation (`!(...`), and `nonegate` option bypassing.
+- **Port**: Implemented `negate()` method in `main_loop.rs` adhering to exact parity counting and De Morgan paren boundary guards.
+- **Why**: Ensures leading `!`, `!!`, `!!!`, `!(...)`, `!!(...)`, `!a.js`, and `opts.nonegate` match V8 parse state output byte-for-byte.
+- **Cost**: None; verified across 73 oracle cases and 57 adversarial cases.
+
+---
+
 ### D-015 — Scanner option model is distinct from parser `Options`
 
 - **Status**: Accepted (2026-08-02, Teammate 2 Chunk 2)

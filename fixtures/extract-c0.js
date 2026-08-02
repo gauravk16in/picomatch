@@ -104,8 +104,8 @@ const rows = CASES.map(c => ({
   chunk: c.chunk,
   layer: c.layer || 'core',
   jsOnly: c.jsOnly === true,
-  // activation threshold: rows unlock when their owning chunk lands (C2 now)
-  active: (c.chunk || 0) <= 2 && c.jsOnly !== true,
+  // activation threshold: rows unlock when their owning chunk lands (C3 now)
+  active: (c.chunk || 0) <= 3 && c.jsOnly !== true,
   pattern: c.jsOnly ? undefined : c.pattern,
   options: encOptions(c.options || {}),
   assert: c.assert,

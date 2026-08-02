@@ -1,14 +1,10 @@
 'use strict';
 
 /**
- * C2 corpus extractor — segment semantics: slash handling, dot handling,
- * and leading "./" collapse (lib/parse.js:L975-L991, L997-L1015).
- * Extracts test cases directly from original test files in picomatch:
- *   - test/slashes-posix.js
- *   - test/dots-invalid.js
- *   - test/api.picomatch.js
+ * C8 corpus extractor — Globstar machinery and push demotion
+ * (lib/parse.js:L493-L505, L1128-L1244).
  *
- * node fixtures/extract-c2.js → fixtures/c2_oracle.json
+ * node fixtures/extract-c8.js → fixtures/c8_oracle.json
  */
 
 const path = require('path');
@@ -16,11 +12,11 @@ const fs = require('fs');
 const crypto = require('crypto');
 const Mocha = require('mocha');
 
-const REF = path.join(__dirname, '..', '..', 'picomatch');
+const REF = path.join(__dirname, '..', '..', 'picomatch-original');
 const parsePath = require.resolve(path.join(REF, 'lib', 'parse'));
 const origParse = require(parsePath);
 
-const { canonState } = require('./canon');
+const { canonState, encOptions } = require('./canon');
 
 const captured = [];
 const seen = new Set();
@@ -30,9 +26,9 @@ function requiredChunk(pattern) {
   if (pattern.length > 65536) return 0;
   if (pattern.includes('**')) return 8;
   if (pattern.startsWith('!')) return 9;
-  if (/[?*+@!]\(|[()]/.test(pattern)) return 7;
+  if (/[?*+@!]\(|[()]|\|/.test(pattern)) return 7;
   if (/[\[\]]/.test(pattern)) return 6;
-  if (/[\{\}]/.test(pattern)) return 5;
+  if (/[\{\},]/.test(pattern)) return 5;
   if (/[*?+@]/.test(pattern)) return 3;
   if (/[.\/]/.test(pattern)) return 2;
   if (/["'\\]/.test(pattern)) return 1;
@@ -48,7 +44,6 @@ function addCase(pattern, options, sourceFile) {
   }
 }
 
-// Hook lib/parse.js during mocha test suite runs
 require.cache[parsePath].exports = function(pattern, options) {
   addCase(pattern, options, 'mocha');
   return origParse.call(this, pattern, options);
@@ -58,7 +53,12 @@ Object.assign(require.cache[parsePath].exports, origParse);
 function SilentReporter(runner) {}
 
 const mocha = new Mocha({ reporter: SilentReporter });
-const testFiles = ['slashes-posix.js', 'dots-invalid.js', 'api.picomatch.js'];
+const testFiles = [
+  'globstars.js',
+  'stars.js',
+  'options.noglobstar.js',
+  'bash.js'
+];
 testFiles.forEach(file => {
   const filePath = path.join(REF, 'test', file);
   if (fs.existsSync(filePath)) {
@@ -67,7 +67,6 @@ testFiles.forEach(file => {
 });
 
 mocha.run(() => {
-  // Restore original exports
   require.cache[parsePath].exports = origParse;
 
   const runCase = c => {
@@ -80,15 +79,15 @@ mocha.run(() => {
   };
 
   const rows = captured.map((c, idx) => {
-    const chunk = requiredChunk(c.pattern, c.options);
+    const chunk = requiredChunk(c.pattern);
     return {
-      id: `c2.orig.${idx}`,
+      id: `c8.orig.${idx}`,
       chunk: chunk,
       layer: 'core',
       jsOnly: false,
-      active: chunk <= 3,
+      active: chunk <= 8,
       pattern: c.pattern,
-      options: c.options || {},
+      options: encOptions(c.options || {}),
       note: `extracted from original test file ${c.sourceFile}`,
       expect: runCase(c)
     };
@@ -96,9 +95,9 @@ mocha.run(() => {
 
   const doc = {
     meta: {
-      corpus: 'c2-segments',
-      generator: 'fixtures/extract-c2.js',
-      reference: path.join('..', '..', 'picomatch') + ' (read-only checkout)',
+      corpus: 'c8-globstar',
+      generator: 'fixtures/extract-c8.js',
+      reference: path.join('..', '..', 'picomatch-original') + ' (read-only checkout)',
       picomatchVersion: require(path.join(REF, 'package.json')).version,
       fieldPolicy: 'u16-unit sequences for emitted text (canon.js); assert-all when no assert list'
     },
@@ -106,7 +105,7 @@ mocha.run(() => {
   };
 
   const json = JSON.stringify(doc, null, 1) + '\n';
-  const out = path.join(__dirname, 'c2_oracle.json');
+  const out = path.join(__dirname, 'c8_oracle.json');
   fs.writeFileSync(out, json);
   const sha = crypto.createHash('sha256').update(json).digest('hex');
   const activeCount = rows.filter(r => r.active).length;

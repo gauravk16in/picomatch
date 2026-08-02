@@ -4,12 +4,15 @@
 //! maybe_slash → rebuild). The inline fastpath returns the state EARLY;
 //! finish() must NOT run on that route (L654).
 
+mod extglob;
+mod fastpath;
 mod fragments;
 mod inline_fastpath;
 mod main_loop;
 mod parser;
 mod state;
 
+pub use fastpath::fastpaths;
 pub use state::{ParseState, Token, TokenKind};
 
 use crate::constants;
@@ -44,8 +47,8 @@ pub fn parse(input: &str, options: &Options) -> Result<ParseState, PmxError> {
         return Ok(parser.state);
     }
 
-    // C1: main loop (NUL / escapes / quotes / text)
-    parser.main_loop();
+    // C1: main loop (NUL / escapes / quotes / text / C6 brackets)
+    parser.main_loop()?;
 
     // C0: recovery → maybe_slash → rebuild
     parser.finish()

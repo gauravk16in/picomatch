@@ -6,7 +6,12 @@
 //! windows/dot/bash/capture/prepend/max_length/strict_brackets/strict_slashes,
 //! plus the `noext`→`noextglob` alias fold (all chunks read through it).
 
+use std::sync::Arc;
+
 use crate::constants::MAX_LENGTH;
+
+/// Custom range expansion function signature for `opts.expandRange`.
+pub type ExpandRangeFn = Arc<dyn Fn(&[String], &Options) -> String + Send + Sync>;
 
 /// JS `typeof opts.maxExtglobRecursion === 'number'` vs `=== false`
 /// (parse.js:L288-L295). Typed now so C7 doesn't re-shape Options.
@@ -21,7 +26,7 @@ pub enum ExtglobRecursion {
 /// One `Option<T>` per JS option, mirroring "field present vs unset"
 /// (JS `undefined`), so coercions like `opts.x === true` vs `x !== false`
 /// stay distinguishable (BEHAVIORAL_ORACLE.md §8; ARCHITECTURE.md §5 table).
-#[derive(Debug, Clone, Default)]
+#[derive(Clone, Default)]
 pub struct Options {
     pub windows: Option<bool>,
     pub dot: Option<bool>,
@@ -52,6 +57,44 @@ pub struct Options {
     pub prepend: Option<String>,
     pub max_length: Option<f64>, // JS: maxLength — number coercion, floats allowed
     pub max_extglob_recursion: ExtglobRecursion,
+    pub expand_range: Option<ExpandRangeFn>,
+}
+
+impl std::fmt::Debug for Options {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Options")
+            .field("windows", &self.windows)
+            .field("dot", &self.dot)
+            .field("bash", &self.bash)
+            .field("capture", &self.capture)
+            .field("contains", &self.contains)
+            .field("fastpaths", &self.fastpaths)
+            .field("noext", &self.noext)
+            .field("noextglob", &self.noextglob)
+            .field("nonegate", &self.nonegate)
+            .field("unescape", &self.unescape)
+            .field("posix", &self.posix)
+            .field("nobrace", &self.nobrace)
+            .field("nobracket", &self.nobracket)
+            .field("noparen", &self.noparen)
+            .field("noglobstar", &self.noglobstar)
+            .field("strict_brackets", &self.strict_brackets)
+            .field("strict_slashes", &self.strict_slashes)
+            .field("literal_brackets", &self.literal_brackets)
+            .field("keep_quotes", &self.keep_quotes)
+            .field("regex", &self.regex)
+            .field("nocase", &self.nocase)
+            .field("flags", &self.flags)
+            .field("debug", &self.debug)
+            .field("match_base", &self.match_base)
+            .field("basename", &self.basename)
+            .field("ignore", &self.ignore)
+            .field("prepend", &self.prepend)
+            .field("max_length", &self.max_length)
+            .field("max_extglob_recursion", &self.max_extglob_recursion)
+            .field("expand_range", &self.expand_range.as_ref().map(|_| "<fn>"))
+            .finish()
+    }
 }
 
 impl Options {
@@ -84,6 +127,11 @@ impl Options {
             Some(s) if !s.is_empty() => s.as_str(),
             _ => "",
         }
+    }
+
+    /// parse.js:L1061 — `opts.nonegate === true`
+    pub fn nonegate(&self) -> bool {
+        self.nonegate == Some(true)
     }
 
     /// parse.js:L364 — `typeof opts.maxLength === 'number' ? Math.min(MAX_LENGTH, n) : MAX_LENGTH`.
@@ -140,8 +188,67 @@ impl Options {
         }
     }
 
+    // ---------- C3 accessors ----------
+
+    /// parse.js:L1257 — `opts.regex === true`.
+    pub fn regex(&self) -> bool {
+        self.regex == Some(true)
+    }
+
+    // ---------- C4 accessors ----------
+
+    /// parse.js:L1364 — `opts.noglobstar === true`.
+    pub fn noglobstar(&self) -> bool {
+        self.noglobstar == Some(true)
+    }
+
+    // ---------- C5 accessors ----------
+
+    /// parse.js:L881 — `opts.nobrace === true`.
+    pub fn nobrace(&self) -> bool {
+        self.nobrace == Some(true)
+    }
+
+    // ---------- C6 accessors ----------
+
+    /// parse.js:L815 — `opts.nobracket === true`.
+    pub fn nobracket(&self) -> bool {
+        self.nobracket == Some(true)
+    }
+
+    /// parse.js:L719 — `opts.posix !== false` (true unless explicitly false).
+    pub fn posix_not_false(&self) -> bool {
+        self.posix != Some(false)
+    }
+
+    /// parse.js:L751 — `opts.posix === true`.
+    pub fn posix_true(&self) -> bool {
+        self.posix == Some(true)
+    }
+
+    /// parse.js:L854/L865 — 3-way `literalBrackets` option (`Some(true)`, `Some(false)`, `None`).
+    pub fn literal_brackets(&self) -> Option<bool> {
+        self.literal_brackets
+    }
+
     // ---------- builder (tests + adapters; one knob per field) ----------
 
+    pub fn with_nonegate(mut self, v: bool) -> Self {
+        self.nonegate = Some(v);
+        self
+    }
+    pub fn with_noext(mut self, v: bool) -> Self {
+        self.noext = Some(v);
+        self
+    }
+    pub fn with_noextglob(mut self, v: bool) -> Self {
+        self.noextglob = Some(v);
+        self
+    }
+    pub fn with_max_extglob_recursion(mut self, v: ExtglobRecursion) -> Self {
+        self.max_extglob_recursion = v;
+        self
+    }
     pub fn with_windows(mut self, v: bool) -> Self {
         self.windows = Some(v);
         self
@@ -160,6 +267,26 @@ impl Options {
     }
     pub fn with_fastpaths(mut self, v: bool) -> Self {
         self.fastpaths = Some(v);
+        self
+    }
+    pub fn with_noglobstar(mut self, v: bool) -> Self {
+        self.noglobstar = Some(v);
+        self
+    }
+    pub fn with_nobrace(mut self, v: bool) -> Self {
+        self.nobrace = Some(v);
+        self
+    }
+    pub fn with_nobracket(mut self, v: bool) -> Self {
+        self.nobracket = Some(v);
+        self
+    }
+    pub fn with_literal_brackets(mut self, v: bool) -> Self {
+        self.literal_brackets = Some(v);
+        self
+    }
+    pub fn with_posix(mut self, v: bool) -> Self {
+        self.posix = Some(v);
         self
     }
     pub fn with_strict_brackets(mut self, v: bool) -> Self {
@@ -188,6 +315,17 @@ impl Options {
     }
     pub fn with_contains(mut self, v: bool) -> Self {
         self.contains = Some(v);
+        self
+    }
+    pub fn with_regex(mut self, v: bool) -> Self {
+        self.regex = Some(v);
+        self
+    }
+    pub fn with_expand_range<F>(mut self, f: F) -> Self
+    where
+        F: Fn(&[String], &Options) -> String + Send + Sync + 'static,
+    {
+        self.expand_range = Some(Arc::new(f));
         self
     }
 }

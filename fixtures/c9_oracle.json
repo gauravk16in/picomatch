@@ -1,0 +1,3980 @@
+{
+ "meta": {
+  "corpus": "c9-negation",
+  "generator": "fixtures/extract-c9.js",
+  "reference": "../../picomatch-original (read-only checkout)",
+  "picomatchVersion": "4.0.5",
+  "fieldPolicy": "u16-unit sequences for emitted text (canon.js); assert-all when no assert list"
+ },
+ "cases": [
+  {
+   "id": "c9.orig.0",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!*",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "!*",
+     "index": 1,
+     "start": 1,
+     "dot": false,
+     "consumed": "*",
+     "output": "(?!\\.)(?=.)[^/]*?\\/?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "maybe_slash",
+       "value": "",
+       "output": "\\/?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.1",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!abc",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!abc",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": "abc",
+     "output": "abc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.2",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!*foo",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!*foo",
+     "index": 4,
+     "start": 1,
+     "dot": false,
+     "consumed": "*foo",
+     "output": "(?!\\.)(?=.)[^/]*?foo",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": "foo",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.3",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!foo*",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!foo*",
+     "index": 4,
+     "start": 1,
+     "dot": false,
+     "consumed": "foo*",
+     "output": "foo[^/]*?\\/?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "foo",
+       "output": null
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "maybe_slash",
+       "value": "",
+       "output": "\\/?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.4",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!xyz",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!xyz",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": "xyz",
+     "output": "xyz",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "xyz",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.5",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!a/b",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/b",
+     "output": "a\\/b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.6",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!abc",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!!abc",
+     "index": 4,
+     "start": 1,
+     "dot": false,
+     "consumed": "abc",
+     "output": "abc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.7",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!abc",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!!!abc",
+     "index": 5,
+     "start": 3,
+     "dot": false,
+     "consumed": "abc",
+     "output": "abc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.8",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!abc",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 7,
+    "state": {
+     "input": "!!!!abc",
+     "index": 6,
+     "start": 3,
+     "dot": false,
+     "consumed": "abc",
+     "output": "abc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.9",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!!abc",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 8,
+    "state": {
+     "input": "!!!!!abc",
+     "index": 7,
+     "start": 5,
+     "dot": false,
+     "consumed": "abc",
+     "output": "abc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.10",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!!!abc",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 9,
+    "state": {
+     "input": "!!!!!!abc",
+     "index": 8,
+     "start": 5,
+     "dot": false,
+     "consumed": "abc",
+     "output": "abc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.11",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!!!!abc",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 10,
+    "state": {
+     "input": "!!!!!!!abc",
+     "index": 9,
+     "start": 7,
+     "dot": false,
+     "consumed": "abc",
+     "output": "abc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.12",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!!!!!abc",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 11,
+    "state": {
+     "input": "!!!!!!!!abc",
+     "index": 10,
+     "start": 7,
+     "dot": false,
+     "consumed": "abc",
+     "output": "abc",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.13",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!(abc)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!(abc)",
+     "index": 5,
+     "start": 0,
+     "dot": false,
+     "consumed": "!(abc)",
+     "output": "(?=.)(?:(?!(?:abc)$))[^/]*?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))[^/]*?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.14",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!(abc)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 7,
+    "state": {
+     "input": "!!(abc)",
+     "index": 6,
+     "start": 1,
+     "dot": false,
+     "consumed": "!(abc)",
+     "output": "(?=.)(?:(?!(?:abc)$))[^/]*?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))[^/]*?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.15",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!(abc)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 8,
+    "state": {
+     "input": "!!!(abc)",
+     "index": 7,
+     "start": 1,
+     "dot": false,
+     "consumed": "!(abc)",
+     "output": "(?=.)(?:(?!(?:abc)$))[^/]*?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))[^/]*?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.16",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!(abc)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 9,
+    "state": {
+     "input": "!!!!(abc)",
+     "index": 8,
+     "start": 3,
+     "dot": false,
+     "consumed": "!(abc)",
+     "output": "(?=.)(?:(?!(?:abc)$))[^/]*?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))[^/]*?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.17",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!!(abc)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 10,
+    "state": {
+     "input": "!!!!!(abc)",
+     "index": 9,
+     "start": 3,
+     "dot": false,
+     "consumed": "!(abc)",
+     "output": "(?=.)(?:(?!(?:abc)$))[^/]*?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))[^/]*?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.18",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!!!(abc)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 11,
+    "state": {
+     "input": "!!!!!!(abc)",
+     "index": 10,
+     "start": 5,
+     "dot": false,
+     "consumed": "!(abc)",
+     "output": "(?=.)(?:(?!(?:abc)$))[^/]*?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))[^/]*?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.19",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!!!!(abc)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 12,
+    "state": {
+     "input": "!!!!!!!(abc)",
+     "index": 11,
+     "start": 5,
+     "dot": false,
+     "consumed": "!(abc)",
+     "output": "(?=.)(?:(?!(?:abc)$))[^/]*?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))[^/]*?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.20",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!!!!!(abc)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 13,
+    "state": {
+     "input": "!!!!!!!!(abc)",
+     "index": 12,
+     "start": 7,
+     "dot": false,
+     "consumed": "!(abc)",
+     "output": "(?=.)(?:(?!(?:abc)$))[^/]*?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "abc",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))[^/]*?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.21",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!(*/*)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!(*/*)",
+     "index": 5,
+     "start": 0,
+     "dot": false,
+     "consumed": "!(*/*)",
+     "output": "(?=.)(?:(?!(?:[^/]*?\\/(?!\\.)(?=.)[^/]*?)$))(?:(?:(?!(?:^|\\/)\\.).)*?)",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))(?:(?:(?!(?:^|\\/)\\.).)*?)"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.22",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!(*/b)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!(*/b)",
+     "index": 5,
+     "start": 0,
+     "dot": false,
+     "consumed": "!(*/b)",
+     "output": "(?=.)(?:(?!(?:[^/]*?\\/b)$))(?:(?:(?!(?:^|\\/)\\.).)*?)",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))(?:(?:(?!(?:^|\\/)\\.).)*?)"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.23",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!(a/b)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!(a/b)",
+     "index": 5,
+     "start": 0,
+     "dot": false,
+     "consumed": "!(a/b)",
+     "output": "(?=.)(?:(?!(?:a\\/b)$))(?:(?:(?!(?:^|\\/)\\.).)*?)",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))(?:(?:(?!(?:^|\\/)\\.).)*?)"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.24",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!*/*",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!*/*",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": "*/*",
+     "output": "(?!\\.)(?=.)[^/]*?\\/(?!\\.)(?=.)[^/]*?\\/?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "maybe_slash",
+       "value": "",
+       "output": "\\/?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.25",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!*/b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!*/b",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": "*/b",
+     "output": "(?!\\.)(?=.)[^/]*?\\/b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.26",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!*/c",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!*/c",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": "*/c",
+     "output": "(?!\\.)(?=.)[^/]*?\\/c",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "c",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.27",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!*a*",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!*a*",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": "*a*",
+     "output": "(?!\\.)(?=.)[^/]*?a[^/]*?\\/?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "maybe_slash",
+       "value": "",
+       "output": "\\/?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.28",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/(*)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!a/(*)",
+     "index": 5,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/(*)",
+     "output": "a\\/([^/]*?)",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": null
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.29",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/(b)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!a/(b)",
+     "index": 5,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/(b)",
+     "output": "a\\/(b)",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": null
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.30",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/*",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!a/*",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/*",
+     "output": "a\\/(?!\\.)(?=.)[^/]*?\\/?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "maybe_slash",
+       "value": "",
+       "output": "\\/?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.31",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!f*b",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!f*b",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": "f*b",
+     "output": "f[^/]*?b",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "f",
+       "output": null
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.32",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!.md",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!.md",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": ".md",
+     "output": "\\.md",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "dot",
+       "value": ".",
+       "output": "\\."
+      },
+      {
+       "type": "text",
+       "value": "md",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.33",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!**/*.md",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 8,
+    "state": {
+     "input": "!**/*.md",
+     "index": 7,
+     "start": 1,
+     "dot": false,
+     "consumed": "**//*.md",
+     "output": "(?:^|\\/|(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)(?!\\.)(?=.)[^/]*?\\.md",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": true,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)"
+      },
+      {
+       "type": "globstar",
+       "value": "**",
+       "output": "(?:^|\\/|(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": ".md",
+       "output": "\\.md"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.34",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!*.md",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!*.md",
+     "index": 4,
+     "start": 1,
+     "dot": false,
+     "consumed": "*.md",
+     "output": "(?!\\.)(?=.)[^/]*?\\.md",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": ".md",
+       "output": "\\.md"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.35",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/*/a.js",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 9,
+    "state": {
+     "input": "!a/*/a.js",
+     "index": 8,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/*/a.js",
+     "output": "a\\/(?!\\.)(?=.)[^/]*?\\/a\\.js",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "a.js",
+       "output": "a.js"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.36",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/*/*/a.js",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 11,
+    "state": {
+     "input": "!a/*/*/a.js",
+     "index": 10,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/*/*/a.js",
+     "output": "a\\/(?!\\.)(?=.)[^/]*?\\/(?!\\.)(?=.)[^/]*?\\/a\\.js",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "a.js",
+       "output": "a.js"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.37",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/a*.txt",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 9,
+    "state": {
+     "input": "!a/a*.txt",
+     "index": 8,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/a*.txt",
+     "output": "a\\/a[^/]*?\\.txt",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": ".txt",
+       "output": "\\.txt"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.38",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a.a*.txt",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 9,
+    "state": {
+     "input": "!a.a*.txt",
+     "index": 8,
+     "start": 1,
+     "dot": false,
+     "consumed": "a.a*.txt",
+     "output": "a\\.a[^/]*?\\.txt",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a.a",
+       "output": "a.a"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": ".txt",
+       "output": "\\.txt"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.39",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/*.txt",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 8,
+    "state": {
+     "input": "!a/*.txt",
+     "index": 7,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/*.txt",
+     "output": "a\\/(?!\\.)(?=.)[^/]*?\\.txt",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": ".txt",
+       "output": "\\.txt"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.40",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!**/a.js",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 8,
+    "state": {
+     "input": "!**/a.js",
+     "index": 7,
+     "start": 1,
+     "dot": false,
+     "consumed": "**//a.js",
+     "output": "(?:^|\\/|(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)a\\.js",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": true,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)"
+      },
+      {
+       "type": "globstar",
+       "value": "**",
+       "output": "(?:^|\\/|(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a.js",
+       "output": "a.js"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.41",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/**/a.js",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 10,
+    "state": {
+     "input": "!a/**/a.js",
+     "index": 9,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/**//a.js",
+     "output": "a(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/|\\/|$)a\\.js",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": true,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "(?:\\/(?!\\.)"
+      },
+      {
+       "type": "globstar",
+       "value": "**",
+       "output": "(?:(?:(?!(?:^|\\/)\\.).)*?)\\/|\\/|$)"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a.js",
+       "output": "a.js"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.42",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!.*.md",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!.*.md",
+     "index": 5,
+     "start": 1,
+     "dot": false,
+     "consumed": ".*.md",
+     "output": "\\.(?!\\.{0,1}(?:\\/|$))(?=.)[^/]*?\\.md",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "dot",
+       "value": ".",
+       "output": "\\.(?!\\.{0,1}(?:\\/|$))(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "text",
+       "value": ".md",
+       "output": "\\.md"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.43",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!.gitignore",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 11,
+    "state": {
+     "input": "!.gitignore",
+     "index": 10,
+     "start": 1,
+     "dot": false,
+     "consumed": ".gitignore",
+     "output": "\\.gitignore",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "dot",
+       "value": ".",
+       "output": "\\."
+      },
+      {
+       "type": "text",
+       "value": "gitignore",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.44",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/**",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!a/**",
+     "index": 4,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/**",
+     "output": "a(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)|$)",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": true,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "(?:\\/(?!\\.)"
+      },
+      {
+       "type": "globstar",
+       "value": "**",
+       "output": "(?:(?:(?!(?:^|\\/)\\.).)*?)|$)"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.45",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!*.js",
+   "options": {
+    "fastpaths": false,
+    "matchBase": true,
+    "windows": true
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!*.js",
+     "index": 4,
+     "start": 1,
+     "dot": false,
+     "consumed": "*.js",
+     "output": "(?!\\.)(?=.)[^\\\\/]*?\\.js",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^\\\\/]*?"
+      },
+      {
+       "type": "text",
+       "value": ".js",
+       "output": "\\.js"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.46",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!**/*.js",
+   "options": {
+    "fastpaths": false,
+    "matchBase": true,
+    "windows": true
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 8,
+    "state": {
+     "input": "!**/*.js",
+     "index": 7,
+     "start": 1,
+     "dot": false,
+     "consumed": "**//*.js",
+     "output": "(?:^|[\\\\/]|(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/])(?!\\.)(?=.)[^\\\\/]*?\\.js",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": true,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)"
+      },
+      {
+       "type": "globstar",
+       "value": "**",
+       "output": "(?:^|[\\\\/]|(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/])"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^\\\\/]*?"
+      },
+      {
+       "type": "text",
+       "value": ".js",
+       "output": "\\.js"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.47",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!**/a",
+   "options": {
+    "fastpaths": false,
+    "windows": true
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!**/a",
+     "index": 4,
+     "start": 1,
+     "dot": false,
+     "consumed": "**//a",
+     "output": "(?:^|[\\\\/]|(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/])a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": true,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)"
+      },
+      {
+       "type": "globstar",
+       "value": "**",
+       "output": "(?:^|[\\\\/]|(?:(?:(?!(?:^|[\\\\/])\\.).)*?)[\\\\/])"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.48",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!*.md",
+   "options": {
+    "fastpaths": false,
+    "nonegate": true,
+    "windows": true
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!*.md",
+     "index": 4,
+     "start": 0,
+     "dot": false,
+     "consumed": "!*.md",
+     "output": "![^\\\\/]*?\\.md",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "!",
+       "output": null
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^\\\\/]*?"
+      },
+      {
+       "type": "text",
+       "value": ".md",
+       "output": "\\.md"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.49",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!**/a",
+   "options": {
+    "fastpaths": false,
+    "nonegate": true,
+    "windows": true
+   },
+   "note": "extracted from original test file mocha",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!**/a",
+     "index": 4,
+     "start": 0,
+     "dot": false,
+     "consumed": "!**/a",
+     "output": "![^\\\\/]*?[\\\\/]a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "!",
+       "output": null
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^\\\\/]*?"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": ""
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "[\\\\/]"
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.50",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "!a",
+     "index": 1,
+     "start": 1,
+     "dot": false,
+     "consumed": "a",
+     "output": "a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.51",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!a",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "!!a",
+     "index": 2,
+     "start": 1,
+     "dot": false,
+     "consumed": "a",
+     "output": "a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.52",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!a",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!!!a",
+     "index": 3,
+     "start": 3,
+     "dot": false,
+     "consumed": "a",
+     "output": "a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.53",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!a",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!!!!a",
+     "index": 4,
+     "start": 3,
+     "dot": false,
+     "consumed": "a",
+     "output": "a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.54",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!!!a",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!!!!!a",
+     "index": 5,
+     "start": 5,
+     "dot": false,
+     "consumed": "a",
+     "output": "a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.55",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a",
+   "options": {
+    "fastpaths": false,
+    "nonegate": true
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "!a",
+     "index": 1,
+     "start": 0,
+     "dot": false,
+     "consumed": "!a",
+     "output": "!a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "!a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.56",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!a",
+   "options": {
+    "fastpaths": false,
+    "nonegate": true
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "!!a",
+     "index": 2,
+     "start": 0,
+     "dot": false,
+     "consumed": "!!a",
+     "output": "!!a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "!!a",
+       "output": "!!a"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.57",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!(a)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!!(a)",
+     "index": 4,
+     "start": 1,
+     "dot": false,
+     "consumed": "!(a)",
+     "output": "(?=.)(?:(?!(?:a)$))[^/]*?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))[^/]*?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.58",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!(a)",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!!!(a)",
+     "index": 5,
+     "start": 1,
+     "dot": false,
+     "consumed": "!(a)",
+     "output": "(?=.)(?:(?!(?:a)$))[^/]*?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": true,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "negate",
+       "value": "!",
+       "output": "(?=.)"
+      },
+      {
+       "type": "paren",
+       "value": "(",
+       "output": "(?:(?!(?:"
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "paren",
+       "value": ")",
+       "output": ")$))[^/]*?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.59",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!**",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "!**",
+     "index": 2,
+     "start": 1,
+     "dot": false,
+     "consumed": "**",
+     "output": "(?:(?:(?!(?:^|\\/)\\.).)*?)",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": true,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)"
+      },
+      {
+       "type": "globstar",
+       "value": "**",
+       "output": "(?:(?:(?!(?:^|\\/)\\.).)*?)"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.60",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!**",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!!**",
+     "index": 3,
+     "start": 1,
+     "dot": false,
+     "consumed": "**",
+     "output": "(?:(?:(?!(?:^|\\/)\\.).)*?)",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": true,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "globstar",
+       "value": "**",
+       "output": "(?:(?:(?!(?:^|\\/)\\.).)*?)"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.61",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!**/a",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!**/a",
+     "index": 4,
+     "start": 1,
+     "dot": false,
+     "consumed": "**//a",
+     "output": "(?:^|\\/|(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": true,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)"
+      },
+      {
+       "type": "globstar",
+       "value": "**",
+       "output": "(?:^|\\/|(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)"
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.62",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a",
+   "options": {
+    "fastpaths": false,
+    "dot": true
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "!a",
+     "index": 1,
+     "start": 1,
+     "dot": true,
+     "consumed": "a",
+     "output": "a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.63",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a",
+   "options": {
+    "fastpaths": false,
+    "capture": true
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "!a",
+     "index": 1,
+     "start": 1,
+     "dot": false,
+     "consumed": "a",
+     "output": "a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.64",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a",
+   "options": {
+    "fastpaths": false,
+    "windows": true
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 2,
+    "state": {
+     "input": "!a",
+     "index": 1,
+     "start": 1,
+     "dot": false,
+     "consumed": "a",
+     "output": "a",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.65",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!{a,b}",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!{a,b}",
+     "index": 5,
+     "start": 1,
+     "dot": false,
+     "consumed": "{a,b}",
+     "output": "(a|b)",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "brace",
+       "value": "{",
+       "output": "("
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "comma",
+       "value": ",",
+       "output": "|"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      },
+      {
+       "type": "brace",
+       "value": "}",
+       "output": ")"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.66",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "![a-z]",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "![a-z]",
+     "index": 5,
+     "start": 1,
+     "dot": false,
+     "consumed": "[a-z]",
+     "output": "[a-z]\\/?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "bracket",
+       "value": "[a-z]",
+       "output": null
+      },
+      {
+       "type": "maybe_slash",
+       "value": "",
+       "output": "\\/?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.67",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a.js",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 5,
+    "state": {
+     "input": "!a.js",
+     "index": 4,
+     "start": 1,
+     "dot": false,
+     "consumed": "a.js",
+     "output": "a\\.js",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a.js",
+       "output": "a.js"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.68",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!a.js",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!!a.js",
+     "index": 5,
+     "start": 1,
+     "dot": false,
+     "consumed": "a.js",
+     "output": "a\\.js",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a.js",
+       "output": "a.js"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.69",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!a.js",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 7,
+    "state": {
+     "input": "!!!a.js",
+     "index": 6,
+     "start": 3,
+     "dot": false,
+     "consumed": "a.js",
+     "output": "a\\.js",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a.js",
+       "output": "a.js"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.70",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!*",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 3,
+    "state": {
+     "input": "!!*",
+     "index": 2,
+     "start": 1,
+     "dot": false,
+     "consumed": "*",
+     "output": "[^/]*?\\/?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": false,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "maybe_slash",
+       "value": "",
+       "output": "\\/?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.71",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!!!*",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 4,
+    "state": {
+     "input": "!!!*",
+     "index": 3,
+     "start": 3,
+     "dot": false,
+     "consumed": "*",
+     "output": "(?!\\.)(?=.)[^/]*?\\/?",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": "(?!\\.)(?=.)"
+      },
+      {
+       "type": "star",
+       "value": "*",
+       "output": "[^/]*?"
+      },
+      {
+       "type": "maybe_slash",
+       "value": "",
+       "output": "\\/?"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "c9.orig.72",
+   "chunk": 9,
+   "layer": "core",
+   "jsOnly": false,
+   "active": true,
+   "pattern": "!a/b/c",
+   "options": {
+    "fastpaths": false
+   },
+   "note": "extracted from original test file manual",
+   "expect": {
+    "kind": "ok",
+    "utf16Length": 6,
+    "state": {
+     "input": "!a/b/c",
+     "index": 5,
+     "start": 1,
+     "dot": false,
+     "consumed": "a/b/c",
+     "output": "a\\/b\\/c",
+     "prefix": "",
+     "backtrack": false,
+     "negated": true,
+     "brackets": 0,
+     "braces": 0,
+     "parens": 0,
+     "quotes": 0,
+     "globstar": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "type": "bos",
+       "value": "",
+       "output": ""
+      },
+      {
+       "type": "text",
+       "value": "a",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "b",
+       "output": null
+      },
+      {
+       "type": "slash",
+       "value": "/",
+       "output": "\\/"
+      },
+      {
+       "type": "text",
+       "value": "c",
+       "output": null
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

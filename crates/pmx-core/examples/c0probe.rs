@@ -31,11 +31,58 @@ fn opts_of(v: &Value) -> Options {
     if let Some(x) = b("fastpaths") {
         o = o.with_fastpaths(x);
     }
+    if let Some(x) = b("nobrace") {
+        o = o.with_nobrace(x);
+    }
     if let Some(x) = b("strictBrackets") {
         o = o.with_strict_brackets(x);
     }
     if let Some(x) = b("strictSlashes") {
         o = o.with_strict_slashes(x);
+    }
+    if let Some(x) = b("unescape") {
+        o = o.with_unescape(x);
+    }
+    if let Some(x) = b("keepQuotes") {
+        o = o.with_keep_quotes(x);
+    }
+    if let Some(x) = b("contains") {
+        o = o.with_contains(x);
+    }
+    if let Some(x) = b("regex") {
+        o = o.with_regex(x);
+    }
+    if let Some(x) = b("noglobstar") {
+        o = o.with_noglobstar(x);
+    }
+    if let Some(x) = b("nobracket") {
+        o = o.with_nobracket(x);
+    }
+    if let Some(x) = b("literalBrackets") {
+        o = o.with_literal_brackets(x);
+    }
+    if let Some(x) = b("posix") {
+        o = o.with_posix(x);
+    }
+    if let Some(x) = b("noext") {
+        o = o.with_noext(x);
+    }
+    if let Some(x) = b("noextglob") {
+        o = o.with_noextglob(x);
+    }
+    if let Some(x) = b("nonegate") {
+        o = o.with_nonegate(x);
+    }
+    match v.get("maxExtglobRecursion") {
+        Some(Value::Bool(false)) => {
+            o = o.with_max_extglob_recursion(pmx_core::ExtglobRecursion::Disabled);
+        }
+        Some(Value::Number(n)) => {
+            if let Some(f) = n.as_f64() {
+                o = o.with_max_extglob_recursion(pmx_core::ExtglobRecursion::Limit(f));
+            }
+        }
+        _ => {}
     }
     if let Some(s) = v.get("prepend").and_then(|x| x.as_str()) {
         o = o.with_prepend(s);
@@ -94,6 +141,7 @@ fn main() {
                 "kind": "ok",
                 "input": units(&s.input),
                 "prefix": s.prefix,
+                "output": s.output,
                 "dot": s.dot,
                 "index": s.index,
                 "start": s.start,

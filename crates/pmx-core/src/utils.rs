@@ -43,6 +43,13 @@ pub fn has_regex_chars(s: &str) -> bool {
     s.bytes().any(|b| b < 0x80 && SPECIAL_CHARS.contains(&b))
 }
 
+/// Unit-slice variant used by parser internals over emitted UTF-16 buffers.
+pub(crate) fn has_regex_chars_units(units: &[u16]) -> bool {
+    units
+        .iter()
+        .any(|&u| u < 0x80 && SPECIAL_CHARS.contains(&(u as u8)))
+}
+
 /// utils.js:L13 — `isRegexChar(str)` = `str.length === 1 && hasRegexChars(str)`.
 /// `str.length` is a UTF-16-unit count, so exactly one BMP char in the set.
 /// Exported but never called inside lib/ (public API surface).
@@ -63,6 +70,15 @@ pub fn escape_regex(s: &str) -> String {
             out.push('\\');
         }
         out.push(c);
+    }
+    out
+}
+
+/// `escapeRegex` over a UTF-16 unit slice (parser-internal emitted buffers).
+pub(crate) fn escape_regex_units(units: &[u16]) -> Vec<u16> {
+    let mut out = Vec::with_capacity(units.len());
+    for &u in units {
+        push_escape_regex_unit(&mut out, u);
     }
     out
 }
