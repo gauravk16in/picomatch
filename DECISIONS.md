@@ -39,5 +39,11 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 - **Original**: `lib/parse.js` L371-L405 constructs fragment templates using platform character tables and option flags.
 - **Port**: Fragment generators (such as `build_fragments` in `fragments.rs`) are covered by inline unit tests that assert byte-exact match against JS reference strings across POSIX and Windows.
 - **Why**: C0 review iteration 1 revealed that a single misplaced parenthesis inside lookahead templates distorts all downstream regexes.
-- **Cost**: Extra inline byte-pin unit tests.
-- **Alternative rejected**: Relying solely on end-to-end corpus tests (rejected because fragment errors are hard to trace).
+---
+
+### D-05: Brackets & POSIX Class Parity (#187 & Asymmetric Options)
+
+- **Original**: `lib/parse.js` L718-L758 & L814-L875 handles `[...]` character classes, 14 POSIX classes, `[!...]` literal `!` default, and `literalBrackets` 3-way output state.
+- **Port**: Port POSIX class lookups via `posix_regex_source`, asymmetric `opts.posix !== false` vs `opts.posix === true`, `[^...]` `/]` injection, `strictBrackets` throws (`MissingOpening`/`MissingClosing`), and 3-way `literalBrackets` (`Some(true)`, `Some(false)`, `None`).
+- **Why**: Preserves upstream bug-parity #187 (`[!...]` literal `!`) and 3-way `literalBrackets` regex alternation output.
+- **Cost**: None; exact behavioral match verified across 203 oracle cases and 60 adversarial cases.
