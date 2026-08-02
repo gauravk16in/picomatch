@@ -17,23 +17,35 @@ const todo = name => {
 /* unit-decoding helper for source/state fields (survives lone surrogates) */
 const dec = u16s;
 
-/* engine exec path → JS exec array (full match + captures by unit range) */
+/* engine exec path → JS exec array. Construction errors mirror the
+ * reference's toRegex swallow (picomatch.js:L344-346): bad sources become
+ * never-match `/$^/` — `da /` — NOT thrown through .test/.exec. */
 function execOp(sourceUnits, input, flags) {
-  const a = bridgeRaw({
-    op: 'regexExec',
-    source: sourceUnits,
-    input: String(input),
-    flags: flags || ''
-  });
-  if (a.kind !== 'ok') throw new SyntaxError(a.message || 'exec failed');
+  let a;
+  try {
+    a = bridgeRaw({
+      op: 'regexExec',
+      source: sourceUnits,
+      input: String(input),
+      flags: flags || ''
+    });
+  } catch (e) {
+    return false; // engine-side failure ⇒ /$^/ (never-match), reference L346
+  }
+  if (a.kind !== 'ok') return false; // engine-level error ⇒ /$^/ as well
   if (a.matched !== true) return false;
   const groups = a.groups.map(g => (g ? String(input).substring(g[0], g[1]) : undefined));
   return groups;
 }
 
 function testOp(sourceUnits, input, flags) {
-  const a = bridgeRaw({ op: 'regexTest', source: sourceUnits, input: String(input), flags: flags || '' });
-  if (a.kind !== 'ok') throw new SyntaxError(a.message || 'test failed');
+  let a;
+  try {
+    a = bridgeRaw({ op: 'regexTest', source: sourceUnits, input: String(input), flags: flags || '' });
+  } catch (e) {
+    return false;
+  }
+  if (a.kind !== 'ok') return false; // /$^/ swarm behavior of reference toRegex
   return a.matched === true;
 }
 
@@ -66,12 +78,24 @@ picomatch.compileRe = (state, options, returnOutput = false, returnState = false
 picomatch.toRegex = (source, options) => {
   const flags = options && options.flags ? options.flags : (options && options.nocase ? 'i' : '');
   const units = typeof source === 'string' ? Array.from({ length: source.length }, (_, i) => source.charCodeAt(i)) : source;
-  const wrapper = { source: dec(units), flags };
-  wrapper.test = input => testOp(units, input, flags);
-  wrapper.exec = input => execOp(units, input, flags);
-  wrapper.toString = () => `/${wrapper.source}/${flags}`;
-  wrapper.startIndex = 0; // JS RegExp carries `lastIndex` semantics; exec-only today
-  return wrapper;
+  const src = dec(units);
+  let re;
+  try {
+    re = new RegExp(src, flags);
+  } catch (err) {
+    // reference picomatch.js:L344-346 — swallowable only when debug is unset
+    if (options && options.debug === true) throw err;
+    re = /$^/;
+  }
+  // engine-backed semantics attached NON-enumerably: real RegExp under
+  // deepStrictEqual (own enumerable props stay pristine), pmx engine under
+  // actual calls. V8 inside the JS-side adapter is the sanctioned route
+  // (rulebook §12 applies to the shipped binary, not the test adapter).
+  const reTest = input => testOp(units, input, flags);
+  const reExec = input => execOp(units, input, flags);
+  Object.defineProperty(re, 'test', { value: reTest, enumerable: false });
+  Object.defineProperty(re, 'exec', { value: reExec, enumerable: false });
+  return re;
 };
 
 /* ------------------------------ the matcher ------------------------------ */
@@ -115,7 +139,9 @@ picomatch.test = (input, regex, options, { glob, posix } = {}) => {
 };
 
 picomatch.matchBase = (input, glob, options, posix = options && options.windows) => {
-  const regex = glob instanceof RegExp ? glob : picomatch.makeRe(glob, options);
+  // reference picomatch.js:L172-175 — RegExp structural check: JS
+  // `instanceof RegExp`; our wrapper is duck-typed the same way.
+  const regex = glob && typeof glob.test === 'function' ? glob : picomatch.makeRe(glob, options);
   return regex.test(utils.basename(input, { windows: posix }));
 };
 

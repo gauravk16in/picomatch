@@ -289,3 +289,141 @@ BUG-001 and BUG-002 are **correctness defects** unrelated to that divergence —
 produce invalid regex strings and non-deterministic output for `opts.prepend`.
 Neither is tested by the original test suite, and both are clearly unintended.
 The Rust port corrects them.
+
+---
+
+## BUG-003 — Adapter option-forwarding dropped seven option keys
+
+**Severity:** High (parity-affecting)
+**Affected:** pmx adapter (`crates/pmx-cli/src/lib.rs` `parse_options_of`)
+**Chunks:** adapter track — surfaced by original-suite parity (slashes-posix "double slashes")
+**Status:** Fixed (2026-08-03, verified)
+
+### Description
+
+The dispatch's `parse_options_of` mapped only a subset of picomatch's options to the
+Rust `Options` struct. Seven keys silently fell through on the floor: `noglobstar`,
+`noextglob`, `nonegate`, `posix`, `nobrace`, `nobracket`, `literalBrackets`.
+
+First evidence: original-suite `test/slashes-posix.js` "double slashes" block —
+`isMatch('https://foo.com/bar/baz/app.min.js', 'https://foo.com/**', { noglobstar: true })`
+returned `true` through the adapter while the reference returns `false`, because the
+Rust parser never received the `noglobstar === true` flag and emitted the globstar
+fragment anyway.
+
+**Initial misattribution suspicion:** suspected a missing `noglobstar` branch in the
+C8 globstar machinery (`main_loop.rs`). Root cause was entirely in the adapter's
+option-forwarding; the friend's parser was correct all along.
+
+### Fix
+
+All seven `with_*` builders mapped in `parse_options_of` (the `Options` accessors
+existed; only the adapter forwarding was missing). After the fix all 8 assertions
+of the suite block return identical values to the reference (probed directly), and
+`slashes-posix.js` runs 18/18.
+
+### Verification
+
+`cargo build --workspace` green; parity `slashes-posix.js: 18/18`; all 12 passing
+suite files re-verified; both transports (`PMX_ADAPTER=serve|napi`).
+
+---
+
+## BUG-004 — regress engine coalesces astral surrogate pairs in bracket classes
+
+**Severity:** Bounded (0.077% of the 148,488-case differential; 114 cases)
+**Affected:** `crates/pmx-exec`'s choice of `regress` 0.11.1
+**Chunks:** A3 engine track
+**Status:** OPEN — engine upstream difference; tracked purposefully, loud by design
+
+### Description
+
+JavaScript's `[^x]`-style classes match exactly ONE UTF-16 code unit. regress's
+bracket evaluation coalesces a surrogate pair as one logical character, so:
+
+```
+source ^(?:a[^/])$   input 'a😀'   V8: false   regress 0.11.1: true
+```
+
+Only astral *input* characters are affected (classes are ASCII fragments everywhere
+picomatch emits); input patterns containing astral are unaffected. The differential
+harness classified all 114 observed cases into this single class (zero other
+divergences in 148,488 engine comparisons; zero engine errors).
+
+### Tracking
+
+* `DECISIONS.md` D-024 documents choice, reproducer, cost, rejected alternatives.
+* A purposefully-pinned unit test `engine_boundary_astral_class_is_documented`
+  (crates/pmx-exec/src/lib.rs) asserts the CURRENT engine behavior and flips the
+  day an upgraded engine fixes it — never silent.
+* `fixtures/attack-a3.js` splits divergence classes: `astral-class boundary (D-018-era)`
+  vs `other`; parity gates fail on `other > 0`.
+
+### Later fix
+
+Pending upstream: either `regress` ships a fix for bracket-class surrogate handling
+in `find_from_utf16` (watch upstream releases), or pmx-exec gains a pre-match detector
+that routes astral-input class patterns through the &-str path (analysis owned here —
+do not pre-implement without a failing case beyond the D-024 reproducer class).
+
+---
+
+## BUG-005 — Adapter boundary: `options.expandRange` JS-callbacks can't reach the Rust parse
+
+**Severity:** Medium (one suite block + one options file)
+**Affected:** `test/braces.js` "special chars and expand ranges in parentheses"; `test/options.expandRange.js`
+**Chunks:** adapter protocol (B-track)
+**Status:** OPEN (defined, needs napi callback protocol)
+
+### Description
+
+The reference's `parse` calls `options.expandRange(a, b, options)` — a **user-supplied JavaScript function** —
+whenever a `{a..b}` range appears (lib/parse.js:L23-25). Parity requires invoking
+user JS inside the Rust parse loop. Spawn-based JSONL ops are one-shot: the bridge
+can't call back mid-op, so today the Rust parser uses the default expansion and
+those blocks compare wrong.
+
+### Defined fix
+
+The napi transport already speaks synchronously to the JS loop. Extend the op:
+`bridge_op(payload, expandFn?)` where napi-crate's op dispatches
+`options.expandRange` — the engine invokes the JS function at range-emission time
+(`#[napi] pub fn bridge_op(payload: String, expand_fn: Option<napi::JsFunction>)`,
+holding the function reference for the call duration). The `serve` transport keeps
+default expansion only (public surface documented limitation there).
+
+### Evidence
+
+`test/braces.js:192-212` (fill-range `expandRange = (a, b) => '(' + fill(a, b, {toRegex: true}) + ')'`);
+`test/options.expandRange.js` (same helper).
+
+---
+
+## BUG-006 — C7 negate-extglob close: inner-star segment diverges on `!(*.*).!(*.*)`
+
+**Severity:** Medium (1 of 1,977 suite rows; nested negate-close region)
+**Affected:** `crates/pmx-core/src/parse/extglob.rs` close handling (negate branch)
+**Chunks:** C7 (friend-side)
+**Status:** OPEN (fix in pmx-core, not adapter)
+
+### Description
+
+For extglob `!(*.*)` followed by another edge, reference (lib/parse.js:L582-L591,
+`inner.includes('*')` + suffix-sculpting) produces a close WITHOUT the extra
+`\.(?:.(?!\.{0,1}(?:\/|$))(?=.)[^/]*?)$` segment. Ours emits it on the inner star slot:
+
+```
+ref:  ^(?:(?=.)(?:(?!(?:[^/]*?\.DOTPUT)[^/]*?)\.(?:(?!(?:[^/]*?\.DOTPUT)$))[^/]*?)$
+ours: ^(?:(?=.)(?:(?!(?:[^/]*?\.DOTPUT)\.(?:(?!(?:[^/]*?\.DOTPUT)$))[^/]*?)[^/]*?)\.(?:(?!(?:[^/]*?\.DOTPUT)$))[^/]*?)$
+```
+(DOTPUT = the dot-run lookahead `(?!\.{0,1}(?:\/|$))(?=.)[^/]*?`)
+
+Result: `isMatch('moo.cow', '!(*.*).!(*.*)')` → **reference false, port true**.
+
+### Fix directions
+
+Re-read lib/parse.js:L571-L591 closely: which of the three negate-close variants
+(extglobStar-with-slash, eos/`)...$)`-susp, `*`-in-inner-with-suffix) applies when
+the inner has BOTH `*` and `.` segments; the reference's suffix-recursion runs
+`parse(rest, {..., fastpaths:false})` only when `/^\.[^\\/.]+$/.test(rest)` — the
+divergent branch probably mispicks on dotted-star inner content. Friend-side fix.

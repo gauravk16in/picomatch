@@ -76,11 +76,24 @@ pub mod dispatch {
         if let Some(x) = b("literalBrackets") {
             o = o.with_literal_brackets(x);
         }
+        // parse.js:L408-L410 — minimatch `noext` boolean aliases onto noextglob
+        // and OVERWRITES it, exact reference order
+        if let Some(x) = b("noext") {
+            o = o.with_noextglob(x);
+        }
         if let Some(s) = v.get("prepend").and_then(|x| x.as_str()) {
             o = o.with_prepend(s);
         }
         if let Some(n) = f64_of(v.get("maxLength")) {
             o = o.with_max_length(n);
+        }
+        // parse.js:L288-L295 — maxExtglobRecursion: false disables; number sets limit
+        if let Some(x) = v.get("maxExtglobRecursion") {
+            if let Some(false) = x.as_bool() {
+                o = o.with_max_extglob_recursion(pmx_core::ExtglobRecursion::Disabled);
+            } else if let Some(n) = x.as_f64() {
+                o = o.with_max_extglob_recursion(pmx_core::ExtglobRecursion::Limit(n));
+            }
         }
         o
     }
