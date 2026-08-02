@@ -1,0 +1,82 @@
+[
+  {
+    "pair_id": 0,
+    "rust_first": false
+  },
+  {
+    "pair_id": 1,
+    "rust_first": true
+  },
+  {
+    "pair_id": 2,
+    "rust_first": false
+  },
+  {
+    "pair_id": 3,
+    "rust_first": false
+  },
+  {
+    "pair_id": 4,
+    "rust_first": true
+  },
+  {
+    "pair_id": 5,
+    "rust_first": false
+  },
+  {
+    "pair_id": 6,
+    "rust_first": true
+  },
+  {
+    "pair_id": 7,
+    "rust_first": false
+  },
+  {
+    "pair_id": 8,
+    "rust_first": false
+  },
+  {
+    "pair_id": 9,
+    "rust_first": true
+  },
+  {
+    "pair_id": 10,
+    "rust_first": true
+  },
+  {
+    "pair_id": 11,
+    "rust_first": false
+  },
+  {
+    "pair_id": 12,
+    "rust_first": false
+  },
+  {
+    "pair_id": 13,
+    "rust_first": true
+  },
+  {
+    "pair_id": 14,
+    "rust_first": true
+  },
+  {
+    "pair_id": 15,
+    "rust_first": false
+  },
+  {
+    "pair_id": 16,
+    "rust_first": false
+  },
+  {
+    "pair_id": 17,
+    "rust_first": false
+  },
+  {
+    "pair_id": 18,
+    "rust_first": true
+  },
+  {
+    "pair_id": 19,
+    "rust_first": true
+  }
+]

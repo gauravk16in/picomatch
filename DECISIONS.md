@@ -74,3 +74,59 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 - **Evidence**: `lib/scan.js` L26-L30, L356-L361, L375; D-014 (non-finite transport); `Rust/fixtures/canon.js` `encOptions`.
 - **Rejected**: `u32` depth with a sentinel — rejected because it loses the `Infinity` observable and breaks JSON transport parity.
 - **Links**: D-013, D-014; `crates/pmx-core/src/scan.rs`; `Rust/fixtures/canon-scan.js`.
+
+---
+
+### D-018 — Benchmark remediation: replacement after PR #5/PR #6
+
+- **Status:** Accepted (2026-08-02, Teammate 2 Chunk 4 remediation)
+- **Context:** PR #5 was independently reviewed and found to have 5 blocking defects: asymmetric checksum overhead (BigInt vs u64), false parity validation, invalid self-referential SHA-256, artifacts not bound to reviewed source, and violated statistical independence (flattened bootstrap). PR #6 reverted PR #5.
+- **Decision:** Complete independent replacement benchmark system designed from scratch. No code or evidence from PR #5 reused.
+- **Evidence:** PR #5 review at https://github.com/gauravk16in/picomatch/pull/5#pullrequestreview-4839150197; PR #6 revert commit `b19e762`.
+- **Rejected:** Patching PR #5 code — rejected because the defects were structural, not line-level.
+
+---
+
+### D-019 — Process-pair experimental unit for benchmarks
+
+- **Status:** Accepted (2026-08-02)
+- **Context:** PR #5 flattened JS samples from 3 process runs into one pool and bootstrapped at individual-sample level, violating independence. Rust ran only 1 process.
+- **Decision:** Both runtimes use equal fresh-process repetition. 20 process pairs, each with one fresh JS worker and one fresh Rust worker. Execution order deterministically randomized using seeded mulberry32 PRNG. Per-pair median ns/op is the process-level estimate. Log ratios bootstrapped at the process-pair level (cluster bootstrap).
+- **Evidence:** Research confirms cluster bootstrap is correct for correlated within-process data (https://en.wikipedia.org/wiki/Bootstrapping_(statistics)#Block_bootstrap).
+- **Rejected:** Flattened individual-level bootstrap — rejected because it underestimates variance and produces anti-conservative CIs.
+
+---
+
+### D-020 — Semantic parity gate outside timing
+
+- **Status:** Accepted (2026-08-02)
+- **Context:** PR #5 claimed "checksum parity" but never actually compared JS and Rust checksums. A checksum may bind an artifact but must not substitute for direct semantic equality.
+- **Decision:** Before any timing, each scenario is run through both runtimes and states compared using `assert.deepStrictEqual` via `fixtures/integrated-harness-core.js`. Aborts on mismatch. The parity result is recorded in the raw artifact.
+- **Rejected:** Checksum-based parity — rejected because checksums are incomparable across runtimes with different string encodings.
+
+---
+
+### D-021 — Honest operation definition: scanner plus result consumption
+
+- **Status:** Accepted (2026-08-02)
+- **Context:** PR #5 timed "scanner + BigInt checksum" for JS and "scanner + u64 checksum" for Rust, calling it pure scanner time.
+- **Decision:** The timed region honestly measures "scanner plus canonical result consumption". Both runtimes use the same u32 FNV-1a digest algorithm with native arithmetic (no BigInt). Rust uses `std::hint::black_box` for anti-optimization. The operation is named honestly in documentation.
+- **Rejected:** Pure scanner time claim — rejected because the digest is inside the timed region.
+
+---
+
+### D-022 — Two-commit provenance and sidecar integrity
+
+- **Status:** Accepted (2026-08-02)
+- **Context:** PR #5 computed summary SHA-256 before adding hash fields, then rewrote the file, making the hash invalid. Artifacts recorded the base SHA, not the PR head.
+- **Decision:** Two-commit workflow: H (harness/source) then E (evidence/publication). Sidecar SHA-256 files (not self-referential). The benchmark refuses to run unless HEAD matches the declared harness SHA and the tree is clean.
+- **Rejected:** Self-referential hash — rejected because the hash changes when added to the file.
+
+---
+
+### D-023 — Fail-closed shared validation
+
+- **Status:** Accepted (2026-08-02)
+- **Context:** PR #5's canaries copied validation logic instead of importing it, making them tautological. The validator never compared checksums.
+- **Decision:** One exported production validator (`benchmarks/validator.js`) used by the benchmark runner, analyzer, verifier, and all canaries. Canaries apply mutations to valid fixtures and require expected error codes. 31 canaries, all import the real validator.
+- **Rejected:** Copied validation in canaries — rejected because it cannot detect breakage in the production validator.
