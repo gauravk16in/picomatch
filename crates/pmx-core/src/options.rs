@@ -204,6 +204,28 @@ impl Options {
         self.nobrace == Some(true)
     }
 
+    // ---------- C6 accessors ----------
+
+    /// parse.js:L815 — `opts.nobracket === true`.
+    pub fn nobracket(&self) -> bool {
+        self.nobracket == Some(true)
+    }
+
+    /// parse.js:L719 — `opts.posix !== false` (true unless explicitly false).
+    pub fn posix_not_false(&self) -> bool {
+        self.posix != Some(false)
+    }
+
+    /// parse.js:L751 — `opts.posix === true`.
+    pub fn posix_true(&self) -> bool {
+        self.posix == Some(true)
+    }
+
+    /// parse.js:L854/L865 — 3-way `literalBrackets` option (`Some(true)`, `Some(false)`, `None`).
+    pub fn literal_brackets(&self) -> Option<bool> {
+        self.literal_brackets
+    }
+
     // ---------- builder (tests + adapters; one knob per field) ----------
 
     pub fn with_windows(mut self, v: bool) -> Self {
@@ -232,6 +254,18 @@ impl Options {
     }
     pub fn with_nobrace(mut self, v: bool) -> Self {
         self.nobrace = Some(v);
+        self
+    }
+    pub fn with_nobracket(mut self, v: bool) -> Self {
+        self.nobracket = Some(v);
+        self
+    }
+    pub fn with_literal_brackets(mut self, v: bool) -> Self {
+        self.literal_brackets = Some(v);
+        self
+    }
+    pub fn with_posix(mut self, v: bool) -> Self {
+        self.posix = Some(v);
         self
     }
     pub fn with_strict_brackets(mut self, v: bool) -> Self {

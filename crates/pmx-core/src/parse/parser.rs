@@ -70,6 +70,7 @@ impl Parser {
             output: Some(opts.prepend().encode_utf16().collect()),
             suffix: None,
             prev: 0,
+            posix: false,
         };
         tokens.push(bos);
 
@@ -232,18 +233,7 @@ impl Parser {
     /// Recovery ("unbalanced constructs"), then `maybe_slash`, then the
     /// backtrack rebuild. Mirrors the source order exactly.
     pub(crate) fn finish(mut self) -> Result<ParseState, PmxError> {
-        // L1308-L1319 — rebuild from the token journal when dirty
-        if self.state.backtrack {
-            self.state.output.clear();
-            for token in &self.state.tokens {
-                let piece = token.output.as_deref().unwrap_or(&token.value);
-                self.state.output.extend_from_slice(piece);
-                if let Some(suffix) = &token.suffix {
-                    self.state.output.extend_from_slice(suffix);
-                }
-            }
-        }
-
+        // L1286-L1302 — recovery
         self.recovery()?;
 
         // L1304-L1306 — maybe_slash
@@ -257,6 +247,18 @@ impl Parser {
             utils::extend_units(&mut output, self.platform.slash_literal);
             output.push(b'?' as u16);
             self.push(Token::units(TokenKind::MaybeSlash, &[], Some(output)));
+        }
+
+        // L1308-L1319 — rebuild from the token journal when dirty
+        if self.state.backtrack {
+            self.state.output.clear();
+            for token in &self.state.tokens {
+                let piece = token.output.as_deref().unwrap_or(&token.value);
+                self.state.output.extend_from_slice(piece);
+                if let Some(suffix) = &token.suffix {
+                    self.state.output.extend_from_slice(suffix);
+                }
+            }
         }
 
         Ok(self.state)

@@ -46,8 +46,8 @@ pub fn parse(input: &str, options: &Options) -> Result<ParseState, PmxError> {
         return Ok(parser.state);
     }
 
-    // C1: main loop (NUL / escapes / quotes / text)
-    parser.main_loop();
+    // C1: main loop (NUL / escapes / quotes / text / C6 brackets)
+    parser.main_loop()?;
 
     // C0: recovery → maybe_slash → rebuild
     parser.finish()

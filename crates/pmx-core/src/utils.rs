@@ -24,11 +24,17 @@ pub(crate) fn extend_units(buf: &mut Vec<u16>, s: &str) {
 /// UTF-16 unit, possibly a lone surrogate half) at a time; the &str-shaped
 /// wrapper lands when a later chunk needs it (C6).
 pub(crate) fn push_escape_regex_unit(buf: &mut Vec<u16>, u: u16) {
-    static SET: &[u8] = b"-*+?.^${}()|[]\\";
+    static SET: &[u8] = b"-*+?.^${}()|[]";
     if u < 0x80 && SET.contains(&(u as u8)) {
         buf.push(b'\\' as u16);
     }
     buf.push(u);
+}
+
+/// constants.js:L99 — `REGEX_SPECIAL_CHARS = /[-*+?.^${}(|)[\]]/`
+pub(crate) fn has_regex_chars(units: &[u16]) -> bool {
+    static SET: &[u8] = b"-*+?.^${}()|[]";
+    units.iter().any(|&u| u < 0x80 && SET.contains(&(u as u8)))
 }
 
 /// utils.js:L52-L61 — `wrapOutput(input, state, options)`.
@@ -137,4 +143,3 @@ pub(crate) fn escape_regex(units: &[u16]) -> Vec<u16> {
     }
     out
 }
-

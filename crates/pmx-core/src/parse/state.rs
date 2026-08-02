@@ -65,6 +65,7 @@ pub struct Token {
     pub output: Option<Vec<u16>>,
     pub suffix: Option<Vec<u16>>, // honored only by the backtrack rebuild (L1315-L1317)
     pub prev: usize,
+    pub posix: bool,
 }
 
 impl Token {
@@ -75,6 +76,7 @@ impl Token {
             output,
             suffix: None,
             prev: 0,
+            posix: false,
         }
     }
 
@@ -85,6 +87,7 @@ impl Token {
             output,
             suffix: None,
             prev: 0,
+            posix: false,
         }
     }
 

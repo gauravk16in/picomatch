@@ -6,6 +6,8 @@
 
 use super::parser::{BraceFrame, CounterKind, Parser};
 use super::state::{Token, TokenKind};
+use crate::constants;
+use crate::error::PmxError;
 use crate::options::Options;
 use crate::utils;
 
@@ -28,6 +30,12 @@ const COMMA: u16 = b',' as u16;
 const LPAREN: u16 = b'(' as u16;
 const RPAREN: u16 = b')' as u16;
 const PIPE: u16 = b'|' as u16;
+
+const LBRACK: u16 = b'[' as u16;
+const RBRACK: u16 = b']' as u16;
+const COLON: u16 = b':' as u16;
+const MINUS: u16 = b'-' as u16;
+const EXCLAMATION: u16 = b'!' as u16;
 
 /// REGEX_NON_SPECIAL_CHARS set (constants.js:L98): chars that STOP a literal
 /// run — `@ ! [ \ ] . , $ * + ? ^ { } ( ) | \ /`
@@ -55,7 +63,7 @@ fn is_special(u: u16) -> bool {
 impl Parser {
     /// The while(!eos()) dispatch loop — C1 links only. Runs after the inline
     /// fastpath has declined (mod.rs ordering), before finish().
-    pub(crate) fn main_loop(&mut self) {
+    pub(crate) fn main_loop(&mut self) -> Result<(), PmxError> {
         while !self.eos() {
             // L662 — one unit per iteration
             let Some(value) = self.advance() else {
@@ -69,11 +77,23 @@ impl Parser {
 
             // L672-L711 — escape handling
             if value == BS {
-                self.escape_branch();
+                self.escape_branch()?;
                 continue;
             }
 
-            // (C6 bracket accumulation would sit here — L718)
+            // L718-L758 — in-class character accumulation & POSIX expansion
+            if self.state.brackets > 0 {
+                let is_close_bracket = value == RBRACK;
+                let prev_val_is_open = self
+                    .state
+                    .tokens
+                    .get(self.prev)
+                    .is_some_and(|t| t.value == [LBRACK] || t.value == [LBRACK, CARET]);
+                if !is_close_bracket || prev_val_is_open {
+                    self.bracket_accumulation_branch(value)?;
+                    continue;
+                }
+            }
 
             // L765-L770 — inside a quoted section: per-char escapeRegex into prev
             if self.state.quotes == 1 && value != DQ {
@@ -92,6 +112,18 @@ impl Parser {
                 if self.opts.keep_quotes() {
                     self.push(Token::units(TokenKind::Text, &[DQ], None));
                 }
+                continue;
+            }
+
+            // L814-L827 — open bracket branch
+            if value == LBRACK {
+                self.open_bracket_branch()?;
+                continue;
+            }
+
+            // L829-L875 — close bracket branch
+            if value == RBRACK {
+                self.close_bracket_branch()?;
                 continue;
             }
 
@@ -149,6 +181,184 @@ impl Parser {
                 continue;
             }
         }
+        Ok(())
+    }
+
+    /// L718-L758 — in-class character accumulation and POSIX class expansion
+    fn bracket_accumulation_branch(&mut self, mut value: u16) -> Result<(), PmxError> {
+        if self.opts.posix_not_false() && value == COLON {
+            let prev_tok = &mut self.state.tokens[self.prev];
+            if prev_tok.value.len() > 1 && prev_tok.value[1..].contains(&LBRACK) {
+                prev_tok.posix = true;
+                if prev_tok.value[1..].contains(&COLON) {
+                    if let Some(idx) = prev_tok.value.iter().rposition(|&u| u == LBRACK) {
+                        let pre = prev_tok.value[..idx].to_vec();
+                        let rest_units = if idx + 2 <= prev_tok.value.len() {
+                            &prev_tok.value[idx + 2..]
+                        } else {
+                            &[]
+                        };
+                        let rest_bytes: Vec<u8> = rest_units.iter().map(|&u| u as u8).collect();
+                        if let Ok(rest_str) = std::str::from_utf8(&rest_bytes) {
+                            if let Some(posix_src) = constants::posix_regex_source(rest_str) {
+                                let mut new_val = pre;
+                                new_val.extend(posix_src.encode_utf16());
+                                self.state.tokens[self.prev].value = new_val;
+                                self.state.backtrack = true;
+                                self.advance(); // skip closing ':'
+
+                                let is_second_token = self.prev == 1;
+                                let bos_has_no_output = self
+                                    .state
+                                    .tokens
+                                    .first()
+                                    .and_then(|t| t.output.as_ref())
+                                    .is_none_or(|o| o.is_empty());
+                                if bos_has_no_output && is_second_token {
+                                    let chars = constants::glob_chars(self.opts.windows());
+                                    let one_char: Vec<u16> =
+                                        chars.one_char.encode_utf16().collect();
+                                    if let Some(bos) = self.state.tokens.first_mut() {
+                                        bos.output = Some(one_char);
+                                    }
+                                }
+                                return Ok(());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        let mut val_units = Vec::new();
+        let prev_val = &self.state.tokens[self.prev].value;
+        let prev_is_open = prev_val == &[LBRACK] || prev_val == &[LBRACK, CARET];
+
+        if (value == LBRACK && self.peek(1) != Some(COLON))
+            || (value == MINUS && self.peek(1) == Some(RBRACK))
+        {
+            val_units.push(BS);
+        }
+        if value == RBRACK && prev_is_open {
+            val_units.push(BS);
+        }
+        if self.opts.posix_true() && value == EXCLAMATION && prev_val == &[LBRACK] {
+            value = CARET;
+        }
+        val_units.push(value);
+
+        let prev_tok = &mut self.state.tokens[self.prev];
+        prev_tok.value.extend_from_slice(&val_units);
+        self.append_parts(&val_units, None);
+        Ok(())
+    }
+
+    /// L814-L827 — open bracket branch
+    fn open_bracket_branch(&mut self) -> Result<(), PmxError> {
+        let mut val_units = vec![LBRACK];
+        if self.opts.nobracket() || !self.remaining().contains(&RBRACK) {
+            if !self.opts.nobracket() && self.opts.strict_brackets() {
+                return Err(PmxError::MissingClosing { c: ']' });
+            }
+            val_units = vec![BS, LBRACK];
+        } else {
+            self.increment(CounterKind::Brackets);
+        }
+
+        self.push(Token::units(TokenKind::Bracket, &val_units, None));
+        Ok(())
+    }
+
+    /// L829-L875 — close bracket branch
+    fn close_bracket_branch(&mut self) -> Result<(), PmxError> {
+        let prev_tok = self.state.tokens.get(self.prev);
+        let prev_is_bracket_single =
+            prev_tok.is_some_and(|t| t.kind == TokenKind::Bracket && t.value.len() == 1);
+
+        if self.opts.nobracket() || prev_is_bracket_single {
+            self.push(Token::units(
+                TokenKind::Text,
+                &[RBRACK],
+                Some(vec![BS, RBRACK]),
+            ));
+            return Ok(());
+        }
+
+        if self.state.brackets == 0 {
+            if self.opts.strict_brackets() {
+                return Err(PmxError::MissingOpening { c: '[' });
+            }
+            self.push(Token::units(
+                TokenKind::Text,
+                &[RBRACK],
+                Some(vec![BS, RBRACK]),
+            ));
+            return Ok(());
+        }
+
+        self.decrement(CounterKind::Brackets);
+
+        let prev_tok = &self.state.tokens[self.prev];
+        let prev_val = &prev_tok.value;
+        let prev_val_sliced = if prev_val.len() > 1 {
+            &prev_val[1..]
+        } else {
+            &[]
+        };
+        let prev_posix = prev_tok.posix;
+
+        let mut append_val = vec![RBRACK];
+        if !prev_posix
+            && prev_val_sliced.starts_with(&[CARET])
+            && !prev_val_sliced.contains(&FSLASH)
+        {
+            append_val = vec![FSLASH, RBRACK];
+        }
+
+        self.state.tokens[self.prev]
+            .value
+            .extend_from_slice(&append_val);
+        self.append_parts(&append_val, None);
+
+        let prev_tok = &self.state.tokens[self.prev];
+        let prev_val_sliced = if prev_tok.value.len() > append_val.len() {
+            &prev_tok.value[1..prev_tok.value.len() - append_val.len()]
+        } else {
+            &[]
+        };
+
+        if self.opts.literal_brackets() == Some(false) || utils::has_regex_chars(prev_val_sliced) {
+            return Ok(());
+        }
+
+        let escaped = utils::escape_regex(&prev_tok.value);
+        let prev_len = prev_tok.value.len();
+        if self.state.output.len() >= prev_len {
+            self.state
+                .output
+                .truncate(self.state.output.len() - prev_len);
+        }
+
+        if self.opts.literal_brackets() == Some(true) {
+            self.state.output.extend_from_slice(&escaped);
+            self.state.tokens[self.prev].value = escaped;
+            return Ok(());
+        }
+
+        // 3-way alternation default (literalBrackets unset)
+        let capture = if self.opts.capture() { "" } else { "?:" };
+        let mut alt_val = Vec::new();
+        alt_val.push(LPAREN);
+        utils::extend_units(&mut alt_val, capture);
+        alt_val.extend_from_slice(&escaped);
+        alt_val.push(PIPE);
+        alt_val.extend_from_slice(&self.state.tokens[self.prev].value);
+        alt_val.push(RPAREN);
+
+        self.state.tokens[self.prev].value = alt_val.clone();
+        self.state.output.extend_from_slice(&alt_val);
+
+        Ok(())
     }
 
     /// L881-L895 — brace open branch
@@ -272,7 +482,10 @@ impl Parser {
                     prev_tok.output = Some(dot_lit);
                 }
                 prev_tok.kind = TokenKind::Dots;
-                let mut out = prev_tok.output.take().unwrap_or_else(|| prev_tok.value.clone());
+                let mut out = prev_tok
+                    .output
+                    .take()
+                    .unwrap_or_else(|| prev_tok.value.clone());
                 out.push(DOT);
                 prev_tok.output = Some(out);
                 prev_tok.value.push(DOT);
@@ -299,23 +512,28 @@ impl Parser {
     }
 
     /// L672-L711. Backslash already consumed when this is called.
-    fn escape_branch(&mut self) {
+    fn escape_branch(&mut self) -> Result<(), PmxError> {
         let next = self.peek(1);
 
         // L675 — `\/` dropped unless bash
         if next == Some(FSLASH) && !self.opts.bash() {
-            return;
+            return Ok(());
         }
 
         // L679 — `\.` and `\;` dropped unconditionally
         if next == Some(DOT) || next == Some(SEMI) {
-            return;
+            return Ok(());
         }
 
         // L683-L687 — trailing backslash: double it into raw text
         if next.is_none() {
-            self.push(Token::units(TokenKind::Text, &[BS, BS], None));
-            return;
+            let val = vec![BS, BS];
+            if self.state.brackets == 0 {
+                self.push(Token::units(TokenKind::Text, &val, None));
+            } else {
+                self.bracket_accumulation_units(&val)?;
+            }
+            return Ok(());
         }
 
         // L689-L699 — collapse backslash RUNS > 2: skip the run, keep one
@@ -337,14 +555,27 @@ impl Parser {
         if let Some(c) = escaped_char {
             value.push(c);
         }
-        // (JS past-end: advance() => '' — appending nothing is equivalent)
 
         // L707-L710 — pushed as text ONLY outside a character class
         if self.state.brackets == 0 {
             self.push(Token::units(TokenKind::Text, &value, None));
+        } else {
+            self.bracket_accumulation_units(&value)?;
         }
-        // C6 (L718): bracket accumulation receives `value` here. Unreachable
-        // today — no C1 branch can increment `brackets`.
+        Ok(())
+    }
+
+    fn bracket_accumulation_units(&mut self, units: &[u16]) -> Result<(), PmxError> {
+        if units.is_empty() {
+            return Ok(());
+        }
+        if units.len() == 1 {
+            return self.bracket_accumulation_branch(units[0]);
+        }
+        let prev_tok = &mut self.state.tokens[self.prev];
+        prev_tok.value.extend_from_slice(units);
+        self.append_parts(units, None);
+        Ok(())
     }
 
     /// L1109-L1122 — $ and ^ escaped, then greedy literal-run coalescing.
@@ -527,10 +758,7 @@ fn count_run(units: &[u16], u: u16) -> usize {
 /// Helper: parse.js:L22-L38 — `expandRange(args, options)`
 pub(crate) fn expand_range(args: &[Vec<u16>], options: &Options) -> Vec<u16> {
     if let Some(ref expand_fn) = options.expand_range {
-        let args_str: Vec<String> = args
-            .iter()
-            .map(|u| String::from_utf16_lossy(u))
-            .collect();
+        let args_str: Vec<String> = args.iter().map(|u| String::from_utf16_lossy(u)).collect();
         let res_str = expand_fn(&args_str, options);
         return res_str.encode_utf16().collect();
     }
@@ -670,17 +898,30 @@ mod tests {
 
         // Single brace without comma/dots -> literal escape
         let res_lit = parse("{abc}", &opts).unwrap();
-        assert_eq!(res_lit.output, "\\{abc\\}".encode_utf16().collect::<Vec<_>>());
+        assert_eq!(
+            res_lit.output,
+            "\\{abc\\}".encode_utf16().collect::<Vec<_>>()
+        );
 
         // nobrace option
         let res_nobrace = parse("{a,b}", &opts.clone().with_nobrace(true)).unwrap();
-        assert_eq!(res_nobrace.output, "{a,b}".encode_utf16().collect::<Vec<_>>());
+        assert_eq!(
+            res_nobrace.output,
+            "{a,b}".encode_utf16().collect::<Vec<_>>()
+        );
 
         // custom expand_range
-        let res_custom = parse("{1..100}", &opts.clone().with_expand_range(|args, _| {
-            format!("({},{})", args[0], args[1])
-        })).unwrap();
-        assert_eq!(res_custom.output, "(1,100)".encode_utf16().collect::<Vec<_>>());
+        let res_custom = parse(
+            "{1..100}",
+            &opts
+                .clone()
+                .with_expand_range(|args, _| format!("({},{})", args[0], args[1])),
+        )
+        .unwrap();
+        assert_eq!(
+            res_custom.output,
+            "(1,100)".encode_utf16().collect::<Vec<_>>()
+        );
     }
 
     #[test]
@@ -691,9 +932,9 @@ mod tests {
         let res1 = parse("{abc", &opts).unwrap();
         assert_eq!(res1.output, "\\(abc".encode_utf16().collect::<Vec<_>>());
 
-        // Unclosed brace with range inside (triggers backtrack + recovery): should emit \([a-z]
+        // Unclosed brace with range inside (triggers backtrack + recovery): should emit ([a-z]
         let res2 = parse("{{a..z}", &opts).unwrap();
-        assert_eq!(res2.output, "\\([a-z]".encode_utf16().collect::<Vec<_>>());
+        assert_eq!(res2.output, "([a-z]".encode_utf16().collect::<Vec<_>>());
     }
 
     #[test]
@@ -710,5 +951,35 @@ mod tests {
             res2.output,
             "PFXsrc\\/[a-z]\\.js".encode_utf16().collect::<Vec<_>>()
         );
+    }
+
+    #[test]
+    fn test_brackets_and_posix_classes() {
+        let opts = Options::default().with_fastpaths(false);
+
+        // nobracket option
+        let res_nobracket = parse("[abc]", &opts.clone().with_nobracket(true)).unwrap();
+        assert_eq!(
+            res_nobracket.output,
+            "\\[abc\\]".encode_utf16().collect::<Vec<_>>()
+        );
+
+        // literalBrackets = true (last token is Bracket, maybe_slash appends \/?)
+        let res_lit_true = parse("[abc]", &opts.clone().with_literal_brackets(true)).unwrap();
+        assert_eq!(
+            res_lit_true.output,
+            "\\[abc\\]\\/?".encode_utf16().collect::<Vec<_>>()
+        );
+
+        // literalBrackets = false (last token is Bracket, maybe_slash appends \/?)
+        let res_lit_false = parse("[abc]", &opts.clone().with_literal_brackets(false)).unwrap();
+        assert_eq!(
+            res_lit_false.output,
+            "[abc]\\/?".encode_utf16().collect::<Vec<_>>()
+        );
+
+        // POSIX class [[:alnum:]]
+        let res_posix = parse("[[:alnum:]]", &opts).unwrap();
+        assert!(!res_posix.output.is_empty());
     }
 }

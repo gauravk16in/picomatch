@@ -163,7 +163,7 @@ pub fn posix_regex_source(name: &str) -> Option<&'static str> {
         "lower" => "a-z",
         "print" => r"\x20-\x7E ",
         "punct" => r##"\-!"#$%&'()\*+,./:;<=>?@[\]^_`{|}~"##,
-        "space" => " \\t\\r\\n\\v\\f",
+        "space" => r" \t\r\n\v\f",
         "upper" => "A-Z",
         "word" => "A-Za-z0-9_",
         "xdigit" => "A-Fa-f0-9",

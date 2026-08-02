@@ -55,6 +55,15 @@ fn opts_of(v: &Value) -> Options {
     if let Some(x) = b("noglobstar") {
         o = o.with_noglobstar(x);
     }
+    if let Some(x) = b("nobracket") {
+        o = o.with_nobracket(x);
+    }
+    if let Some(x) = b("literalBrackets") {
+        o = o.with_literal_brackets(x);
+    }
+    if let Some(x) = b("posix") {
+        o = o.with_posix(x);
+    }
     if let Some(s) = v.get("prepend").and_then(|x| x.as_str()) {
         o = o.with_prepend(s);
     }
