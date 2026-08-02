@@ -37,16 +37,4 @@ Rust port of `micromatch/picomatch` v4.0.5, bug-for-bug (parity includes upstrea
 
 ## Current status
 
-C0 (foundation) and C1 (inline fastpath + NUL/escapes/quotes/text) done and accepted (`reviews/c0-1.md` rejected once, `c0-2.md` accepted). C2 (slash + dot segment semantics) merged via PR #1.
-
-**Teammate 2 work — complete:**
-- **Chunk 1** (PR #2, merged): constants + utilities — all constants and utils ported and oracle-pinned.
-- **Chunk 2** (PR #3, merged): scanner — `scan()`/`scan_utf16()` API, `ScanOptions`/`ScanState`/`ScanToken` types, `scanprobe` example, `scan-bridge.js` unchanged-test bridge, `scan_oracle.json` corpus (3,072 cases), `attack-scan.js` differential (0 divergences). Unchanged `Main/test/api.scan.js` passes 40/40 against Rust.
-- **Chunk 3** (PR #4, merged): integrated differential validation — unified runner (15 steps), 19 fail-closed harness canaries, 3,969-comparison integration attack set, `prevIndex=0` bug fix. Aggregate: 12,723 comparisons, 0 divergences.
-- **Chunk 4** (this branch): benchmarks + final evidence — reproducible scanner performance suite (20 scenarios), 14 benchmark canaries, core vs bridge overhead separation, `BENCHMARKS.md`, `JUDGING_EVIDENCE.md`, this audit. Rust scanner 2.01×–7.10× faster than JS (median 3.32×) in-process.
-
-Next per PARSE_CHUNKS.md: **C3 (single wildcards `?` and `*` with BOS/dot guards)** — other teammates' work. Before changing behavior of `*`, quotes, or dot-merge: read the staging notes in `src/parse/main_loop.rs` and the corpus rows they explain.
-
-### Post-merge correction (Chunk 4, 2026-08-02)
-
-The previous version of this section stated the scanner PR was "pending" and listed C3 as next. That was stale as of PR #3 merge (2026-08-02T12:23Z). The scanner, integrated differential validation, and benchmarks are now all complete and merged (PRs #3, #4). This correction preserves the historical baseline; no prior results were altered.
+C0 (foundation) and C1 (inline fastpath + NUL/escapes/quotes/text) done and accepted (`reviews/c0-1.md` rejected once, `c0-2.md` accepted). C2 (slash + dot segment semantics) merged via PR #1. **Scanner (`lib/scan.js` → `src/scan.rs`) complete (Teammate 2 Chunk 2, PR pending)** — `scan()`/`scan_utf16()` API, `ScanOptions`/`ScanState`/`ScanToken` types, `scanprobe` example, `scan-bridge.js` unchanged-test bridge, `scan_oracle.json` corpus (3072 cases), `attack-scan.js` differential (0 divergences). Unchanged `Main/test/api.scan.js` passes 40/40 against Rust. Next per PARSE_CHUNKS.md: **C3 (single wildcards `?` and `*` with BOS/dot guards)**. Before changing behavior of `*`, quotes, or dot-merge: read the staging notes in `src/parse/main_loop.rs` and the corpus rows they explain.

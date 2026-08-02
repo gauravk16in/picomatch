@@ -8,9 +8,7 @@
 
 **CHUNK 3 COMPLETE — INTEGRATED DIFFERENTIAL VALIDATION LAYER ESTABLISHED; SCANNER `//` PARTS BUG FOUND AND FIXED; ALL GATES GREEN.**
 
-Every invoked required test has zero failures: Main original suite 1977/1977 (lint+mocha), Rust fmt/clippy/test clean (50 unit + 2 integration), unchanged `Main/test/api.scan.js` 40/40 passing against Rust, scanner corpus 3072/3072 deterministic, integration attack set 3969 comparisons / 0 divergences / 0 process failures, harness canary 19/19 passing (see correction note below), all C0/C1/C2 regression gates green.
-
-> **Post-merge correction (Chunk 4, 2026-08-02):** The original text of this section said "harness canary 16/16 passing." That count was from the initial implementation before post-review fixes. The post-review fix (commit `6ec20f5`) increased the canary count to 19 (adding fail-closed meta-test and shared harness core canaries). The correct final count is 19/19. Similarly, §2 listed the post-review head as "(recorded after commit)" — the correct SHA is `33a034fdee8c100d07dddafe4a33c7297c3cfcbb`. §6 listed "16 canaries" and omitted `integrated-harness-core.js` from the files-changed list — both corrected below. No historical baseline results were altered.
+Every invoked required test has zero failures: Main original suite 1977/1977 (lint+mocha), Rust fmt/clippy/test clean (50 unit + 2 integration), unchanged `Main/test/api.scan.js` 40/40 passing against Rust, scanner corpus 3072/3072 deterministic, integration attack set 3969 comparisons / 0 divergences / 0 process failures, harness canary 16/16 passing, all C0/C1/C2 regression gates green.
 
 A real scanner bug was found by the integration attack set: the `prevIndex=0` falsy quirk in parts assembly (JS L354 `const n = prevIndex ? prevIndex + 1 : start;`) was incorrectly ported as `Some(0) => 0 + 1 = 1` instead of `start`. This produced wrong `parts` and `tokens` for inputs like `//` with `parts:true` or `tokens:true`. The same class of bug was previously fixed for the trailing-part check (L373) but missed in the `n` computation. Fixed with the smallest semantics-preserving change and a regression test.
 
