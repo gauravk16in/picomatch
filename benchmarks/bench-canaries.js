@@ -132,6 +132,8 @@ register('wrong-execution-order', (raw) => { const tmp = raw.measurements[1]; ra
 register('schedule-measurement-contradiction', (raw) => { raw.measurements[1].rust_first = false; }, ErrorCodes.WRONG_EXECUTION_ORDER);
 register('wrong-schedule', (raw) => { raw.provenance.schedule[1].rust_first = false; raw.measurements[1].rust_first = false; }, ErrorCodes.WRONG_SCHEDULE);
 register('wrong-mode', (raw) => { raw.config.mode = 'pilot'; }, ErrorCodes.WRONG_MODE);
+register('wrong-mode-bogus', (raw) => { raw.config.mode = 'bogus'; }, ErrorCodes.WRONG_MODE);
+register('full-is-not-final', (raw) => { raw.config.mode = 'full'; }, ErrorCodes.WRONG_MODE);
 register('missing-binary-hashes', (raw) => { delete raw.provenance.scanbench_sha256; }, ErrorCodes.MISSING_PROVENANCE);
 register('config-mismatch', (raw) => { raw.config.samples = 10; }, ErrorCodes.CONFIG_MISMATCH);
 register('bootstrap-too-few', (raw) => { raw.config.bootstrap_resamples = 100; }, ErrorCodes.BOOTSTRAP_TOO_FEW);

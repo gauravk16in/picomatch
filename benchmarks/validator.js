@@ -82,8 +82,8 @@ function validateRaw(raw, expected) {
 
   // --- config surface ---
   const cfg = raw.config || {};
-  if (cfg.mode !== 'pilot' && cfg.mode !== 'final') {
-    errors.push({ code: ErrorCodes.WRONG_MODE, message: 'config.mode must be "pilot" or "final", got ' + cfg.mode });
+  if (cfg.mode !== 'pilot' && cfg.mode !== 'full' && cfg.mode !== 'final') {
+    errors.push({ code: ErrorCodes.WRONG_MODE, message: 'config.mode must be "pilot", "full", or "final", got ' + cfg.mode });
   }
   if (expMode && cfg.mode !== expMode) {
     errors.push({ code: ErrorCodes.WRONG_MODE, message: 'expected mode ' + expMode + ', got ' + cfg.mode });

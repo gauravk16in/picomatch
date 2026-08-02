@@ -375,7 +375,15 @@ function main() {
   console.error('  Digest + consumption equality OK (' + digestChecks + ' scenario/pair checks)');
 
   console.error('\n[6] Validating raw results...');
-  const mode = opts.pilot ? 'pilot' : 'final';
+  // Three run modes (PR #9 review): "pilot" (reduced settings), "full"
+  // (complete settings but NO declared harness binding), "final" (complete
+  // settings + --harness-sha declared, clean tree enforced above). Only
+  // "final" is acceptable as final evidence by the verifier; a plain full
+  // run must not be indistinguishable from a bound final run.
+  const mode = opts.pilot ? 'pilot' : (opts.harnessSha ? 'final' : 'full');
+  if (mode === 'full') {
+    console.error('  NOTE: no --harness-sha declared — this run is recorded as mode "full" and is NOT final evidence.');
+  }
   const rawArtifact = {
     schema_version: 2,
     provenance: {

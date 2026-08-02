@@ -9,16 +9,19 @@ Reproducible performance benchmark for the Rust scanner port vs the JavaScript r
 # never accepted as final evidence)
 node benchmarks/run-benchmarks.js --pilot
 
-# Run full benchmark (20 process pairs, ~10 min)
+# Run full benchmark (20 process pairs, ~10 min, complete settings but NO
+# declared harness binding; artifact is marked mode "full" and is NOT
+# accepted as final evidence)
 node benchmarks/run-benchmarks.js
 
-# Run final benchmark from a clean harness commit (required for final evidence)
+# Run final benchmark from a clean harness commit (clean tree enforced;
+# artifact is marked mode "final" — the ONLY mode accepted as final evidence)
 node benchmarks/run-benchmarks.js --harness-sha <H_SHA>
 
 # Run benchmark canaries (validator mutations + CLI canaries + stats fixture)
 node benchmarks/bench-canaries.js
 
-# Verify final artifacts (independent recompute; legacy artifacts are skipped)
+# Verify final artifacts (independent recompute; non-final artifacts are skipped)
 node benchmarks/verify-artifacts.js benchmarks/results
 ```
 
@@ -34,7 +37,7 @@ node benchmarks/verify-artifacts.js benchmarks/results
 
 5. **Statistics** — Per-pair median ns/op per runtime. Log ratios `ln(js/rust)` bootstrapped at the process-pair level (cluster bootstrap; 10,000 resamples; deterministic per-scenario seed), 95% percentile CI with symmetric indices, exponentiated. Implemented once in `benchmarks/stats.js` and used by both the controller and the verifier.
 
-6. **Artifact integrity (schema v2)** — Raw artifact binds: harness commit (HEAD, clean tree required in final mode), corpus SHA-256, schedule + hash, scanbench/scanprobe binary SHA-256, effective Cargo profile + toolchain, environment metadata, and `config.mode` (`pilot` | `final`). Sidecar SHA-256 files (not self-referential). The verifier selects exactly one final set, re-derives expectations, and **independently recomputes every summary row from the raw measurements**. Legacy (v1) artifacts are reported as superseded and never accepted as final evidence.
+6. **Artifact integrity (schema v2)** — Raw artifact binds: harness commit (HEAD; clean tree enforced in final mode), corpus SHA-256, schedule + hash, scanbench/scanprobe binary SHA-256, effective Cargo profile + toolchain, environment metadata, and `config.mode` (`pilot` | `full` | `final` — only `final`, produced with `--harness-sha`, is accepted as final evidence; `full` is a complete but unbound run). Sidecar SHA-256 files (not self-referential). The verifier selects exactly one final set, re-derives expectations, and **independently recomputes every summary row from the raw measurements**. Legacy (v1) and non-final artifacts are reported and never accepted as final evidence.
 
 ## Files
 
@@ -46,6 +49,6 @@ node benchmarks/verify-artifacts.js benchmarks/results
 | `scanbench.rs` | Rust in-process worker (uses `black_box`) |
 | `validator.js` | Shared production validator (fail closed) |
 | `stats.js` | Shared statistics (median/MAD/analyzeScenario) |
-| `bench-canaries.js` | Mutation-tested canary suite (67 canaries) |
+| `bench-canaries.js` | Mutation-tested canary suite (69 canaries) |
 | `prng.js` | Deterministic PRNG (mulberry32) |
 | `verify-artifacts.js` | Standalone final-evidence verifier |

@@ -261,3 +261,12 @@ Committed artifact blobs verified byte-identical to sidecars. Final results (rat
 **COMPLETE — TEAMMATE 2 DELIVERABLES VERIFIED, FIXED, OPTIMIZED, AND EVIDENCE-CLOSED.**
 
 Three BLOCKER semantic divergences (F-01, F-02, F-07) were found by line-by-line oracle comparison, reproduced against the oracle, fixed, and regression-covered; the benchmark operation-equivalence defects (F-04/F-05) were empirically demonstrated in the old committed raw artifact and repaired with a verified-identical digest outside timing plus a minimal symmetric in-loop consumption; the validator/verifier now fail closed and recompute summary from raw; scanner performance improved 18–50% per scenario with allocation evidence; final H2/E2 evidence binds source, binaries, corpus, schedule, and environment; results are honestly mixed (Rust faster 13, JS faster 5, inconclusive 2) with no universal speedup claimed. "Rust faster in all scenarios" was not a completion gate.
+
+## 24. Post-review addendum (2026-08-03, PR #9 automated review)
+
+An automated PR review (Copilot) flagged that `run-benchmarks.js` derived `config.mode` from the pilot flag alone, so a plain full run without `--harness-sha` was emitted as `mode:"final"` — indistinguishable from a bound final-evidence run and conflicting with the verifier's final-set selection (an unbound full run into the same directory would also trip the "exactly one final set" rule).
+
+- **Verification:** confirmed in source and by behavior: the artifact recorded `harness_sha` (HEAD at run time) but not whether `--harness-sha` was declared; two different run types produced identical-looking artifacts. VALID finding ( MEDIUM workflow/integrity gap in the F-12 fix).
+- **Fix (commit after F):** three-mode model — `pilot` (reduced settings), `full` (complete settings, no declared binding), `final` (`--harness-sha` declared, clean tree enforced). The controller records the derived mode and prints a "NOT final evidence" note for full runs; the validator accepts exactly the three values; the verifier selects only `mode:"final"` and reports pilot/full/legacy skips explicitly. Two canaries added (`wrong-mode-bogus`, `full-is-not-final`) → 69/69 green.
+- **Validation:** plain full run now records `mode:"full"` and is rejected as final evidence (exit 1); the E2 final set still verifies (exit 0); pilot runs unchanged.
+- **E2 impact:** none — the E2 artifact was produced with `--harness-sha` and remains `mode:"final"`; the timed operation, workers, statistics, and artifact hashes are untouched by this fix.

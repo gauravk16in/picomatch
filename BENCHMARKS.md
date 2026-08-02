@@ -120,13 +120,18 @@ Sidecar SHA-256 files verify correctly via `node benchmarks/verify-artifacts.js 
 ## Reproduction Commands
 
 ```bash
-# Run canaries (67 validator/CLI/stats mutations)
+# Run canaries (69 validator/CLI/stats mutations)
 node benchmarks/bench-canaries.js
 
 # Run pilot (artifact marked mode "pilot"; never final evidence)
 node benchmarks/run-benchmarks.js --pilot
 
-# Run final benchmark (requires clean tree at the harness commit)
+# Run full benchmark (complete settings, unbound; artifact marked mode
+# "full"; NOT final evidence)
+node benchmarks/run-benchmarks.js
+
+# Run final benchmark (requires clean tree at the harness commit; artifact
+# marked mode "final" — the only mode accepted as final evidence)
 git checkout 14e3128cf458bca684927e76c54499e6bdfa305b  # or a descendant
 node benchmarks/run-benchmarks.js --harness-sha 14e3128cf458bca684927e76c54499e6bdfa305b
 

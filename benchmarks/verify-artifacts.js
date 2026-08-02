@@ -49,13 +49,17 @@ function main() {
   const errors = [];
   const legacy = [];
 
-  // --- classify artifacts: final (v2 + mode "final") vs legacy/superseded ---
+  // --- classify artifacts: final (v2 + mode "final") vs non-final ---
+  // Non-final includes: mode "pilot", mode "full" (complete but unbound),
+  // and legacy schema v1 artifacts (superseded pre-H2 evidence).
   const finals = [];
   for (const f of rawFiles) {
     const raw = JSON.parse(fs.readFileSync(path.join(resultsDir, f), 'utf8'));
     if (raw.schema_version === 2 && raw.config && raw.config.mode === 'final') {
       const base = f.replace(/-raw\.json$/, '');
       finals.push({ base, raw });
+    } else if (raw.schema_version === 2 && raw.config && (raw.config.mode === 'pilot' || raw.config.mode === 'full')) {
+      legacy.push(f + ' (mode "' + raw.config.mode + '" — not final evidence)');
     } else {
       legacy.push(f + ' (schema ' + (raw.schema_version || '?') + ', superseded — not final evidence)');
     }
