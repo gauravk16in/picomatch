@@ -142,9 +142,10 @@ fn set_depth(tok: &mut ScanToken) {
     }
 }
 
-/// The core scanner over UTF-16 code units — exactly mirrors JS `charCodeAt`
-/// indexing (D-016). `input` is the original `&str` (for storing into
-/// `ScanState.input`); `units` is its UTF-16 encoding.
+/// The core scanner over UTF-16 code units, mirroring JavaScript
+/// `charCodeAt` indexing (D-016). The returned state's `input` field is
+/// populated by the higher-level `scan(&str, ...)` wrapper or by the
+/// calling adapter when unit-level input is used.
 pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
     // lib/scan.js L52-L54
     let length = units.len().saturating_sub(1);
@@ -514,6 +515,8 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
             // JS: `base.charCodeAt(base.length - 1)` — last UTF-16 unit.
             let last_unit = base.encode_utf16().last().unwrap_or(0);
             if is_path_separator(last_unit) {
+                // Safe here: the branch runs only when the final UTF-16 unit is ASCII
+                // '/' or '\', so removing one Rust char removes exactly one UTF-16 unit.
                 base.pop();
             }
         }

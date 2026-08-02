@@ -59,7 +59,7 @@ function canonState(s) {
       if (t.isBrace === true) tk.isBrace = true;
       if (t.isBracket === true) tk.isBracket = true;
       if (t.isExtglob === true) tk.isExtglob = true;
-      if (t.isGlobstar === true) tok.isGlobstar = true;
+      if (t.isGlobstar === true) tk.isGlobstar = true;
       if (t.negated === true) tk.negated = true;
       if (t.isPrefix === true) tk.isPrefix = true;
       return tk;
@@ -93,7 +93,7 @@ function decToken(t) {
   if (t.isBrace === true) tok.isBrace = true;
   if (t.isBracket === true) tok.isBracket = true;
   if (t.isExtglob === true) tok.isExtglob = true;
-  if (t.isGlobstar === true) tk.isGlobstar = true;
+  if (t.isGlobstar === true) tok.isGlobstar = true;
   if (t.negated === true) tok.negated = true;
   if (t.isPrefix === true) tok.isPrefix = true;
   return tok;
@@ -153,19 +153,36 @@ function rustScan(input, opts) {
     maxBuffer: 32 * 1024 * 1024,
   });
   if (res.status !== 0) {
-    throw new Error(
+    const err = new Error(
       '[attack-scan] scanprobe exited ' +
         res.status +
         ': ' +
         (res.stderr || '(no stderr)')
     );
+    err.rustProcessFailure = true;
+    throw err;
   }
   const lines = res.stdout.split(/\r?\n/).filter(function (l) {
     return l.trim();
   });
-  if (lines.length === 0) throw new Error('[attack-scan] no output');
-  const row = JSON.parse(lines[lines.length - 1]);
-  if (row.probeError) throw new Error('[attack-scan] probeError ' + row.probeError);
+  if (lines.length === 0) {
+    const err = new Error('[attack-scan] no output');
+    err.rustProcessFailure = true;
+    throw err;
+  }
+  let row;
+  try {
+    row = JSON.parse(lines[lines.length - 1]);
+  } catch (e) {
+    const err = new Error('[attack-scan] malformed JSON: ' + e.message);
+    err.rustProcessFailure = true;
+    throw err;
+  }
+  if (row.probeError) {
+    const err = new Error('[attack-scan] probeError ' + row.probeError);
+    err.rustProcessFailure = true;
+    throw err;
+  }
   return decState(row.state);
 }
 
@@ -210,6 +227,24 @@ let big = '';
 for (let i = 0; i < 1000; i++) big += 'a';
 inputs.push(big);
 
+// --- explicit globstar-token coverage inputs
+// These are deterministic (not random) and specifically target patterns
+// where `**` appears with option combos that request tokens AND scan to
+// end, so the globstar token's isGlobstar is set and the token passes
+// through both canonState and decToken.
+const globstarInputs = [
+  '**',
+  'a/**',
+  'a/**/b',
+  '**/*.js',
+  'foo/**/bar',
+  'a/b/**/*.js',
+  '**/foo',
+  '*/**/*',
+  './foo/**/bar',
+  '!foo/**/*.js',
+];
+
 const optionCombos = [
   {},
   { parts: true },
@@ -219,44 +254,90 @@ const optionCombos = [
   { nonegate: true },
   { noparen: true },
   { unescape: true },
+  // Combined options that force scanToEnd with tokens, so `**` tokens
+  // are actually generated and compared. Without scanToEnd or parts,
+  // scanning stops at the first `*` and the second `*` (globstar) is
+  // never observed.
+  { tokens: true, parts: true },
+  { tokens: true, scanToEnd: true },
+  { parts: true, scanToEnd: true },
+  { tokens: true, parts: true, scanToEnd: true },
 ];
 
 const assert = require('assert');
 let divergences = 0;
 let compared = 0;
-let panics = 0;
+let rustProcessFailures = 0;
+let globstarTokenComparisons = 0;
+
+// Helper: check if a state has at least one token with isGlobstar === true
+function hasGlobstarToken(state) {
+  return (
+    state &&
+    state.tokens &&
+    state.tokens.some(function (t) {
+      return t.isGlobstar === true;
+    })
+  );
+}
+
+// --- main attack loop: random + adversarial inputs × all option combos
 for (const input of inputs) {
   for (const opts of optionCombos) {
     compared++;
-    let jsState, rustState, jsErr, rustErr;
+    let jsState, rustState, jsErr, rustErr, rustProcFail;
     try {
       jsState = canonState(scan(input, opts));
     } catch (e) {
-      jsErr = e.message;
+      jsErr = e;
     }
     try {
       rustState = canonState(rustScan(input, opts));
     } catch (e) {
-      rustErr = e.message;
-    }
-    if (jsErr || rustErr) {
-      if (jsErr !== rustErr) {
-        divergences++;
-        console.error(
-          'DIVERGE (error) input=' +
-            JSON.stringify(input) +
-            ' opts=' +
-            JSON.stringify(opts) +
-            ' js=' +
-            jsErr +
-            ' rust=' +
-            rustErr
-        );
+      if (e.rustProcessFailure) {
+        rustProcFail = e;
+      } else {
+        rustErr = e;
       }
+    }
+
+    // Rust process/probe failures are always divergences
+    if (rustProcFail) {
+      rustProcessFailures++;
+      divergences++;
+      console.error(
+        'RUST PROCESS FAILURE input=' +
+          JSON.stringify(input) +
+          ' opts=' +
+          JSON.stringify(opts) +
+          ' error=' +
+          rustProcFail.message
+      );
       continue;
     }
+
+    // Scanner exceptions are NOT acceptable matches — any throw is a divergence
+    if (jsErr || rustErr) {
+      divergences++;
+      console.error(
+        'DIVERGE (exception) input=' +
+          JSON.stringify(input) +
+          ' opts=' +
+          JSON.stringify(opts) +
+          ' jsErr=' +
+          (jsErr ? jsErr.name + ': ' + jsErr.message : 'none') +
+          ' rustErr=' +
+          (rustErr ? rustErr.name + ': ' + rustErr.message : 'none')
+      );
+      continue;
+    }
+
     try {
       assert.deepStrictEqual(rustState, jsState);
+      // Track globstar-token comparisons for coverage assurance
+      if (hasGlobstarToken(jsState)) {
+        globstarTokenComparisons++;
+      }
     } catch (e) {
       divergences++;
       console.error(
@@ -273,14 +354,98 @@ for (const input of inputs) {
   }
 }
 
+// --- explicit globstar-token coverage loop
+// These deterministic inputs are specifically chosen to produce `**` tokens
+// when combined with scanToEnd/parts/tokens options. This ensures the
+// canonState and decToken isGlobstar paths are actually exercised.
+for (const input of globstarInputs) {
+  for (const opts of optionCombos) {
+    compared++;
+    let jsState, rustState, jsErr, rustErr, rustProcFail;
+    try {
+      jsState = canonState(scan(input, opts));
+    } catch (e) {
+      jsErr = e;
+    }
+    try {
+      rustState = canonState(rustScan(input, opts));
+    } catch (e) {
+      if (e.rustProcessFailure) {
+        rustProcFail = e;
+      } else {
+        rustErr = e;
+      }
+    }
+
+    if (rustProcFail) {
+      rustProcessFailures++;
+      divergences++;
+      console.error(
+        'RUST PROCESS FAILURE (globstar) input=' +
+          JSON.stringify(input) +
+          ' opts=' +
+          JSON.stringify(opts) +
+          ' error=' +
+          rustProcFail.message
+      );
+      continue;
+    }
+
+    if (jsErr || rustErr) {
+      divergences++;
+      console.error(
+        'DIVERGE (exception, globstar) input=' +
+          JSON.stringify(input) +
+          ' opts=' +
+          JSON.stringify(opts) +
+          ' jsErr=' +
+          (jsErr ? jsErr.name + ': ' + jsErr.message : 'none') +
+          ' rustErr=' +
+          (rustErr ? rustErr.name + ': ' + rustErr.message : 'none')
+      );
+      continue;
+    }
+
+    try {
+      assert.deepStrictEqual(rustState, jsState);
+      if (hasGlobstarToken(jsState)) {
+        globstarTokenComparisons++;
+      }
+    } catch (e) {
+      divergences++;
+      console.error(
+        'DIVERGE (state, globstar) input=' +
+          JSON.stringify(input) +
+          ' opts=' +
+          JSON.stringify(opts) +
+          '\n  js=' +
+          JSON.stringify(jsState) +
+          '\n  rust=' +
+          JSON.stringify(rustState)
+      );
+    }
+  }
+}
+
+// --- coverage assertion: globstar tokens must be actually compared
+if (globstarTokenComparisons === 0) {
+  console.error(
+    'COVERAGE FAILURE: no globstar-token comparisons executed — ' +
+      'the canonState/decToken isGlobstar paths were not exercised'
+  );
+  process.exit(1);
+}
+
 console.log(
   'attack-scan: inputs=' +
-    inputs.length +
+    (inputs.length + globstarInputs.length) +
     ' compared=' +
     compared +
     ' divergences=' +
     divergences +
-    ' panics=' +
-    panics
+    ' rustProcessFailures=' +
+    rustProcessFailures +
+    ' globstarTokenComparisons=' +
+    globstarTokenComparisons
 );
 if (divergences > 0) process.exit(1);

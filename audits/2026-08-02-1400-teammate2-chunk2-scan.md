@@ -8,7 +8,9 @@
 
 **CHUNK 2 COMPLETE — SCANNER PORTED; UNCHANGED ORIGINAL SCANNER TESTS PASS AGAINST RUST.**
 
-Every invoked required test has zero failures: Main original suite 1977/1977 (lint+mocha before AND after), Rust fmt/clippy/test clean (49 unit + 2 integration), unchanged `Main/test/api.scan.js` 40/40 passing against Rust via the test-only bridge, scanner corpus 3072/3072 deterministic, differential attack 401 inputs / 3208 comparisons / 0 divergences / 0 panics, all C0/C1/C2 regression gates green, corpus double-regeneration byte-identical.
+Every invoked required test has zero failures: Main original suite 1977/1977 (lint+mocha before AND after), Rust fmt/clippy/test clean (49 unit + 2 integration), unchanged `Main/test/api.scan.js` 40/40 passing against Rust via the test-only bridge, scanner corpus 3072/3072 deterministic, differential attack 411 inputs / 4932 comparisons / 0 divergences / 0 rust process failures / 33 globstar-token comparisons, all C0/C1/C2 regression gates green, corpus double-regeneration byte-identical.
+
+**Post-review harness fix (2026-08-02):** A PR review identified two variable-name typos in `attack-scan.js` (`tok`↔`tk` on L62/L96) that silently skipped globstar-token comparisons, plus a `panics` counter that was never incremented. The option matrix also never combined `tokens: true` with `scanToEnd: true` or `parts: true`, so globstar tokens were not actually exercised. All three issues were fixed: typos corrected, explicit globstar inputs added with combined option combos, `panics` replaced with a truthful `rustProcessFailures` counter, and scanner exceptions are now treated as divergences (not silently matched). The `scan_utf16` doc comment was also corrected to remove a reference to a nonexistent `input` parameter, and a safety comment was added before `base.pop()`. No production scanner behavior changed.
 
 ## 2. Branch/PR/base/head SHAs
 
@@ -159,8 +161,10 @@ Command: `cd Main && npx mocha --require ../Rust/fixtures/scan-bridge.js test/ap
 
 ## 17. Differential/adversarial counts and divergences
 
-- `node fixtures/attack-scan.js` → **inputs=401, compared=3208, divergences=0, panics=0**.
-- Covers: all original `api.scan.js` inputs × 12 option combos; 300 seeded random inputs (mulberry32, seed=42); 50 long backslash runs (40 `\` each); 50 nested brace runs (`{`×20 + `}`×20); 1 max-length plain (1000 `a`).
+- `node fixtures/attack-scan.js` → **inputs=411, compared=4932, divergences=0, rustProcessFailures=0, globstarTokenComparisons=33**.
+- Covers: 300 seeded random inputs (mulberry32, seed=42); 50 long backslash runs (40 `\` each); 50 nested brace runs (`{`×20 + `}`×20); 1 max-length plain (1000 `a`); 10 explicit globstar-token coverage inputs (`**`, `a/**`, `a/**/b`, `**/*.js`, `foo/**/bar`, `a/b/**/*.js`, `**/foo`, `*/**/*`, `./foo/**/bar`, `!foo/**/*.js`).
+- Option combos include combined `{ tokens: true, parts: true }`, `{ tokens: true, scanToEnd: true }`, `{ parts: true, scanToEnd: true }`, `{ tokens: true, parts: true, scanToEnd: true }` — these force scanToEnd so `**` tokens are actually generated and compared through both `canonState` and `decToken`.
+- **Post-review fix:** the original harness had `tok`↔`tk` typos on L62/L96 that silently skipped globstar-token comparisons, a `panics` counter that was never incremented, and an option matrix that never combined `tokens` with `scanToEnd`/`parts`. All fixed; globstarTokenComparisons now asserted > 0.
 
 ## 18. Determinism hashes
 
@@ -175,6 +179,11 @@ Command: `cd Main && npx mocha --require ../Rust/fixtures/scan-bridge.js test/ap
 | 324 divergences in attack-scan: tokens missing `depth` | `ScanToken::default()` had `depth: None`; JS initial token has `depth: 0`. | Changed token init to `ScanToken { depth: Some(0.0), ..Default::default() }` at both init sites. |
 | 20 divergences: `prevIndex=0` falsy | JS `if (prevIndex && ...)` treats `0` as falsy; Rust `Some(0)` is truthy. | Added `pi != 0` guard to the trailing-part block. |
 | Corpus non-deterministic (hash mismatch) | `generatedAt: new Date().toISOString()` in meta changed each run. | Removed `generatedAt` from corpus meta. |
+| Post-review: `attack-scan.js` typos `tok`↔`tk` (L62/L96) | Copy-paste inconsistency between `canonState` (uses `tk`) and `decToken` (uses `tok`). Both referenced the wrong variable name for `isGlobstar`. | Fixed both to use the correct local variable. |
+| Post-review: `attack-scan.js` option matrix never combined `tokens` with `scanToEnd`/`parts` | Without scanToEnd, scanning stops at the first `*` before the second `*` sets `isGlobstar`. | Added 4 combined option combos and 10 explicit globstar inputs. |
+| Post-review: `attack-scan.js` `panics` counter never incremented | The variable was initialized but no code path incremented it. | Replaced with `rustProcessFailures` counter for nonzero exit, signal termination, missing output, malformed JSON, and `probeError`. |
+| Post-review: `scan_utf16` doc comment referenced nonexistent `input` parameter | The function signature only has `units` and `opts`; `input` is set by the caller. | Updated doc comment to clarify the caller sets `state.input`. |
+| Post-review: `base.pop()` lacked safety comment | `String::pop()` removes a Rust char, not a UTF-16 unit — but only called when the last unit is ASCII `/` or `\`, so it is safe. | Added a comment explaining the ASCII safety. |
 
 No failure was skipped, filtered, swallowed, or relabeled; each was reproduced, root-caused, fixed in production code/config, and re-verified.
 
