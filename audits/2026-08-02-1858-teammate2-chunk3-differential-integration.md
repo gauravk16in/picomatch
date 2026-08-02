@@ -20,7 +20,8 @@ A real scanner bug was found by the integration attack set: the `prevIndex=0` fa
 | `origin/main` (Main/ reference) | `00cf02c251c3bcd498448e7c313e5eaf8e27d8f2` |
 | PR #3 final head | `f8d350bc89cc9176e145d8685bf1bc3d32b83f3e` |
 | PR #3 merge commit | `3bcb877736322241fe572703c1c7b45080b8fdf7` |
-| `chirag-rust-port-chunk3-differential-integration` (this PR) | (pending commit) |
+| `chirag-rust-port-chunk3-differential-integration` (initial PR head) | `34869d255b6cc1e9e4c01f5d3b8386f3cbd693e0` |
+| `chirag-rust-port-chunk3-differential-integration` (post-review fix head) | (recorded after commit) |
 
 ## 3. GitHub PR state verified
 
@@ -75,26 +76,29 @@ Each step captures: exact command, exit code, bounded stdout/stderr. Returns non
 
 ## 8. Harness canary/self-tests design
 
-`fixtures/canary-harness.js` proves the harness DETECTS failures using test-only dependency injection (fake probe responses, deliberately corrupted data, simulated process failures). 16 canaries:
+`fixtures/canary-harness.js` proves the harness DETECTS failures using the **same shared detector** imported from `fixtures/integrated-harness-core.js`. 19 canaries, each declaring the expected `HarnessError` code:
 
-1. Changed semantic field (flip isGlob)
-2. Missing vs explicit false (delete isGlob)
-3. Missing vs explicit null (isGlob = null)
-4. JS oracle exception (simulated throw)
-5. Rust probe nonzero exit (status=1)
-6. Rust probe signal/timeout (signal=SIGTERM)
-7. Malformed JSON (truncated)
-8. Truncated JSON
-9. Empty output
-10. Missing row
-11. Infinity transport corruption ({__num:"Infinity"} vs null)
-12. UTF-16 transport corruption (__u16 vs mojibake)
-13. Coverage counter zero (globstarTokenComparisons=0)
-14. Boolean vs undefined (false vs undefined)
-15. Zero vs falsy (0 vs undefined)
-16. Array order (token swap)
+1. SEMANTIC_DIVERGENCE (changed semantic field)
+2. SEMANTIC_DIVERGENCE (missing vs false)
+3. SEMANTIC_DIVERGENCE (missing vs null)
+4. JS_ORACLE_EXCEPTION (JS throws, Rust succeeds)
+5. RUST_PROCESS_EXIT (nonzero exit via classifyProbeResult)
+6. RUST_PROCESS_SIGNAL (signal via classifyProbeResult)
+7. RUST_PROCESS_TIMEOUT (ETIMEDOUT via classifyProbeResult)
+8. RUST_SPAWN_ERROR (ENOENT via classifyProbeResult)
+9. RUST_MALFORMED_JSON (truncated via parseProbeOutput)
+10. RUST_MALFORMED_JSON (truncated via parseProbeOutput)
+11. RUST_EMPTY_OUTPUT (empty via parseProbeOutput)
+12. RUST_MISSING_ROW (missing ID via correlateByIds)
+13. RUST_MALFORMED_JSON (duplicate ID via correlateByIds)
+14. RUST_PROBE_ERROR (probeError via parseProbeOutput)
+15. SEMANTIC_DIVERGENCE (Infinity transport corruption)
+16. SEMANTIC_DIVERGENCE (UTF-16 transport corruption)
+17. COVERAGE_ZERO (zero counter via assertCoverage)
+18. SEMANTIC_DIVERGENCE (array/token order)
+19. Meta-test: unexpected ReferenceError correctly rejected as failure
 
-All 16 canaries pass (harness detects each fault).
+All 19 canaries pass. The canary runner fails closed: an unexpected exception (not a HarnessError with the expected code) is a FAILURE, not a pass.
 
 ## 9. Deterministic seed and replay
 
@@ -105,7 +109,17 @@ All 16 canaries pass (harness detects each fault).
 
 ## 10. Bug found and fixed
 
-### BUG-001: `prevIndex=0` falsy in parts assembly
+### BUG-001: `prevIndex=0` falsy in parts assembly (unchanged from initial PR)
+
+### Post-review fixes (commit 2)
+
+- **Finding A (tautological canaries)**: FIXED — all canaries now use the shared harness core (`integrated-harness-core.js`); none assert on locally-constructed literals only.
+- **Finding B (unexpected exceptions pass)**: FIXED — `evaluateCanary()` now requires the exact expected `HarnessError` code; unexpected exceptions are failures. Meta-test #19 proves this.
+- **Finding C (Windows-only runner)**: FIXED — `run-integrated.js` now uses `process.execPath` + argument arrays (no `cmd /c`), `node:crypto` for hashing (no `certutil`), and `shell:true` only for the npx/mocha bridge step (fixed command, no user data interpolated).
+- **Finding D (timeout detection)**: FIXED — timeout now detected via `out.error.code === 'ETIMEDOUT'`, not the nonexistent `out.timedOut`.
+- **Finding E (3940 spawns)**: FIXED — scanner probe calls batched per option combo (20 spawns, not 3940).
+- **Finding F (skip counting)**: FIXED — explicit `attempted`, `compared`, `skippedUnsupported` counters; skipped rows excluded from compared totals.
+- **Finding G (pending commit in audit)**: FIXED — initial head SHA recorded as `34869d2`.
 
 - **Input**: `//` with `{parts:true}` or `{tokens:true}`
 - **Expected** (JS): `parts = ['/']`, `tokens[1].value = '/'`
@@ -133,8 +147,8 @@ All 16 canaries pass (harness detects each fault).
 | `attack-c2` | 85/85 passed | 85/85 passed |
 | `attack-scan` | 0 divergences, 33 globstar | 0 divergences, 33 globstar |
 | `api.scan.js` against Rust | 40/40 passing | 40/40 passing |
-| Integration attack | N/A (new) | **3969 compared, 0 divergences** |
-| Canary harness | N/A (new) | **16/16 canaries pass** |
+| Integration attack | N/A (new) | **3969 compared, 0 divergences, 20 probe spawns** |
+| Canary harness | N/A (new) | **19/19 canaries pass** |
 
 ## 12. Unchanged original-test hash
 
@@ -144,17 +158,19 @@ All 16 canaries pass (harness detects each fault).
 
 | Surface | Comparisons | Divergences | Process failures |
 |---|---|---|---|
-| Scanner (integration attack) | 3940 | 0 | 0 |
-| Parser C0 (integration attack) | 29 | 0 | 0 |
-| Scanner corpus (verify-scan) | 3072 | 0 | 0 |
-| C0 corpus (verify-c0) | 39 | 0 | 0 |
-| C1 corpus (verify-c1) | 55 | 0 | 0 |
-| C2 corpus (verify-c2) | 18 | 0 | 0 |
-| Scanner attack (attack-scan) | 4932 | 0 | 0 |
-| C0 attack (attack-c0) | 213 | 0 | 0 |
-| C0-2 attack (attack-c0-2) | 340 | 0 | 0 |
-| C2 attack (attack-c2) | 85 | 0 | 0 |
-| **AGGREGATE** | **12723** | **0** | **0** |
+| Scanner (integration attack) | 3940 | 3940 | 0 | 0 |
+| Parser (integration attack) | 29 | 29 | 0 | 0 |
+| Scanner corpus (verify-scan) | 3072 | 3072 | 0 | 0 |
+| C0 corpus (verify-c0) | 39 | 39 | 0 | 0 |
+| C1 corpus (verify-c1) | 55 | 55 | 0 | 0 |
+| C2 corpus (verify-c2) | 18 | 18 | 0 | 0 |
+| Scanner attack (attack-scan) | 4932 | 4932 | 0 | 0 |
+| C0 attack (attack-c0) | 213 | 213 | 0 | 0 |
+| C0-2 attack (attack-c0-2) | 340 | 340 | 0 | 0 |
+| C2 attack (attack-c2) | 85 | 85 | 0 | 0 |
+| **AGGREGATE (compared only)** | **12723** | **0** | **0** | **0** |
+
+Note: scanner probe spawns reduced from 3940 to 20 (batched per option combo).
 
 ## 14. Limitations and deferred Chunk 4 work
 
