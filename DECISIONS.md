@@ -41,9 +41,18 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 - **Why**: C0 review iteration 1 revealed that a single misplaced parenthesis inside lookahead templates distorts all downstream regexes.
 ---
 
-### D-05: Brackets & POSIX Class Parity (#187 & Asymmetric Options)
+### D-06: Extglob & ReDoS Triage Parity
 
-- **Original**: `lib/parse.js` L718-L758 & L814-L875 handles `[...]` character classes, 14 POSIX classes, `[!...]` literal `!` default, and `literalBrackets` 3-way output state.
-- **Port**: Port POSIX class lookups via `posix_regex_source`, asymmetric `opts.posix !== false` vs `opts.posix === true`, `[^...]` `/]` injection, `strictBrackets` throws (`MissingOpening`/`MissingClosing`), and 3-way `literalBrackets` (`Some(true)`, `Some(false)`, `None`).
-- **Why**: Preserves upstream bug-parity #187 (`[!...]` literal `!`) and 3-way `literalBrackets` regex alternation output.
-- **Cost**: None; exact behavioral match verified across 203 oracle cases and 60 adversarial cases.
+- **Original**: `lib/parse.js` L48-L347 & L523-L600 handles ReDoS vulnerability analysis for repeated extglobs (`analyzeRepeatedExtglob`), single-character star extglob consolidation, `!(...)` magic suffix parsing via sub-`parse(rest, { fastpaths: false })`, and `opts.maxExtglobRecursion`.
+- **Port**: Ported ReDoS triage static analysis helpers and `extglobOpen`/`extglobClose` routines in `extglob.rs`.
+- **Why**: Ensures ReDoS mitigation logic matches V8 output byte-for-byte without breaking nested extglob expressions.
+- **Cost**: None; verified across 841 oracle cases and 61 adversarial cases.
+
+---
+
+### D-07: Globstar Machine & `push` Demotion Parity
+
+- **Original**: `lib/parse.js` L493-L505 & L1128-L1244 implements `**` second-star context transitions, consecutive `/**/` stripping, `push()` demotion of `globstar` to `star` for non-slash tokens, and `bash` mode empty-output star semantics.
+- **Port**: Implemented `push()` demotion in `parser.rs` and the 6 globstar context branches in `main_loop.rs`.
+- **Why**: Guarantees byte-identical regex output for `**`, `a/**/b`, `a/**`, `/**/a`, and `a**b` across POSIX and Windows.
+- **Cost**: None; verified across 273 oracle cases and 59 adversarial cases.
