@@ -143,6 +143,11 @@ const scanInputs = [
   'a/b/c/**/d', '{a,b,c}/{x,y}/z', '*.{js,ts,jsx}',
   '!{a,b}/!{c,d}', '[[', ']]', '{{', '}}',
   'a'.repeat(100), '\\'.repeat(20), '{'.repeat(10) + '}'.repeat(10),
+  // trailing escape-advance inside extglob/paren inner loops (final-audit
+  // F-01/F-02): residual `code` decides the final-token push (scan.js:344).
+  '@(\\a', '@(\\/', '@(a\\', '@(a\\)', 'a@(b\\c', 'x(\\y', '((/', '((a',
+  // line terminators for the unescape path (final-audit F-07).
+  'a\\\rb', 'a\\\u2028b', '[a\rb\\x]',
 ];
 
 // Lone surrogates excluded from random alphabet (D-016 boundary).

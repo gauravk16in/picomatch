@@ -144,6 +144,13 @@ const inputs = [
   'path/\\{../,./,\\{bar,/baz},qux}/',
   'path/\\{../,./,{bar,/baz},qux}/',
   'path/{,/,bar/\\{baz,qux}}/',
+  // trailing escape-advance at end of an extglob/paren inner loop — the
+  // residual `code` after the escape decides the final-token push
+  // (JS scan.js:344 `!isPathSeparator(code)`); final-audit F-01/F-02.
+  '@(\\a', '@(\\/', '@(a\\', '@(a\\)', 'a@(b\\c', 'x(\\y', '((/', '((a',
+  // line terminators with unescape (JS `.` excludes \n \r <LS> <PS>;
+  // final-audit F-07): backslash before CR is KEPT by removeBackslashes.
+  'a\\\rb', 'a\\\u2028b', '[a\rb\\x]', 'foo\\[a\rbar\\]',
 ];
 
 const optionCombos = [

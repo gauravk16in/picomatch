@@ -78,14 +78,19 @@ impl ScanOptions {
 
 /// A scan token — mirrors the JS `token` object shape (lib/scan.js L51, L148,
 /// L342-L386). Fields present vs absent matters (D-013/D-017):
-/// - `value`, `isGlob` always present.
-/// - `depth` present unless `isPrefix === true` (JS omits it).
+/// - `value`, `isGlob`, `depth` always present: JS initializes every token as
+///   `{ value: '', depth: 0, isGlob: false }` (L75/L159); `depth()` (L26-L30)
+///   overwrites depth to `1` or `Infinity` for non-prefix tokens, so a prefix
+///   token keeps the INITIAL `depth: 0` — the property is present, not omitted
+///   (verified against the oracle: `scan('./a/b',{tokens:true})` yields
+///   `{ value: './', depth: 0, isGlob: false, isPrefix: true }`).
 /// - `backslashes`, `isBrace`, `isExtglob`, `isGlobstar`, `negated`, `isPrefix`
 ///   present only when set to `true`.
 #[derive(Debug, Clone, Default)]
 pub struct ScanToken {
     pub value: String,
-    /// `None` = property absent (prefix tokens when `isPrefix === true`).
+    /// Always `Some` for real tokens: `Some(0.0)` initial (kept by prefix
+    /// tokens), `Some(1.0)` or `Some(f64::INFINITY)` after `set_depth`.
     pub depth: Option<f64>,
     pub is_glob: bool,
     pub backslashes: Option<bool>,
@@ -131,7 +136,8 @@ fn is_path_separator(code: u16) -> bool {
 }
 
 /// `lib/scan.js` L26-L30 — `depth(token)`: sets `token.depth` to `Infinity`
-/// for globstar, `1` otherwise, UNLESS `isPrefix === true` (then no depth set).
+/// for globstar, `1` otherwise, UNLESS `isPrefix === true` (then the initial
+/// `depth: 0` from L75/L159 is kept — JS never omits the property).
 fn set_depth(tok: &mut ScanToken) {
     if tok.is_prefix != Some(true) {
         tok.depth = Some(if tok.is_globstar == Some(true) {
@@ -348,7 +354,12 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
                         if code == CHAR_BACKWARD_SLASH {
                             backslashes = true;
                             token.backslashes = Some(true);
+                            // JS L190: `code = advance()` — the escaped unit IS
+                            // assigned to `code` (load-bearing: the residual
+                            // `code` at loop exit decides the final-token push
+                            // at L344 via `isPathSeparator(code)`).
                             index += 1;
+                            code = units.get(index as usize).copied().unwrap_or(0);
                             continue;
                         }
                         if code == CHAR_RIGHT_PARENTHESES {
@@ -442,11 +453,15 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
                         break;
                     }
                     // JS L263: `if (code === CHAR_LEFT_PARENTHESES)` sets
-                    // backslashes (a quirk — see BEHAVIORAL_ORACLE); then advance.
+                    // backslashes (a quirk — see BEHAVIORAL_ORACLE); then
+                    // `code = advance()` ASSIGNS the next unit (load-bearing:
+                    // the residual `code` at loop exit decides the final-token
+                    // push at L344 via `isPathSeparator(code)`).
                     if code == CHAR_LEFT_PARENTHESES {
                         backslashes = true;
                         token.backslashes = Some(true);
                         index += 1;
+                        code = units.get(index as usize).copied().unwrap_or(0);
                         continue;
                     }
                     if code == CHAR_RIGHT_PARENTHESES {
@@ -475,10 +490,11 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
         is_glob = false;
     }
 
-    // lib/scan.js L291-L317 — base/glob/prefix split
-    let mut base: String;
+    // lib/scan.js L291-L317 — base/glob/prefix split.
+    // Base/glob are computed as UTF-16 unit RANGES first so the trailing-
+    // separator trim (JS L309-L313) needs no intermediate String builds;
+    // each field is materialized exactly once at the end.
     let mut prefix = String::new();
-    let mut glob = String::new();
 
     // str = input (we keep `units` as the source of truth for slicing)
     let mut str_start: usize = 0; // start offset into units for `str`
@@ -493,34 +509,38 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
         last_index = last_index.saturating_sub(start);
     }
 
-    // Reconstruct `str` boundaries for slicing: units[str_start..str_start+str_len]
-    let str_units = &units[str_start..str_start + str_len];
+    // str spans units[str_start..str_start+str_len]
+    let base_start = str_start;
+    let mut base_len: usize;
+    let mut glob_start = str_start;
+    let mut glob_len = 0usize;
 
     if str_len > 0 && is_glob && last_index > 0 {
         // base = str.slice(0, last_index); glob = str.slice(last_index)
-        base = slice_units_to_string(str_units, 0, last_index);
-        glob = slice_units_to_string(str_units, last_index, str_len);
+        base_len = last_index;
+        glob_start = str_start + last_index;
+        glob_len = str_len - last_index;
     } else if is_glob {
-        base = String::new();
-        glob = slice_units_to_string(str_units, 0, str_len);
+        base_len = 0;
+        glob_len = str_len;
     } else {
-        base = slice_units_to_string(str_units, 0, str_len);
+        base_len = str_len;
     }
 
-    // lib/scan.js L309-L313 — trim trailing separator from base
-    if !base.is_empty() && base != "/" && base != slice_units_to_string(units, 0, units.len()) {
-        // `base !== str` — compare base to the full `str` (post-prefix slice)
-        let full_str = slice_units_to_string(str_units, 0, str_len);
-        if base != full_str {
-            // JS: `base.charCodeAt(base.length - 1)` — last UTF-16 unit.
-            let last_unit = base.encode_utf16().last().unwrap_or(0);
-            if is_path_separator(last_unit) {
-                // Safe here: the branch runs only when the final UTF-16 unit is ASCII
-                // '/' or '\', so removing one Rust char removes exactly one UTF-16 unit.
-                base.pop();
-            }
-        }
+    // lib/scan.js L309-L313 — trim ONE trailing path separator from base when
+    // base is non-empty, not exactly "/", and not the whole (post-prefix) str.
+    // base is a unit PREFIX of str, so `base !== str` reduces to unequal
+    // lengths — and `base !== '/'` to "not the single unit 0x2F". No strings.
+    if base_len > 0
+        && !(base_len == 1 && units[base_start] == CHAR_FORWARD_SLASH)
+        && base_len != str_len
+        && is_path_separator(units[base_start + base_len - 1])
+    {
+        base_len -= 1;
     }
+
+    let mut base = slice_units_to_string(units, base_start, base_start + base_len);
+    let mut glob = slice_units_to_string(units, glob_start, glob_start + glob_len);
 
     // lib/scan.js L319-L325 — unescape
     if opts.unescape == Some(true) {
@@ -554,9 +574,12 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
         state.max_depth = Some(0.0);
         // `if (!isPathSeparator(code))` — `code` is the last-advanced value
         if !is_path_separator(code) {
-            tokens.push(token.clone());
+            tokens.push(token);
         }
-        state.tokens = Some(tokens.clone());
+        // Move (not clone): the local vec is dead after this point; the parts
+        // loop below mutates `state.tokens` in place, mirroring JS object
+        // mutation of the already-pushed tokens.
+        state.tokens = Some(tokens);
     }
 
     // lib/scan.js L349-L386 — parts/slashes assembly
@@ -611,8 +634,9 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
             }
         }
 
-        state.slashes = Some(slashes.clone());
-        state.parts = Some(parts.clone());
+        // Move (not clone): both locals are dead after assignment.
+        state.slashes = Some(slashes);
+        state.parts = Some(parts);
     }
 
     state
@@ -967,5 +991,98 @@ mod tests {
             Some(&"/".to_string()),
             "token[1].value should be '/' not '' for input '//'"
         );
+    }
+
+    // Regression tests for the residual-`code` escape-assignment bugs
+    // (final-audit F-01/F-02). The extglob and paren scanToEnd inner loops
+    // must ASSIGN the unit consumed after a backslash escape (JS L190) or
+    // after the `(` quirk (JS L263) to `code`: the residual `code` at loop
+    // exit feeds `!isPathSeparator(code)` (JS L344), which decides whether
+    // the final in-progress token is pushed. All expected values below are
+    // from the oracle (Main/lib/scan.js), captured 2026-08-03.
+    #[test]
+    fn tokens_extglob_trailing_escape_nonseparator_pushes_token() {
+        // scan('@(\\a', {tokens:true, scanToEnd:true}) — JS pushes the final
+        // token (residual code 'a' is not a path separator).
+        let st = scan(
+            "@(\\a",
+            &ScanOptions::default()
+                .with_tokens(true)
+                .with_scan_to_end(true),
+        );
+        let toks = st.tokens.as_ref().unwrap();
+        assert_eq!(toks.len(), 1, "JS pushes the final token for '@(\\\\a'");
+        assert!(toks[0].is_glob);
+        assert_eq!(toks[0].is_extglob, Some(true));
+        assert_eq!(toks[0].backslashes, Some(true));
+        assert_eq!(toks[0].depth, Some(0.0));
+        assert_eq!(st.max_depth, Some(0.0));
+    }
+
+    #[test]
+    fn tokens_extglob_trailing_escape_separator_drops_token() {
+        // scan('@(\\/', {tokens:true, scanToEnd:true}) — JS: tokens = []
+        let st = scan(
+            "@(\\/",
+            &ScanOptions::default()
+                .with_tokens(true)
+                .with_scan_to_end(true),
+        );
+        assert_eq!(st.tokens.as_ref().unwrap().len(), 0);
+    }
+
+    #[test]
+    fn tokens_extglob_unterminated_trailing_backslash_pushes_token() {
+        // scan('@(a\\', {tokens:true, scanToEnd:true}) — JS pushes the token
+        // (the escape advance runs off the end; residual code is NaN in JS,
+        // 0 in the port — neither is a path separator).
+        let st = scan(
+            "@(a\\",
+            &ScanOptions::default()
+                .with_tokens(true)
+                .with_scan_to_end(true),
+        );
+        let toks = st.tokens.as_ref().unwrap();
+        assert_eq!(toks.len(), 1);
+        assert_eq!(toks[0].backslashes, Some(true));
+    }
+
+    #[test]
+    fn tokens_extglob_escaped_close_at_end_pushes_token() {
+        // scan('@(a\\)', {tokens:true, scanToEnd:true}) — JS pushes the token.
+        let st = scan(
+            "@(a\\)",
+            &ScanOptions::default()
+                .with_tokens(true)
+                .with_scan_to_end(true),
+        );
+        assert_eq!(st.tokens.as_ref().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn tokens_paren_quirk_trailing_separator_drops_token() {
+        // scan('((/', {tokens:true, scanToEnd:true}) — JS: tokens = [] (the
+        // `(` quirk advance consumes '/'; residual code '/' is a separator).
+        let st = scan(
+            "((/",
+            &ScanOptions::default()
+                .with_tokens(true)
+                .with_scan_to_end(true),
+        );
+        assert_eq!(st.tokens.as_ref().unwrap().len(), 0);
+    }
+
+    #[test]
+    fn tokens_paren_quirk_trailing_nonseparator_pushes_token() {
+        // scan('((a', {tokens:true, scanToEnd:true}) — JS pushes the token.
+        let st = scan(
+            "((a",
+            &ScanOptions::default()
+                .with_tokens(true)
+                .with_scan_to_end(true),
+        );
+        let toks = st.tokens.as_ref().unwrap();
+        assert_eq!(toks.len(), 1);
+        assert_eq!(toks[0].backslashes, Some(true));
     }
 }

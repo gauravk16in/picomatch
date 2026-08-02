@@ -114,13 +114,24 @@ pub fn to_posix_slashes(input: &str) -> String {
 /// probe-removebs-nl*.js):
 ///  - alternative 1 `\[.*?[^\\]\]`: a `[...]` expression closes at the first
 ///    `]` (position ≥ i+2) whose preceding char is not `\`, kept verbatim.
-///    `.` never crosses `\n`, so the CONTENT cannot contain `\n` — but the
-///    `[^\\]` close-preceding char MAY be `\n` (e.g. `[a\\x\n]` is kept).
-///  - alternative 2 `\\(?=.)`: a `\` followed by any char except `\n` is
-///    deleted (the lookahead `.` also excludes `\n`).
-///  - a trailing `\` (or one before `\n`) is kept.
+///    `.` never crosses a line terminator, so the CONTENT cannot contain one
+///    — but the `[^\\]` close-preceding char MAY be one (e.g. `[a\\x\n]` and
+///    `[a\n]` are kept).
+///  - alternative 2 `\\(?=.)`: a `\` followed by any char except a line
+///    terminator is deleted (the lookahead `.` excludes them).
+///  - a trailing `\` (or one before a line terminator) is kept.
+///
+/// JS `.` excludes ALL FOUR line terminators — `\n`, `\r`, `<LS>`, `<PS>` —
+/// not just `\n` (verified against the oracle: `removeBackslashes('a\\\rb')`
+/// keeps the backslash; the span in `[a\rb\\x]` fails so the `\x` backslash
+/// IS deleted).
 ///
 /// Call sites: lib/scan.js:L320, L323 (scan unescape option, Chunk 2).
+/// Returns true for the four ECMAScript line terminators that `.` excludes.
+fn is_dot_line_terminator(c: char) -> bool {
+    matches!(c, '\n' | '\r' | '\u{2028}' | '\u{2029}')
+}
+
 pub fn remove_backslashes(input: &str) -> String {
     let s: Vec<char> = input.chars().collect();
     let mut out = String::with_capacity(input.len());
@@ -128,13 +139,14 @@ pub fn remove_backslashes(input: &str) -> String {
     while i < s.len() {
         if s[i] == '[' {
             // alternative 1: `\[.*?[^\\]\]` — shortest close (k ≥ i+2), no
-            // '\n' in the `.*?` content; the `[^\\]` char may itself be '\n'.
+            // line terminator in the `.*?` content; the `[^\\]` char may
+            // itself be a line terminator.
             let mut k = i + 1;
             let mut close = None;
             while k < s.len() {
-                if s[k] == '\n' {
-                    // '\n' can still be the `[^\\]` char for a close at k+1;
-                    // any later close would contain it in the `.*?` content.
+                if is_dot_line_terminator(s[k]) {
+                    // a terminator can still be the `[^\\]` char for a close
+                    // at k+1; any later close would contain it in the content.
                     if k + 1 < s.len() && s[k + 1] == ']' {
                         close = Some(k + 1);
                     }
@@ -152,7 +164,7 @@ pub fn remove_backslashes(input: &str) -> String {
                 continue;
             }
         }
-        if s[i] == '\\' && i + 1 < s.len() && s[i + 1] != '\n' {
+        if s[i] == '\\' && i + 1 < s.len() && !is_dot_line_terminator(s[i + 1]) {
             // alternative 2: `\\(?=.)` — delete the backslash only.
             i += 1;
             continue;
@@ -396,6 +408,18 @@ mod tests {
         assert_eq!(remove_backslashes("[a\\\\x\n]"), "[a\\\\x\n]"); // kept: bs inside content, '\n' close
         assert_eq!(remove_backslashes("[a\\x\n]"), "[a\\x\n]");
         assert_eq!(remove_backslashes("[ab\n]\\z"), "[ab\n]z");
+        // JS `.` excludes ALL four line terminators (\n, \r, <LS>, <PS>) —
+        // oracle-pinned 2026-08-03 (final-audit F-07):
+        // removeBackslashes('a\\\rb') === 'a\\\rb' (backslash KEPT before CR),
+        // same for <LS>/<PS>; and a bracket span cannot cross a terminator,
+        // so the `\x` backslash inside `[a\rb\\x]` IS deleted.
+        assert_eq!(remove_backslashes("a\\\rb"), "a\\\rb");
+        assert_eq!(remove_backslashes("a\\\u{2028}b"), "a\\\u{2028}b");
+        assert_eq!(remove_backslashes("a\\\u{2029}b"), "a\\\u{2029}b");
+        assert_eq!(remove_backslashes("\\\r"), "\\\r");
+        assert_eq!(remove_backslashes("[a\rb\\x]"), "[a\rbx]");
+        assert_eq!(remove_backslashes("[a\u{2028}b\\x]"), "[a\u{2028}bx]");
+        assert_eq!(remove_backslashes("[a\r]"), "[a\r]"); // CR as close-preceding char: kept
     }
 
     #[test]

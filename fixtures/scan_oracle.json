@@ -3,7 +3,7 @@
   "reference": "D:\\picomatch\\Main",
   "tool": "fixtures/extract-scan.js",
   "indexUnits": "utf16_code_unit",
-  "count": 3072
+  "count": 3216
  },
  "cases": [
   {
@@ -91842,6 +91842,4070 @@
      "isBrace": true,
      "isBracket": false,
      "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3072",
+   "input": "@(\\a",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3073",
+   "input": "@(\\a",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3074",
+   "input": "@(\\a",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3075",
+   "input": "@(\\a",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "isExtglob": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3076",
+   "input": "@(\\a",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "@(\\a",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3077",
+   "input": "@(\\a",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3078",
+   "input": "@(\\a",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3079",
+   "input": "@(\\a",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "",
+     "glob": "@(a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3080",
+   "input": "@(\\a",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "",
+     "glob": "@(a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3081",
+   "input": "@(\\a",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "",
+     "glob": "@(a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "isExtglob": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3082",
+   "input": "@(\\a",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "@(\\a",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3083",
+   "input": "@(\\a",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\a",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3084",
+   "input": "@(\\/",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3085",
+   "input": "@(\\/",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3086",
+   "input": "@(\\/",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3087",
+   "input": "@(\\/",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "isExtglob": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3088",
+   "input": "@(\\/",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "@(\\/",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3089",
+   "input": "@(\\/",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3090",
+   "input": "@(\\/",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3091",
+   "input": "@(\\/",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "",
+     "glob": "@(/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3092",
+   "input": "@(\\/",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "",
+     "glob": "@(/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3093",
+   "input": "@(\\/",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "",
+     "glob": "@(/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "isExtglob": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3094",
+   "input": "@(\\/",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "@(\\/",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3095",
+   "input": "@(\\/",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(\\/",
+     "start": 0,
+     "base": "",
+     "glob": "@(\\/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3096",
+   "input": "@(a\\",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3097",
+   "input": "@(a\\",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3098",
+   "input": "@(a\\",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3099",
+   "input": "@(a\\",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "isExtglob": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3100",
+   "input": "@(a\\",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "@(a\\",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3101",
+   "input": "@(a\\",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3102",
+   "input": "@(a\\",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3103",
+   "input": "@(a\\",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3104",
+   "input": "@(a\\",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3105",
+   "input": "@(a\\",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "isExtglob": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3106",
+   "input": "@(a\\",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "@(a\\",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3107",
+   "input": "@(a\\",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3108",
+   "input": "@(a\\)",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\)",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3109",
+   "input": "@(a\\)",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\)",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3110",
+   "input": "@(a\\)",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\)",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3111",
+   "input": "@(a\\)",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\)",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "isExtglob": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3112",
+   "input": "@(a\\)",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "@(a\\)",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3113",
+   "input": "@(a\\)",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\)",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3114",
+   "input": "@(a\\)",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\)",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3115",
+   "input": "@(a\\)",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "",
+     "glob": "@(a)",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3116",
+   "input": "@(a\\)",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "",
+     "glob": "@(a)",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3117",
+   "input": "@(a\\)",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "",
+     "glob": "@(a)",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "isExtglob": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3118",
+   "input": "@(a\\)",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "@(a\\)",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3119",
+   "input": "@(a\\)",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "@(a\\)",
+     "start": 0,
+     "base": "",
+     "glob": "@(a\\)",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3120",
+   "input": "a@(b\\c",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "",
+     "glob": "a@(b\\c",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3121",
+   "input": "a@(b\\c",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "",
+     "glob": "a@(b\\c",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3122",
+   "input": "a@(b\\c",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "",
+     "glob": "a@(b\\c",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3123",
+   "input": "a@(b\\c",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "",
+     "glob": "a@(b\\c",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "isExtglob": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3124",
+   "input": "a@(b\\c",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "a@(b\\c",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3125",
+   "input": "a@(b\\c",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "",
+     "glob": "a@(b\\c",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3126",
+   "input": "a@(b\\c",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "",
+     "glob": "a@(b\\c",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3127",
+   "input": "a@(b\\c",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "",
+     "glob": "a@(bc",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3128",
+   "input": "a@(b\\c",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "",
+     "glob": "a@(bc",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3129",
+   "input": "a@(b\\c",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "",
+     "glob": "a@(bc",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "isExtglob": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3130",
+   "input": "a@(b\\c",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "a@(b\\c",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3131",
+   "input": "a@(b\\c",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a@(b\\c",
+     "start": 0,
+     "base": "",
+     "glob": "a@(b\\c",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": true,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3132",
+   "input": "x(\\y",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "",
+     "glob": "x(\\y",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3133",
+   "input": "x(\\y",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "",
+     "glob": "x(\\y",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3134",
+   "input": "x(\\y",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "",
+     "glob": "x(\\y",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3135",
+   "input": "x(\\y",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "",
+     "glob": "x(\\y",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3136",
+   "input": "x(\\y",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "x(\\y",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3137",
+   "input": "x(\\y",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "",
+     "glob": "x(\\y",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3138",
+   "input": "x(\\y",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "x(\\y",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3139",
+   "input": "x(\\y",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "",
+     "glob": "x(y",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3140",
+   "input": "x(\\y",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "",
+     "glob": "x(y",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3141",
+   "input": "x(\\y",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "",
+     "glob": "x(y",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3142",
+   "input": "x(\\y",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "x(\\y",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3143",
+   "input": "x(\\y",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "x(\\y",
+     "start": 0,
+     "base": "",
+     "glob": "x(\\y",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3144",
+   "input": "((/",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "",
+     "glob": "((/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3145",
+   "input": "((/",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "",
+     "glob": "((/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3146",
+   "input": "((/",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "",
+     "glob": "((/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3147",
+   "input": "((/",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "",
+     "glob": "((/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3148",
+   "input": "((/",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "((/",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3149",
+   "input": "((/",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "",
+     "glob": "((/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3150",
+   "input": "((/",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "((/",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3151",
+   "input": "((/",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "",
+     "glob": "((/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3152",
+   "input": "((/",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "",
+     "glob": "((/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3153",
+   "input": "((/",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "",
+     "glob": "((/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3154",
+   "input": "((/",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "((/",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3155",
+   "input": "((/",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((/",
+     "start": 0,
+     "base": "",
+     "glob": "((/",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3156",
+   "input": "((a",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "",
+     "glob": "((a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3157",
+   "input": "((a",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "",
+     "glob": "((a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3158",
+   "input": "((a",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "",
+     "glob": "((a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3159",
+   "input": "((a",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "",
+     "glob": "((a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3160",
+   "input": "((a",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "((a",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3161",
+   "input": "((a",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "",
+     "glob": "((a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3162",
+   "input": "((a",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "((a",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3163",
+   "input": "((a",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "",
+     "glob": "((a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3164",
+   "input": "((a",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "",
+     "glob": "((a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3165",
+   "input": "((a",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "",
+     "glob": "((a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3166",
+   "input": "((a",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "((a",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3167",
+   "input": "((a",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "((a",
+     "start": 0,
+     "base": "",
+     "glob": "((a",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3168",
+   "input": "a\\\rb",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3169",
+   "input": "a\\\rb",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3170",
+   "input": "a\\\rb",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3171",
+   "input": "a\\\rb",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": false,
+       "depth": 0,
+       "backslashes": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3172",
+   "input": "a\\\rb",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3173",
+   "input": "a\\\rb",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3174",
+   "input": "a\\\rb",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3175",
+   "input": "a\\\rb",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3176",
+   "input": "a\\\rb",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3177",
+   "input": "a\\\rb",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": false,
+       "depth": 0,
+       "backslashes": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3178",
+   "input": "a\\\rb",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3179",
+   "input": "a\\\rb",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "a\\\rb",
+     "start": 0,
+     "base": "a\\\rb",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3180",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3181",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3182",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3183",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": false,
+       "depth": 0,
+       "backslashes": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3184",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3185",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3186",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3187",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3188",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3189",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": false,
+       "depth": 0,
+       "backslashes": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3190",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3191",
+   "input": {
+    "__u16": [
+     97,
+     92,
+     8232,
+     98
+    ]
+   },
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "start": 0,
+     "base": {
+      "__u16": [
+       97,
+       92,
+       8232,
+       98
+      ]
+     },
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3192",
+   "input": "[a\rb\\x]",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "",
+     "glob": "[a\rb\\x]",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3193",
+   "input": "[a\rb\\x]",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "",
+     "glob": "[a\rb\\x]",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3194",
+   "input": "[a\rb\\x]",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "",
+     "glob": "[a\rb\\x]",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3195",
+   "input": "[a\rb\\x]",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "",
+     "glob": "[a\rb\\x]",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "backslashes": true,
+       "isBracket": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3196",
+   "input": "[a\rb\\x]",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "[a\rb\\x]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3197",
+   "input": "[a\rb\\x]",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "",
+     "glob": "[a\rb\\x]",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3198",
+   "input": "[a\rb\\x]",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "",
+     "glob": "[a\rb\\x]",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3199",
+   "input": "[a\rb\\x]",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "",
+     "glob": "[a\rbx]",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3200",
+   "input": "[a\rb\\x]",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "",
+     "glob": "[a\rbx]",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3201",
+   "input": "[a\rb\\x]",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "",
+     "glob": "[a\rbx]",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": true,
+       "depth": 0,
+       "backslashes": true,
+       "isBracket": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3202",
+   "input": "[a\rb\\x]",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "[a\rb\\x]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3203",
+   "input": "[a\rb\\x]",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "[a\rb\\x]",
+     "start": 0,
+     "base": "",
+     "glob": "[a\rb\\x]",
+     "isBrace": false,
+     "isBracket": true,
+     "isGlob": true,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3204",
+   "input": "foo\\[a\rbar\\]",
+   "options": {},
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo\\[a\rbar\\]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3205",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "parts": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo\\[a\rbar\\]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3206",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "scanToEnd": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo\\[a\rbar\\]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3207",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "tokens": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo\\[a\rbar\\]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": false,
+       "depth": 0,
+       "backslashes": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3208",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo\\[a\rbar\\]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3209",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo\\[a\rbar\\]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3210",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "noparen": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo\\[a\rbar\\]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3211",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo[a\rbar]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false
+    }
+   }
+  },
+  {
+   "id": "scan.3212",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "parts": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo[a\rbar]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3213",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "tokens": true,
+    "unescape": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo[a\rbar]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "tokens": [
+      {
+       "value": "",
+       "isGlob": false,
+       "depth": 0,
+       "backslashes": true
+      }
+     ],
+     "maxDepth": 0,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3214",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "parts": true,
+    "noext": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo\\[a\rbar\\]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
+     "isExtglob": false,
+     "isGlobstar": false,
+     "negated": false,
+     "negatedExtglob": false,
+     "slashes": [],
+     "parts": []
+    }
+   }
+  },
+  {
+   "id": "scan.3215",
+   "input": "foo\\[a\rbar\\]",
+   "options": {
+    "scanToEnd": true,
+    "nonegate": true
+   },
+   "expect": {
+    "kind": "ok",
+    "state": {
+     "prefix": "",
+     "input": "foo\\[a\rbar\\]",
+     "start": 0,
+     "base": "foo\\[a\rbar\\]",
+     "glob": "",
+     "isBrace": false,
+     "isBracket": false,
+     "isGlob": false,
      "isExtglob": false,
      "isGlobstar": false,
      "negated": false,
