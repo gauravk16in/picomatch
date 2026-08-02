@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "generated_by": "Teammate 2 Chunk 3 — integrated differential validation",
+  "base_sha": "3bcb877736322241fe572703c1c7b45080b8fdf7",
+  "surfaces": [
+    {
+      "surface": "constants",
+      "js_reference": "Main/lib/constants.js",
+      "rust_impl": "crates/pmx-core/src/constants.rs",
+      "probe": null,
+      "owner": "Teammate 2",
+      "status": "complete",
+      "unchanged_original_tests": null,
+      "deterministic_verifier": "node fixtures/verify-c0.js (C0 corpus includes constants rows)",
+      "adversarial_runner": "node fixtures/attack-c0.js",
+      "transport_rules": "UTF-16 units for non-ASCII strings; decimal-string for non-finite f64; JS number formatting via js_number",
+      "unsupported": null,
+      "verify_command": "cd Rust && node fixtures/verify-c0.js && node fixtures/attack-c0.js"
+    },
+    {
+      "surface": "utils",
+      "js_reference": "Main/lib/utils.js",
+      "rust_impl": "crates/pmx-core/src/utils.rs",
+      "probe": null,
+      "owner": "Teammate 2",
+      "status": "complete",
+      "unchanged_original_tests": "Main/test/regex-features.js (basename, escapeRegex)",
+      "deterministic_verifier": "node fixtures/verify-c0.js (C0 corpus includes utils rows) + unit tests",
+      "adversarial_runner": "node fixtures/attack-c0.js + node fixtures/attack-c0-2.js",
+      "transport_rules": "UTF-16 units for non-ASCII; remove_backslashes shared by scanner",
+      "unsupported": null,
+      "verify_command": "cd Rust && node fixtures/verify-c0.js && node fixtures/attack-c0.js && node fixtures/attack-c0-2.js"
+    },
+    {
+      "surface": "scanner",
+      "js_reference": "Main/lib/scan.js",
+      "rust_impl": "crates/pmx-core/src/scan.rs",
+      "probe": "crates/pmx-core/examples/scanprobe.rs",
+      "owner": "Teammate 2",
+      "status": "complete",
+      "unchanged_original_tests": "Main/test/api.scan.js (40 tests, deep-equality on full ScanState)",
+      "deterministic_verifier": "node fixtures/verify-scan.js",
+      "adversarial_runner": "node fixtures/attack-scan.js",
+      "transport_rules": "UTF-16 units via __u16 for non-ASCII strings; Option<f64> depth with __num for Infinity; conditional property emission (absent vs false); scan_utf16(&[u16]) for lone-surrogate unit tests",
+      "unsupported": null,
+      "verify_command": "cd Rust && node fixtures/verify-scan.js && node fixtures/attack-scan.js && cd ../Main && npx mocha --require ../Rust/fixtures/scan-bridge.js test/api.scan.js"
+    },
+    {
+      "surface": "parser-C0-foundation",
+      "js_reference": "Main/lib/parse.js (C0 slice: guards, state, token machinery, recovery, rebuild)",
+      "rust_impl": "crates/pmx-core/src/parse/ (mod.rs, parser.rs, state.rs, fragments.rs)",
+      "probe": "crates/pmx-core/examples/c0probe.rs",
+      "owner": "Teammate 1 (C0/C1/C2) / other teammates (C3+)",
+      "status": "partial (C0+C1+C2 complete; C3+ not yet ported)",
+      "unchanged_original_tests": null,
+      "deterministic_verifier": "node fixtures/verify-c0.js + node fixtures/verify-c1.js + node fixtures/verify-c2.js",
+      "adversarial_runner": "node fixtures/attack-c0.js + node fixtures/attack-c0-2.js + node fixtures/attack-c2.js",
+      "transport_rules": "UTF-16 units via Vec<u16>; decimal-string num: for f64 transport; error class+message bytes",
+      "unsupported": "Full end-to-end parser/matcher not yet available — no public adapter bridge for full mocha suite",
+      "verify_command": "cd Rust && node fixtures/verify-c0.js && node fixtures/verify-c1.js && node fixtures/verify-c2.js && node fixtures/attack-c0.js && node fixtures/attack-c0-2.js && node fixtures/attack-c2.js"
+    },
+    {
+      "surface": "parser-matcher-engine-adapter",
+      "js_reference": "Main/lib/picomatch.js, Main/lib/parse.js (full), Main/index.js, Main/posix.js",
+      "rust_impl": null,
+      "probe": null,
+      "owner": "Other teammates",
+      "status": "not-started",
+      "unchanged_original_tests": "Full Main/test/** (1977 tests) — cannot execute against Rust yet",
+      "deterministic_verifier": null,
+      "adversarial_runner": null,
+      "transport_rules": null,
+      "unsupported": "No team-approved adapter exists; full mocha suite against Rust is a standing blocker",
+      "verify_command": null
+    }
+  ],
+  "notes": [
+    "All surfaces marked 'complete' have deterministic verifiers, adversarial differential runners, and (for scanner) unchanged original-test bridge.",
+    "The full Main mocha suite (1977 tests) runs against the JS reference only — no Rust adapter exists yet.",
+    "Lone-surrogate inputs are tested at the unit level via scan_utf16(&[u16]) only (D-013/D-016 boundary)."
+  ]
+}
