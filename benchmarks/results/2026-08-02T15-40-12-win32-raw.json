@@ -1,0 +1,1062 @@
+{
+  "environment": {
+    "timestamp": "2026-08-02T15:40:02.100Z",
+    "timezone": "Asia/Calcutta",
+    "os_platform": "win32",
+    "os_release": "10.0.26200",
+    "os_hostname": "DESKTOP-SE6HKMO",
+    "cpu_model": "12th Gen Intel(R) Core(TM) i7-12650H",
+    "cpu_cores_logical": 16,
+    "cpu_cores_physical": 1,
+    "total_memory_gb": "16.83",
+    "free_memory_gb": "2.30",
+    "node_version": "v24.13.0",
+    "npm_version": "v24.13.0",
+    "v8_version": "13.6.233.17-node.37",
+    "rustc_version": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+    "cargo_version": "cargo 1.97.1 (c980f4866 2026-06-30)",
+    "git_version": "git version 2.53.0.windows.3",
+    "git_head_sha": "e115174120bb9460157c74679cfca6282c4dae4f",
+    "git_base_sha": "e115174120bb9460157c74679cfca6282c4dae4f",
+    "release_flags": "--release"
+  },
+  "config": {
+    "warmup_iters": 1000,
+    "samples": 10,
+    "iters_per_sample": 500,
+    "runs_js": 1,
+    "runs_rust": 1,
+    "timer_js": "process.hrtime.bigint()",
+    "timer_rust": "std::time::Instant::now()"
+  },
+  "rust_results": [
+    {
+      "checksum": 8964166265336246000,
+      "input": "foo/bar/baz.js",
+      "iters_per_sample": 500,
+      "label": "plain-path-short",
+      "options": {},
+      "sample_times_ns": [
+        190300,
+        186200,
+        150600,
+        145700,
+        144500,
+        190400,
+        165100,
+        146100,
+        161700,
+        152700
+      ],
+      "samples": 10,
+      "scenario_id": "S001",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 7619751112594804000,
+      "input": "src/components/deep/nested/path/to/module/file.tsx",
+      "iters_per_sample": 500,
+      "label": "plain-path-long",
+      "options": {},
+      "sample_times_ns": [
+        322000,
+        316400,
+        287500,
+        279800,
+        274500,
+        276600,
+        370100,
+        369900,
+        299200,
+        329400
+      ],
+      "samples": 10,
+      "scenario_id": "S002",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 4354372081753281000,
+      "input": "foo/bar/*.js",
+      "iters_per_sample": 500,
+      "label": "star-glob",
+      "options": {},
+      "sample_times_ns": [
+        267300,
+        414000,
+        250100,
+        229300,
+        198900,
+        200200,
+        209900,
+        200400,
+        200300,
+        209700
+      ],
+      "samples": 10,
+      "scenario_id": "S003",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 9625716363656124000,
+      "input": "foo/ba?.js",
+      "iters_per_sample": 500,
+      "label": "question-mark",
+      "options": {},
+      "sample_times_ns": [
+        190500,
+        188900,
+        189500,
+        189800,
+        196000,
+        191200,
+        190200,
+        190100,
+        191100,
+        189700
+      ],
+      "samples": 10,
+      "scenario_id": "S004",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 8432779060333100000,
+      "input": "./src/**/deep/**/*.js",
+      "iters_per_sample": 500,
+      "label": "globstar-deep",
+      "options": {
+        "scanToEnd": true
+      },
+      "sample_times_ns": [
+        309700,
+        304400,
+        309300,
+        311100,
+        311600,
+        308200,
+        375300,
+        537800,
+        298700,
+        311300
+      ],
+      "samples": 10,
+      "scenario_id": "S005",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 16306973352854161000,
+      "input": "foo/{a,b,c}/*.js",
+      "iters_per_sample": 500,
+      "label": "braces",
+      "options": {
+        "scanToEnd": true
+      },
+      "sample_times_ns": [
+        455700,
+        489400,
+        484200,
+        455700,
+        440500,
+        440100,
+        460300,
+        437200,
+        436800,
+        540800
+      ],
+      "samples": 10,
+      "scenario_id": "S006",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 11295338619486128000,
+      "input": "foo/[abc]/*.js",
+      "iters_per_sample": 500,
+      "label": "brackets",
+      "options": {
+        "scanToEnd": true
+      },
+      "sample_times_ns": [
+        371100,
+        233800,
+        267600,
+        218500,
+        203300,
+        202600,
+        255200,
+        211200,
+        202500,
+        204900
+      ],
+      "samples": 10,
+      "scenario_id": "S007",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 8894329258367292000,
+      "input": "foo/+(bar|baz)/*.js",
+      "iters_per_sample": 500,
+      "label": "extglob",
+      "options": {
+        "scanToEnd": true
+      },
+      "sample_times_ns": [
+        209700,
+        210000,
+        210000,
+        209900,
+        209900,
+        213200,
+        210000,
+        209700,
+        214100,
+        210100
+      ],
+      "samples": 10,
+      "scenario_id": "S008",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 9884710945607910000,
+      "input": "!foo/bar/*.js",
+      "iters_per_sample": 500,
+      "label": "negation",
+      "options": {},
+      "sample_times_ns": [
+        210300,
+        205200,
+        256400,
+        309800,
+        240400,
+        214800,
+        214000,
+        213600,
+        211900,
+        203400
+      ],
+      "samples": 10,
+      "scenario_id": "S009",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 355748339842181700,
+      "input": "!(foo)/bar/*.js",
+      "iters_per_sample": 500,
+      "label": "negated-extglob",
+      "options": {
+        "scanToEnd": true
+      },
+      "sample_times_ns": [
+        105000,
+        105800,
+        168700,
+        124900,
+        106200,
+        112000,
+        105800,
+        104800,
+        104700,
+        104500
+      ],
+      "samples": 10,
+      "scenario_id": "S010",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 10184362764889600000,
+      "input": "foo/\\[a\\]/*.js",
+      "iters_per_sample": 500,
+      "label": "escaped-metachar",
+      "options": {
+        "unescape": true
+      },
+      "sample_times_ns": [
+        320000,
+        342600,
+        332500,
+        334800,
+        375100,
+        399700,
+        443400,
+        483800,
+        516400,
+        589700
+      ],
+      "samples": 10,
+      "scenario_id": "S011",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 15765722103529023000,
+      "input": "foo/bar/baz/*.js",
+      "iters_per_sample": 500,
+      "label": "parts-basic",
+      "options": {
+        "parts": true
+      },
+      "sample_times_ns": [
+        637500,
+        591600,
+        583600,
+        575900,
+        568400,
+        570700,
+        575300,
+        581300,
+        742600,
+        786400
+      ],
+      "samples": 10,
+      "scenario_id": "S012",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 3372973939847180000,
+      "input": "foo/bar/**/*.js",
+      "iters_per_sample": 500,
+      "label": "tokens-basic",
+      "options": {
+        "tokens": true
+      },
+      "sample_times_ns": [
+        891100,
+        857500,
+        800800,
+        799900,
+        802400,
+        945900,
+        793300,
+        760900,
+        796900,
+        832100
+      ],
+      "samples": 10,
+      "scenario_id": "S013",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 9249079878220431000,
+      "input": "./src/**/*.js",
+      "iters_per_sample": 500,
+      "label": "noext-globstar",
+      "options": {
+        "noext": true,
+        "scanToEnd": true
+      },
+      "sample_times_ns": [
+        631900,
+        628300,
+        710000,
+        620200,
+        620400,
+        606900,
+        595700,
+        579800,
+        573100,
+        589300
+      ],
+      "samples": 10,
+      "scenario_id": "S014",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 4755845447499788000,
+      "input": "!foo/bar/*.js",
+      "iters_per_sample": 500,
+      "label": "nonegate",
+      "options": {
+        "nonegate": true
+      },
+      "sample_times_ns": [
+        195500,
+        198100,
+        196900,
+        196600,
+        195100,
+        195500,
+        195700,
+        196600,
+        429100,
+        210200
+      ],
+      "samples": 10,
+      "scenario_id": "S015",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 14167774436636516000,
+      "input": "foo/(bar|baz)/*.js",
+      "iters_per_sample": 500,
+      "label": "noparen",
+      "options": {
+        "noparen": true
+      },
+      "sample_times_ns": [
+        216600,
+        216000,
+        229500,
+        219400,
+        221800,
+        227100,
+        219700,
+        215500,
+        210000,
+        208800
+      ],
+      "samples": 10,
+      "scenario_id": "S016",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 6903932198750412000,
+      "input": "フォルダ/**/*.js",
+      "iters_per_sample": 500,
+      "label": "bmp-unicode",
+      "options": {
+        "parts": true
+      },
+      "sample_times_ns": [
+        792400,
+        674800,
+        572300,
+        649600,
+        561400,
+        514300,
+        524500,
+        514300,
+        523000,
+        507300
+      ],
+      "samples": 10,
+      "scenario_id": "S017",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 17719885657968919000,
+      "input": "😀/*.js",
+      "iters_per_sample": 500,
+      "label": "astral-unicode",
+      "options": {
+        "parts": true
+      },
+      "sample_times_ns": [
+        337000,
+        346500,
+        365200,
+        329800,
+        326800,
+        319200,
+        318600,
+        319300,
+        318000,
+        506900
+      ],
+      "samples": 10,
+      "scenario_id": "S018",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 2398208214254038000,
+      "input": "./src/components/{Footer,Header}/**/*.{js,ts,jsx,tsx}",
+      "iters_per_sample": 500,
+      "label": "mixed-realistic",
+      "options": {
+        "scanToEnd": true
+      },
+      "sample_times_ns": [
+        386400,
+        386500,
+        378200,
+        377100,
+        378000,
+        393400,
+        378100,
+        388600,
+        396900,
+        402900
+      ],
+      "samples": 10,
+      "scenario_id": "S019",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    },
+    {
+      "checksum": 6053839005542901000,
+      "input": "./foo/@(bar)/**/*.js",
+      "iters_per_sample": 500,
+      "label": "complex-parts-tokens",
+      "options": {
+        "tokens": true
+      },
+      "sample_times_ns": [
+        529400,
+        903100,
+        529600,
+        587500,
+        543000,
+        525600,
+        529500,
+        503500,
+        508400,
+        502400
+      ],
+      "samples": 10,
+      "scenario_id": "S020",
+      "total_operations": 6000,
+      "warmup_iters": 1000
+    }
+  ],
+  "js_runs": [
+    [
+      {
+        "scenario_id": "S001",
+        "label": "plain-path-short",
+        "input": "foo/bar/baz.js",
+        "options": {},
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          1254100,
+          1374000,
+          1206400,
+          1433900,
+          1401500,
+          1604900,
+          1391100,
+          1277300,
+          1184400,
+          1174600
+        ],
+        "checksum": 2490417152,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S002",
+        "label": "plain-path-long",
+        "input": "src/components/deep/nested/path/to/module/file.tsx",
+        "options": {},
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          5776000,
+          4612400,
+          3636300,
+          3673500,
+          4647600,
+          6303600,
+          4398100,
+          4497500,
+          4903000,
+          4988800
+        ],
+        "checksum": 139329536,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S003",
+        "label": "star-glob",
+        "input": "foo/bar/*.js",
+        "options": {},
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          795400,
+          793000,
+          773100,
+          807000,
+          1096800,
+          1520100,
+          853300,
+          810800,
+          832800,
+          774700
+        ],
+        "checksum": 4106551296,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S004",
+        "label": "question-mark",
+        "input": "foo/ba?.js",
+        "options": {},
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          709800,
+          1634800,
+          1434200,
+          702800,
+          1087400,
+          720700,
+          636000,
+          643200,
+          1802100,
+          1156100
+        ],
+        "checksum": 512688128,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S005",
+        "label": "globstar-deep",
+        "input": "./src/**/deep/**/*.js",
+        "options": {
+          "scanToEnd": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          1395100,
+          1368000,
+          1279700,
+          2139000,
+          3653500,
+          2419500,
+          2897600,
+          1428300,
+          1240900,
+          1316800
+        ],
+        "checksum": 1758208000,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S006",
+        "label": "braces",
+        "input": "foo/{a,b,c}/*.js",
+        "options": {
+          "scanToEnd": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          1138200,
+          1156000,
+          1193500,
+          1471300,
+          1072200,
+          1105600,
+          1101400,
+          1089200,
+          1121100,
+          1422300
+        ],
+        "checksum": 2394824704,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S007",
+        "label": "brackets",
+        "input": "foo/[abc]/*.js",
+        "options": {
+          "scanToEnd": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          1505900,
+          1373900,
+          2125500,
+          1651600,
+          1898300,
+          1073700,
+          954500,
+          903900,
+          1061400,
+          905300
+        ],
+        "checksum": 2221277184,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S008",
+        "label": "extglob",
+        "input": "foo/+(bar|baz)/*.js",
+        "options": {
+          "scanToEnd": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          1250300,
+          1231600,
+          1345300,
+          1547700,
+          1900600,
+          1430300,
+          1247100,
+          1869300,
+          1239800,
+          1268400
+        ],
+        "checksum": 2068578304,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S009",
+        "label": "negation",
+        "input": "!foo/bar/*.js",
+        "options": {},
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          1333300,
+          1380200,
+          1499700,
+          3035100,
+          4330100,
+          2780600,
+          2942400,
+          2072300,
+          3029600,
+          1892000
+        ],
+        "checksum": 632209408,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S010",
+        "label": "negated-extglob",
+        "input": "!(foo)/bar/*.js",
+        "options": {
+          "scanToEnd": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          4325500,
+          2531400,
+          2129000,
+          2125900,
+          2556900,
+          3881600,
+          2443700,
+          1642400,
+          1061900,
+          1463300
+        ],
+        "checksum": 3210448384,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S011",
+        "label": "escaped-metachar",
+        "input": "foo/\\[a\\]/*.js",
+        "options": {
+          "unescape": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          2458900,
+          1923100,
+          2095400,
+          2247100,
+          1491700,
+          1295900,
+          1076800,
+          1017100,
+          1047500,
+          1228000
+        ],
+        "checksum": 1987272704,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S012",
+        "label": "parts-basic",
+        "input": "foo/bar/baz/*.js",
+        "options": {
+          "parts": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          2276100,
+          2641700,
+          2365200,
+          2159000,
+          3083500,
+          2857700,
+          3619400,
+          2353700,
+          2925200,
+          2573500
+        ],
+        "checksum": 2399531008,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S013",
+        "label": "tokens-basic",
+        "input": "foo/bar/**/*.js",
+        "options": {
+          "tokens": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          3387600,
+          2718600,
+          2701500,
+          2683600,
+          4578800,
+          3809000,
+          2988600,
+          2769100,
+          2448200,
+          2890600
+        ],
+        "checksum": 1776222208,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S014",
+        "label": "noext-globstar",
+        "input": "./src/**/*.js",
+        "options": {
+          "noext": true,
+          "scanToEnd": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          1806900,
+          1574400,
+          2099600,
+          1538300,
+          2103400,
+          2108100,
+          2248700,
+          2242400,
+          2198200,
+          1023500
+        ],
+        "checksum": 700989440,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S015",
+        "label": "nonegate",
+        "input": "!foo/bar/*.js",
+        "options": {
+          "nonegate": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          1218600,
+          1406300,
+          904300,
+          896100,
+          1012200,
+          918000,
+          1030500,
+          1153100,
+          916000,
+          924900
+        ],
+        "checksum": 2811500544,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S016",
+        "label": "noparen",
+        "input": "foo/(bar|baz)/*.js",
+        "options": {
+          "noparen": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          1344500,
+          1247400,
+          1577400,
+          1220400,
+          1158900,
+          1214900,
+          1256500,
+          1346800,
+          1296400,
+          1419500
+        ],
+        "checksum": 2632146944,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S017",
+        "label": "bmp-unicode",
+        "input": "フォルダ/**/*.js",
+        "options": {
+          "parts": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          1275400,
+          1223800,
+          1056200,
+          1063600,
+          996000,
+          1132000,
+          1001200,
+          1013400,
+          986200,
+          1048700
+        ],
+        "checksum": 1518436352,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S018",
+        "label": "astral-unicode",
+        "input": "😀/*.js",
+        "options": {
+          "parts": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          676000,
+          812400,
+          706100,
+          683800,
+          689600,
+          681300,
+          728500,
+          686100,
+          670000,
+          678200
+        ],
+        "checksum": 3075604480,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S019",
+        "label": "mixed-realistic",
+        "input": "./src/components/{Footer,Header}/**/*.{js,ts,jsx,tsx}",
+        "options": {
+          "scanToEnd": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          2494900,
+          2588600,
+          2462400,
+          2460600,
+          2533100,
+          2481700,
+          2571000,
+          2503500,
+          2754300,
+          2344100
+        ],
+        "checksum": 1185890304,
+        "total_operations": 6000
+      },
+      {
+        "scenario_id": "S020",
+        "label": "complex-parts-tokens",
+        "input": "./foo/@(bar)/**/*.js",
+        "options": {
+          "tokens": true
+        },
+        "warmup_iters": 1000,
+        "samples": 10,
+        "iters_per_sample": 500,
+        "sample_times_ns": [
+          2933500,
+          3417900,
+          3193700,
+          3213000,
+          3391500,
+          4169200,
+          3521200,
+          3088500,
+          3106300,
+          2878000
+        ],
+        "checksum": 2659565568,
+        "total_operations": 6000
+      }
+    ]
+  ],
+  "bridge_results": [
+    {
+      "scenario_id": "S001",
+      "label": "plain-path-short",
+      "js_in_process_ns": 334300,
+      "cold_process_ns": 53926800,
+      "bridge_overhead_ns": 53592500,
+      "bridge_ratio": 161.31259347891117
+    },
+    {
+      "scenario_id": "S002",
+      "label": "plain-path-long",
+      "js_in_process_ns": 39500,
+      "cold_process_ns": 6058600,
+      "bridge_overhead_ns": 6019100,
+      "bridge_ratio": 153.38227848101266
+    },
+    {
+      "scenario_id": "S003",
+      "label": "star-glob",
+      "js_in_process_ns": 95100,
+      "cold_process_ns": 6966900,
+      "bridge_overhead_ns": 6871800,
+      "bridge_ratio": 73.25867507886436
+    },
+    {
+      "scenario_id": "S004",
+      "label": "question-mark",
+      "js_in_process_ns": 8900,
+      "cold_process_ns": 7302000,
+      "bridge_overhead_ns": 7293100,
+      "bridge_ratio": 820.4494382022472
+    },
+    {
+      "scenario_id": "S005",
+      "label": "globstar-deep",
+      "js_in_process_ns": 38100,
+      "cold_process_ns": 6231800,
+      "bridge_overhead_ns": 6193700,
+      "bridge_ratio": 163.56430446194227
+    }
+  ]
+}
