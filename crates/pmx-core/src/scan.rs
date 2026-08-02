@@ -490,10 +490,11 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
         is_glob = false;
     }
 
-    // lib/scan.js L291-L317 — base/glob/prefix split
-    let mut base: String;
+    // lib/scan.js L291-L317 — base/glob/prefix split.
+    // Base/glob are computed as UTF-16 unit RANGES first so the trailing-
+    // separator trim (JS L309-L313) needs no intermediate String builds;
+    // each field is materialized exactly once at the end.
     let mut prefix = String::new();
-    let mut glob = String::new();
 
     // str = input (we keep `units` as the source of truth for slicing)
     let mut str_start: usize = 0; // start offset into units for `str`
@@ -508,34 +509,38 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
         last_index = last_index.saturating_sub(start);
     }
 
-    // Reconstruct `str` boundaries for slicing: units[str_start..str_start+str_len]
-    let str_units = &units[str_start..str_start + str_len];
+    // str spans units[str_start..str_start+str_len]
+    let base_start = str_start;
+    let mut base_len: usize;
+    let mut glob_start = str_start;
+    let mut glob_len = 0usize;
 
     if str_len > 0 && is_glob && last_index > 0 {
         // base = str.slice(0, last_index); glob = str.slice(last_index)
-        base = slice_units_to_string(str_units, 0, last_index);
-        glob = slice_units_to_string(str_units, last_index, str_len);
+        base_len = last_index;
+        glob_start = str_start + last_index;
+        glob_len = str_len - last_index;
     } else if is_glob {
-        base = String::new();
-        glob = slice_units_to_string(str_units, 0, str_len);
+        base_len = 0;
+        glob_len = str_len;
     } else {
-        base = slice_units_to_string(str_units, 0, str_len);
+        base_len = str_len;
     }
 
-    // lib/scan.js L309-L313 — trim trailing separator from base
-    if !base.is_empty() && base != "/" && base != slice_units_to_string(units, 0, units.len()) {
-        // `base !== str` — compare base to the full `str` (post-prefix slice)
-        let full_str = slice_units_to_string(str_units, 0, str_len);
-        if base != full_str {
-            // JS: `base.charCodeAt(base.length - 1)` — last UTF-16 unit.
-            let last_unit = base.encode_utf16().last().unwrap_or(0);
-            if is_path_separator(last_unit) {
-                // Safe here: the branch runs only when the final UTF-16 unit is ASCII
-                // '/' or '\', so removing one Rust char removes exactly one UTF-16 unit.
-                base.pop();
-            }
-        }
+    // lib/scan.js L309-L313 — trim ONE trailing path separator from base when
+    // base is non-empty, not exactly "/", and not the whole (post-prefix) str.
+    // base is a unit PREFIX of str, so `base !== str` reduces to unequal
+    // lengths — and `base !== '/'` to "not the single unit 0x2F". No strings.
+    if base_len > 0
+        && !(base_len == 1 && units[base_start] == CHAR_FORWARD_SLASH)
+        && base_len != str_len
+        && is_path_separator(units[base_start + base_len - 1])
+    {
+        base_len -= 1;
     }
+
+    let mut base = slice_units_to_string(units, base_start, base_start + base_len);
+    let mut glob = slice_units_to_string(units, glob_start, glob_start + glob_len);
 
     // lib/scan.js L319-L325 — unescape
     if opts.unescape == Some(true) {
@@ -569,9 +574,12 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
         state.max_depth = Some(0.0);
         // `if (!isPathSeparator(code))` — `code` is the last-advanced value
         if !is_path_separator(code) {
-            tokens.push(token.clone());
+            tokens.push(token);
         }
-        state.tokens = Some(tokens.clone());
+        // Move (not clone): the local vec is dead after this point; the parts
+        // loop below mutates `state.tokens` in place, mirroring JS object
+        // mutation of the already-pushed tokens.
+        state.tokens = Some(tokens);
     }
 
     // lib/scan.js L349-L386 — parts/slashes assembly
@@ -626,8 +634,9 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
             }
         }
 
-        state.slashes = Some(slashes.clone());
-        state.parts = Some(parts.clone());
+        // Move (not clone): both locals are dead after assignment.
+        state.slashes = Some(slashes);
+        state.parts = Some(parts);
     }
 
     state
