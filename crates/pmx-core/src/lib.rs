@@ -12,5 +12,5 @@ pub mod parse;
 pub mod utils;
 
 pub use error::PmxError;
-pub use options::Options;
+pub use options::{ExtglobRecursion, Options};
 pub use parse::{fastpaths, parse, ParseState, Token, TokenKind};

@@ -19,12 +19,18 @@ pub enum CounterKind {
     Parens,
 }
 
-/// Extglob frame, currently only the field `push` accumulates into
-/// (parse.js:L507-L509). Full frame per L523-L531 lands in C7.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct ExtglobFrame {
-    pub inner: Vec<u16>,
-    // C7 adds: conditions, parens, output-snapshot, startIndex, tokensIndex
+    pub(crate) kind: &'static str,
+    pub(crate) open: &'static str,
+    pub(crate) close: String,
+    pub(crate) conditions: usize,
+    pub(crate) inner: Vec<u16>,
+    pub(crate) prev_tok: usize,
+    pub(crate) parens: i32,
+    pub(crate) output: Vec<u16>,
+    pub(crate) start_index: isize,
+    pub(crate) tokens_index: usize,
 }
 
 /// Brace open frame (parse.js:L884-L890).
@@ -43,15 +49,14 @@ pub(crate) struct Parser {
     pub(crate) input_chars: Vec<u16>,
     /// index arena link for `prev` (design §6.2); mutated only via push.
     pub(crate) prev: usize,
-    extglobs: Vec<ExtglobFrame>,
+    pub(crate) extglobs: Vec<ExtglobFrame>,
     pub(crate) braces: Vec<BraceFrame>,
     pub(crate) stack: Vec<CounterKind>,
     /// platform fragment table — selected once at init (parse.js:L377).
     pub(crate) platform: &'static PlatformChars,
     /// per-call fragment bundle — now read by C1's fastpath/text paths.
     pub(crate) fragments: Fragments,
-    #[allow(dead_code)] // platform-extglob table selected at init; consumed by C7 (L523-L537)
-    extglob_chars: &'static ExtglobChars,
+    pub(crate) extglob_chars: &'static ExtglobChars,
     pub(crate) opts: Options,
 }
 
@@ -63,7 +68,7 @@ impl Parser {
         let fragments = build_fragments(&opts, platform);
         let mut tokens = Vec::with_capacity(16);
 
-        // port: L371-L372 — bos token, output = opts.prepend || ''
+        // L371-L372 — bos token, output = opts.prepend || ''
         let bos = Token {
             kind: TokenKind::Bos,
             value: Vec::new(),
@@ -71,6 +76,8 @@ impl Parser {
             suffix: None,
             prev: 0,
             posix: false,
+            star: false,
+            extglob: false,
         };
         tokens.push(bos);
 
@@ -173,6 +180,36 @@ impl Parser {
     /// demotion block (L493-L505) verbatim HERE; its presence is behaviorally
     /// inert until globstar tokens exist, which only C8 creates.
     pub(crate) fn push(&mut self, mut tok: Token) {
+        // L494-L505 — globstar demotion block
+        const STAR_UNIT: u16 = b'*' as u16;
+        if let Some(prev) = self.state.tokens.get_mut(self.prev) {
+            if prev.kind == TokenKind::Globstar {
+                let is_brace = self.state.braces > 0
+                    && (tok.kind == TokenKind::Comma || tok.kind == TokenKind::Brace);
+                let is_pipe = tok.value == [b'|' as u16];
+                let is_extglob = tok.extglob
+                    || (!self.extglobs.is_empty() && (is_pipe || tok.kind == TokenKind::Paren));
+
+                if tok.kind != TokenKind::Slash
+                    && tok.kind != TokenKind::Paren
+                    && !is_brace
+                    && !is_extglob
+                {
+                    let prev_output_len = prev.output.as_ref().map_or(0, |o| o.len());
+                    if self.state.output.len() >= prev_output_len {
+                        self.state
+                            .output
+                            .truncate(self.state.output.len() - prev_output_len);
+                    }
+                    prev.kind = TokenKind::Star;
+                    prev.value = vec![STAR_UNIT];
+                    let star_out: Vec<u16> = self.fragments.star.encode_utf16().collect();
+                    prev.output = Some(star_out.clone());
+                    self.state.output.extend_from_slice(&star_out);
+                }
+            }
+        }
+
         // L507-L509 — accumulate raw value into the open extglob frame's inner
         if tok.kind != TokenKind::Paren {
             if let Some(frame) = self.extglobs.last_mut() {

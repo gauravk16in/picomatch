@@ -129,6 +129,11 @@ impl Options {
         }
     }
 
+    /// parse.js:L1061 — `opts.nonegate === true`
+    pub fn nonegate(&self) -> bool {
+        self.nonegate == Some(true)
+    }
+
     /// parse.js:L364 — `typeof opts.maxLength === 'number' ? Math.min(MAX_LENGTH, n) : MAX_LENGTH`.
     /// NaN passthrough: JS `Math.min(65536, NaN)` is NaN and `len > NaN` is
     /// false, i.e. NaN disables the guard. Mirror that exactly.
@@ -228,6 +233,22 @@ impl Options {
 
     // ---------- builder (tests + adapters; one knob per field) ----------
 
+    pub fn with_nonegate(mut self, v: bool) -> Self {
+        self.nonegate = Some(v);
+        self
+    }
+    pub fn with_noext(mut self, v: bool) -> Self {
+        self.noext = Some(v);
+        self
+    }
+    pub fn with_noextglob(mut self, v: bool) -> Self {
+        self.noextglob = Some(v);
+        self
+    }
+    pub fn with_max_extglob_recursion(mut self, v: ExtglobRecursion) -> Self {
+        self.max_extglob_recursion = v;
+        self
+    }
     pub fn with_windows(mut self, v: bool) -> Self {
         self.windows = Some(v);
         self

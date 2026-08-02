@@ -115,6 +115,18 @@ impl Parser {
                 continue;
             }
 
+            // L788 — open paren
+            if value == LPAREN {
+                self.open_paren_branch();
+                continue;
+            }
+
+            // L794 — close paren
+            if value == RPAREN {
+                self.close_paren_branch()?;
+                continue;
+            }
+
             // L814-L827 — open bracket branch
             if value == LBRACK {
                 self.open_bracket_branch()?;
@@ -136,6 +148,12 @@ impl Parser {
             // L897 — brace close
             if value == RBRACE {
                 self.close_brace_branch();
+                continue;
+            }
+
+            // L946 — pipe
+            if value == PIPE {
+                self.pipe_branch();
                 continue;
             }
 
@@ -163,9 +181,26 @@ impl Parser {
                 continue;
             }
 
+            // L1053 — exclamation
+            if value == EXCLAMATION {
+                self.exclamation_branch();
+                continue;
+            }
+
             // L1071-L1089 — plus
             if value == PLUS {
                 self.plus_branch();
+                continue;
+            }
+
+            // L1095 — at
+            const AT: u16 = b'@' as u16;
+            if value == AT
+                && !self.opts.noextglob()
+                && self.peek(1) == Some(LPAREN)
+                && self.peek(2) != Some(QMARK)
+            {
+                self.push(Token::units(TokenKind::At, &[AT], Some(vec![])));
                 continue;
             }
 
@@ -604,9 +639,77 @@ impl Parser {
         self.push(Token::units(TokenKind::Text, &value, None));
     }
 
+    /// L788 — open paren branch
+    fn open_paren_branch(&mut self) {
+        self.increment(CounterKind::Parens);
+        self.push(Token::units(TokenKind::Paren, &[LPAREN], None));
+    }
+
+    /// L794-L808 — close paren branch
+    fn close_paren_branch(&mut self) -> Result<(), PmxError> {
+        if self.state.parens == 0 && self.opts.strict_brackets() {
+            return Err(PmxError::MissingOpening { c: '(' });
+        }
+
+        if let Some(ext) = self.extglobs.last() {
+            if self.state.parens == ext.parens + 1 {
+                let frame = self.extglobs.pop().unwrap();
+                return self.extglobClose(frame);
+            }
+        }
+
+        let out = if self.state.parens > 0 {
+            vec![RPAREN]
+        } else {
+            vec![BS, RPAREN]
+        };
+        self.push(Token::units(TokenKind::Paren, &[RPAREN], Some(out)));
+        self.decrement(CounterKind::Parens);
+        Ok(())
+    }
+
+    /// L946-L952 — pipe branch
+    fn pipe_branch(&mut self) {
+        if let Some(ext) = self.extglobs.last_mut() {
+            ext.conditions += 1;
+        }
+        self.push(Token::units(TokenKind::Text, &[PIPE], None));
+    }
+
+    /// L1053-L1065 — exclamation branch
+    fn exclamation_branch(&mut self) {
+        if !self.opts.noextglob() && self.peek(1) == Some(LPAREN) {
+            let p2 = self.peek(2);
+            let p3 = self.peek(3);
+            let is_special_lookaround = p2 == Some(QMARK)
+                && p3.is_some_and(|u| {
+                    u == EXCLAMATION || u == b'=' as u16 || u == b'<' as u16 || u == COLON
+                });
+            if !is_special_lookaround {
+                self.extglobOpen("negate", EXCLAMATION);
+                return;
+            }
+        }
+        if !self.opts.nonegate() && self.state.index == 0 {
+            self.state.negated = true;
+            return;
+        }
+        self.text_branch(EXCLAMATION);
+    }
+
     /// L1021-L1047 — question marks branch
     fn qmark_branch(&mut self) {
         let prev_tok = self.state.tokens.get(self.prev);
+        let prev_is_open_paren = prev_tok.is_some_and(|t| t.value == [LPAREN]);
+        if !prev_is_open_paren
+            && !self.opts.noextglob()
+            && self.peek(1) == Some(LPAREN)
+            && self.peek(2) != Some(QMARK)
+        {
+            self.extglobOpen("qmark", QMARK);
+            return;
+        }
+
         let prev_kind = prev_tok.map(|t| t.kind);
 
         if prev_kind == Some(TokenKind::Paren) {
@@ -645,6 +748,11 @@ impl Parser {
 
     /// L1071-L1089 — plus branch
     fn plus_branch(&mut self) {
+        if !self.opts.noextglob() && self.peek(1) == Some(LPAREN) && self.peek(2) != Some(QMARK) {
+            self.extglobOpen("plus", PLUS);
+            return;
+        }
+
         let prev_tok = self.state.tokens.get(self.prev);
         let prev_kind = prev_tok.map(|t| t.kind);
         let prev_val_is_open_paren = prev_tok.is_some_and(|t| t.value == [b'(' as u16]);
@@ -668,8 +776,222 @@ impl Parser {
         self.push(Token::units(TokenKind::Plus, &plus_lit, None));
     }
 
-    /// L1246-L1283 — plain star branch
+    /// L1246-L1283 — plain star branch & C8 globstar machine
     fn star_branch(&mut self) {
+        // L1128-L1137 — prev star run collapse
+        if let Some(prev) = self.state.tokens.get_mut(self.prev) {
+            if prev.kind == TokenKind::Globstar || prev.star {
+                prev.kind = TokenKind::Star;
+                prev.star = true;
+                prev.value.push(STAR);
+                let star_out: Vec<u16> = self.fragments.star.encode_utf16().collect();
+                prev.output = Some(star_out);
+                self.state.backtrack = true;
+                self.state.globstar = true;
+                return;
+            }
+        }
+
+        let mut rest = self.remaining();
+        if !self.opts.noextglob() && rest.starts_with(&[LPAREN]) && rest.get(1) != Some(&QMARK) {
+            self.extglobOpen("star", STAR);
+            return;
+        }
+
+        // L1145-L1244 — globstar second star machine
+        if let Some(prev_kind) = self.state.tokens.get(self.prev).map(|t| t.kind) {
+            if prev_kind == TokenKind::Star {
+                if self.opts.noglobstar() {
+                    return;
+                }
+
+                let prior_idx = self.state.tokens[self.prev].prev;
+                let prior = &self.state.tokens[prior_idx];
+                let before = if prior_idx > 0 {
+                    Some(&self.state.tokens[prior.prev])
+                } else {
+                    None
+                };
+
+                let is_start = prior.kind == TokenKind::Slash || prior.kind == TokenKind::Bos;
+                let after_star = before
+                    .is_some_and(|b| b.kind == TokenKind::Star || b.kind == TokenKind::Globstar);
+
+                let rest_str = String::from_utf16_lossy(rest);
+
+                if self.opts.bash()
+                    && (!is_start || rest_str.chars().next().is_some_and(|c| c != '/'))
+                {
+                    self.push(Token::units(TokenKind::Star, &[STAR], Some(vec![])));
+                    return;
+                }
+
+                let is_brace = self.state.braces > 0
+                    && (prior.kind == TokenKind::Comma || prior.kind == TokenKind::Brace);
+                let is_pipe = prior.value == [PIPE];
+                let is_extglob =
+                    !self.extglobs.is_empty() && (is_pipe || prior.kind == TokenKind::Paren);
+
+                if !is_start && prior.kind != TokenKind::Paren && !is_brace && !is_extglob {
+                    self.push(Token::units(TokenKind::Star, &[STAR], Some(vec![])));
+                    return;
+                }
+
+                // Strip consecutive `/**/`
+                let mut rem_chars = rest_str.clone();
+                while rem_chars.starts_with("/**") {
+                    let after = rem_chars.chars().nth(3);
+                    if after.is_some_and(|c| c != '/') {
+                        break;
+                    }
+                    rem_chars = rem_chars[3..].to_string();
+                    let inc = isize::try_from(3).unwrap_or(3);
+                    self.state.index += inc;
+                    let consumed_units: Vec<u16> = "/**".encode_utf16().collect();
+                    self.state.consumed.extend_from_slice(&consumed_units);
+                }
+                rest = self.remaining();
+                let rest_bytes: Vec<u16> = rest.to_vec();
+
+                let globstar_str = self.fragments.globstar.to_string();
+                let globstar_units: Vec<u16> = globstar_str.encode_utf16().collect();
+
+                // 1) prior.kind == Bos && eos()
+                if prior.kind == TokenKind::Bos && self.eos() {
+                    let prev = &mut self.state.tokens[self.prev];
+                    prev.kind = TokenKind::Globstar;
+                    prev.value.push(STAR);
+                    prev.output = Some(globstar_units.clone());
+                    self.state.output = globstar_units;
+                    self.state.globstar = true;
+                    return;
+                }
+
+                // 2) prior.kind == Slash && prior.prev != Bos && !after_star && eos()
+                if prior.kind == TokenKind::Slash && prior.prev != 0 && !after_star && self.eos() {
+                    let prev_output_len = self.state.tokens[self.prev]
+                        .output
+                        .as_ref()
+                        .map_or(0, |o| o.len());
+                    let prior_output_len = prior.output.as_ref().map_or(0, |o| o.len());
+                    let total_strip = prior_output_len + prev_output_len;
+                    if self.state.output.len() >= total_strip {
+                        self.state
+                            .output
+                            .truncate(self.state.output.len() - total_strip);
+                    }
+
+                    let prior_tok = &mut self.state.tokens[prior_idx];
+                    let mut new_prior_out = vec![LPAREN, b'?' as u16, b':' as u16];
+                    new_prior_out
+                        .extend_from_slice(prior_tok.output.as_deref().unwrap_or(&prior_tok.value));
+                    prior_tok.output = Some(new_prior_out.clone());
+
+                    let mut new_prev_out = globstar_units.clone();
+                    if self.opts.strict_slashes() {
+                        new_prev_out.push(RPAREN);
+                    } else {
+                        new_prev_out.extend(b"|$)".iter().map(|&b| b as u16));
+                    }
+
+                    let prev_tok = &mut self.state.tokens[self.prev];
+                    prev_tok.kind = TokenKind::Globstar;
+                    prev_tok.value.push(STAR);
+                    prev_tok.output = Some(new_prev_out.clone());
+
+                    self.state.globstar = true;
+                    self.state.output.extend_from_slice(&new_prior_out);
+                    self.state.output.extend_from_slice(&new_prev_out);
+                    return;
+                }
+
+                // 3) prior.kind == Slash && prior.prev != Bos && rest[0] == '/'
+                if prior.kind == TokenKind::Slash
+                    && prior.prev != 0
+                    && rest_bytes.first() == Some(&(b'/' as u16))
+                {
+                    let end = if rest_bytes.get(1).is_some() {
+                        "|$"
+                    } else {
+                        ""
+                    };
+                    let prev_output_len = self.state.tokens[self.prev]
+                        .output
+                        .as_ref()
+                        .map_or(0, |o| o.len());
+                    let prior_output_len = prior.output.as_ref().map_or(0, |o| o.len());
+                    let total_strip = prior_output_len + prev_output_len;
+                    if self.state.output.len() >= total_strip {
+                        self.state
+                            .output
+                            .truncate(self.state.output.len() - total_strip);
+                    }
+
+                    let prior_tok = &mut self.state.tokens[prior_idx];
+                    let mut new_prior_out = vec![LPAREN, b'?' as u16, b':' as u16];
+                    new_prior_out
+                        .extend_from_slice(prior_tok.output.as_deref().unwrap_or(&prior_tok.value));
+                    prior_tok.output = Some(new_prior_out.clone());
+
+                    let slash_lit = self.platform.slash_literal;
+                    let glob_out = format!("{globstar_str}{slash_lit}|{slash_lit}{end})");
+                    let glob_units: Vec<u16> = glob_out.encode_utf16().collect();
+
+                    let prev_tok = &mut self.state.tokens[self.prev];
+                    prev_tok.kind = TokenKind::Globstar;
+                    prev_tok.value.push(STAR);
+                    prev_tok.output = Some(glob_units.clone());
+
+                    self.state.output.extend_from_slice(&new_prior_out);
+                    self.state.output.extend_from_slice(&glob_units);
+                    self.state.globstar = true;
+
+                    self.advance(); // consume '/'
+                    self.push(Token::units(TokenKind::Slash, &[FSLASH], Some(vec![])));
+                    return;
+                }
+
+                // 4) prior.kind == Bos && rest[0] == '/'
+                if prior.kind == TokenKind::Bos && rest_bytes.first() == Some(&(b'/' as u16)) {
+                    let slash_lit = self.platform.slash_literal;
+                    let glob_out = format!("(?:^|{slash_lit}|{globstar_str}{slash_lit})");
+                    let glob_units: Vec<u16> = glob_out.encode_utf16().collect();
+
+                    let prev_tok = &mut self.state.tokens[self.prev];
+                    prev_tok.kind = TokenKind::Globstar;
+                    prev_tok.value.push(STAR);
+                    prev_tok.output = Some(glob_units.clone());
+
+                    self.state.output = glob_units;
+                    self.state.globstar = true;
+
+                    self.advance(); // consume '/'
+                    self.push(Token::units(TokenKind::Slash, &[FSLASH], Some(vec![])));
+                    return;
+                }
+
+                // Default globstar replacement
+                let prev_output_len = self.state.tokens[self.prev]
+                    .output
+                    .as_ref()
+                    .map_or(0, |o| o.len());
+                if self.state.output.len() >= prev_output_len {
+                    self.state
+                        .output
+                        .truncate(self.state.output.len() - prev_output_len);
+                }
+
+                let prev_tok = &mut self.state.tokens[self.prev];
+                prev_tok.kind = TokenKind::Globstar;
+                prev_tok.value.push(STAR);
+                prev_tok.output = Some(globstar_units.clone());
+
+                self.state.output.extend_from_slice(&globstar_units);
+                self.state.globstar = true;
+                return;
+            }
+        }
+
         let star_output: Vec<u16> = self.fragments.star.encode_utf16().collect();
         let mut token_output = star_output;
 
@@ -981,5 +1303,12 @@ mod tests {
         // POSIX class [[:alnum:]]
         let res_posix = parse("[[:alnum:]]", &opts).unwrap();
         assert!(!res_posix.output.is_empty());
+    }
+
+    #[test]
+    fn test_extglob_simple() {
+        let opts = Options::default().with_fastpaths(false);
+        let res = parse("?(a|b)", &opts).unwrap();
+        println!("output: {:?}", String::from_utf16_lossy(&res.output));
     }
 }

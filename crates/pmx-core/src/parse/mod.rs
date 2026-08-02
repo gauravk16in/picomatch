@@ -4,6 +4,7 @@
 //! maybe_slash → rebuild). The inline fastpath returns the state EARLY;
 //! finish() must NOT run on that route (L654).
 
+mod extglob;
 mod fastpath;
 mod fragments;
 mod inline_fastpath;

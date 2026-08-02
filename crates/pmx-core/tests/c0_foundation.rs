@@ -55,6 +55,7 @@ fn corpus() -> Vec<Case> {
         "c3_oracle.json",
         "c5_oracle.json",
         "c6_oracle.json",
+        "c7_oracle.json",
     ] {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../fixtures")
@@ -137,6 +138,23 @@ fn options_of(v: &serde_json::Value) -> Options {
     }
     if let Some(b) = v.get("posix").and_then(|x| x.as_bool()) {
         o = o.with_posix(b);
+    }
+    if let Some(b) = v.get("noext").and_then(|x| x.as_bool()) {
+        o = o.with_noext(b);
+    }
+    if let Some(b) = v.get("noextglob").and_then(|x| x.as_bool()) {
+        o = o.with_noextglob(b);
+    }
+    match v.get("maxExtglobRecursion") {
+        Some(x) if x.as_bool() == Some(false) => {
+            o = o.with_max_extglob_recursion(pmx_core::ExtglobRecursion::Disabled);
+        }
+        Some(x) => {
+            if let Some(f) = f64_of(x) {
+                o = o.with_max_extglob_recursion(pmx_core::ExtglobRecursion::Limit(f));
+            }
+        }
+        _ => {}
     }
     o
 }

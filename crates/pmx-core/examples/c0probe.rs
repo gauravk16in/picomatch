@@ -64,6 +64,23 @@ fn opts_of(v: &Value) -> Options {
     if let Some(x) = b("posix") {
         o = o.with_posix(x);
     }
+    if let Some(x) = b("noext") {
+        o = o.with_noext(x);
+    }
+    if let Some(x) = b("noextglob") {
+        o = o.with_noextglob(x);
+    }
+    match v.get("maxExtglobRecursion") {
+        Some(Value::Bool(false)) => {
+            o = o.with_max_extglob_recursion(pmx_core::ExtglobRecursion::Disabled);
+        }
+        Some(Value::Number(n)) => {
+            if let Some(f) = n.as_f64() {
+                o = o.with_max_extglob_recursion(pmx_core::ExtglobRecursion::Limit(f));
+            }
+        }
+        _ => {}
+    }
     if let Some(s) = v.get("prepend").and_then(|x| x.as_str()) {
         o = o.with_prepend(s);
     }

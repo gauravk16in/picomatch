@@ -28,6 +28,7 @@ pub enum TokenKind {
     Qmark,      // C3 — L1041/L1045
     Plus,       // C7 — L1078+
     At,         // C7 — L1097
+    Negate,     // C7 — L1056
     MaybeSlash, // C0 — L1305
 }
 
@@ -49,6 +50,7 @@ impl TokenKind {
             TokenKind::Qmark => "qmark",
             TokenKind::Plus => "plus",
             TokenKind::At => "at",
+            TokenKind::Negate => "negate",
             TokenKind::MaybeSlash => "maybe_slash",
         }
     }
@@ -66,6 +68,8 @@ pub struct Token {
     pub suffix: Option<Vec<u16>>, // honored only by the backtrack rebuild (L1315-L1317)
     pub prev: usize,
     pub posix: bool,
+    pub star: bool,
+    pub extglob: bool,
 }
 
 impl Token {
@@ -77,6 +81,8 @@ impl Token {
             suffix: None,
             prev: 0,
             posix: false,
+            star: false,
+            extglob: false,
         }
     }
 
@@ -88,6 +94,8 @@ impl Token {
             suffix: None,
             prev: 0,
             posix: false,
+            star: false,
+            extglob: false,
         }
     }
 
