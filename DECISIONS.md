@@ -55,4 +55,12 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 - **Original**: `lib/parse.js` L493-L505 & L1128-L1244 implements `**` second-star context transitions, consecutive `/**/` stripping, `push()` demotion of `globstar` to `star` for non-slash tokens, and `bash` mode empty-output star semantics.
 - **Port**: Implemented `push()` demotion in `parser.rs` and the 6 globstar context branches in `main_loop.rs`.
 - **Why**: Guarantees byte-identical regex output for `**`, `a/**/b`, `a/**`, `/**/a`, and `a**b` across POSIX and Windows.
-- **Cost**: None; verified across 273 oracle cases and 59 adversarial cases.
+---
+
+### D-08: Pattern Negation (`!`) & `negate()` Parity
+
+- **Original**: `lib/parse.js` L457-L473 & L1053-L1065 implements leading `!` parity counting (`negate()`), double-negation folding (`count % 2 === 0`), `state.start` pointer advancement, extglob opener disambiguation (`!(...`), and `nonegate` option bypassing.
+- **Port**: Implemented `negate()` method in `main_loop.rs` adhering to exact parity counting and De Morgan paren boundary guards.
+- **Why**: Ensures leading `!`, `!!`, `!!!`, `!(...)`, `!!(...)`, `!a.js`, and `opts.nonegate` match V8 parse state output byte-for-byte.
+- **Cost**: None; verified across 73 oracle cases and 57 adversarial cases.
+

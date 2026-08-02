@@ -56,6 +56,8 @@ fn corpus() -> Vec<Case> {
         "c5_oracle.json",
         "c6_oracle.json",
         "c7_oracle.json",
+        "c8_oracle.json",
+        "c9_oracle.json",
     ] {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../fixtures")
@@ -130,6 +132,9 @@ fn options_of(v: &serde_json::Value) -> Options {
     if let Some(b) = v.get("nobrace").and_then(|x| x.as_bool()) {
         o = o.with_nobrace(b);
     }
+    if let Some(b) = v.get("noglobstar").and_then(|x| x.as_bool()) {
+        o = o.with_noglobstar(b);
+    }
     if let Some(b) = v.get("nobracket").and_then(|x| x.as_bool()) {
         o = o.with_nobracket(b);
     }
@@ -144,6 +149,9 @@ fn options_of(v: &serde_json::Value) -> Options {
     }
     if let Some(b) = v.get("noextglob").and_then(|x| x.as_bool()) {
         o = o.with_noextglob(b);
+    }
+    if let Some(b) = v.get("nonegate").and_then(|x| x.as_bool()) {
+        o = o.with_nonegate(b);
     }
     match v.get("maxExtglobRecursion") {
         Some(x) if x.as_bool() == Some(false) => {

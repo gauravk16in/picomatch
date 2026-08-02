@@ -70,6 +70,9 @@ fn opts_of(v: &Value) -> Options {
     if let Some(x) = b("noextglob") {
         o = o.with_noextglob(x);
     }
+    if let Some(x) = b("nonegate") {
+        o = o.with_nonegate(x);
+    }
     match v.get("maxExtglobRecursion") {
         Some(Value::Bool(false)) => {
             o = o.with_max_extglob_recursion(pmx_core::ExtglobRecursion::Disabled);

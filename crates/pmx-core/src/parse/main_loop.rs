@@ -200,7 +200,9 @@ impl Parser {
                 && self.peek(1) == Some(LPAREN)
                 && self.peek(2) != Some(QMARK)
             {
-                self.push(Token::units(TokenKind::At, &[AT], Some(vec![])));
+                let mut tok = Token::units(TokenKind::At, &[AT], Some(vec![]));
+                tok.extglob = true;
+                self.push(tok);
                 continue;
             }
 
@@ -676,6 +678,39 @@ impl Parser {
         self.push(Token::units(TokenKind::Text, &[PIPE], None));
     }
 
+    /// L457-L473 — `negate()`: consume leading `!` run and set parity.
+    /// Called only when `!` is the FIRST character (state.index == 0) and
+    /// nonegate is false. The outer dispatch always continues after this,
+    /// regardless of whether negation was set.
+    ///
+    /// Parity rule: odd count of leading `!` → negated; even → not negated.
+    /// The while-loop guard stops eating `!` if the next `!` opens an extglob:
+    ///   `peek(2) === '(' && peek(3) !== '?' / '!' / '=' / '<' / ':'`
+    fn negate(&mut self) {
+        let mut count: u32 = 1;
+        // peek(1) is the char after the current '!' (which is already at state.index)
+        while self.peek(1) == Some(EXCLAMATION)
+            && (self.peek(2) != Some(LPAREN)
+                || self.peek(3).is_some_and(|u| {
+                    u == EXCLAMATION
+                        || u == b'=' as u16
+                        || u == b'<' as u16
+                        || u == COLON
+                        || u == b'?' as u16
+                }))
+        {
+            self.advance();
+            self.state.start += 1;
+            count += 1;
+        }
+        // Even parity → cancelled (double negation = positive): no state.negated, no final start++
+        if count.is_multiple_of(2) {
+            return;
+        }
+        self.state.negated = true;
+        self.state.start += 1;
+    }
+
     /// L1053-L1065 — exclamation branch
     fn exclamation_branch(&mut self) {
         if !self.opts.noextglob() && self.peek(1) == Some(LPAREN) {
@@ -691,7 +726,7 @@ impl Parser {
             }
         }
         if !self.opts.nonegate() && self.state.index == 0 {
-            self.state.negated = true;
+            self.negate();
             return;
         }
         self.text_branch(EXCLAMATION);
@@ -788,6 +823,7 @@ impl Parser {
                 prev.output = Some(star_out);
                 self.state.backtrack = true;
                 self.state.globstar = true;
+                self.consume(&[STAR], 0); // L1135: consume(value)
                 return;
             }
         }
@@ -802,6 +838,7 @@ impl Parser {
         if let Some(prev_kind) = self.state.tokens.get(self.prev).map(|t| t.kind) {
             if prev_kind == TokenKind::Star {
                 if self.opts.noglobstar() {
+                    self.consume(&[STAR], 0);
                     return;
                 }
 
@@ -864,6 +901,7 @@ impl Parser {
                     prev.output = Some(globstar_units.clone());
                     self.state.output = globstar_units;
                     self.state.globstar = true;
+                    self.consume(&[STAR], 0); // L1184: consume(value)
                     return;
                 }
 
@@ -902,6 +940,7 @@ impl Parser {
                     self.state.globstar = true;
                     self.state.output.extend_from_slice(&new_prior_out);
                     self.state.output.extend_from_slice(&new_prev_out);
+                    self.consume(&[STAR], 0); // L1197: consume(value)
                     return;
                 }
 
@@ -946,7 +985,12 @@ impl Parser {
                     self.state.output.extend_from_slice(&glob_units);
                     self.state.globstar = true;
 
-                    self.advance(); // consume '/'
+                    // L1214: consume(value + advance()) — star + slash both consumed
+                    self.state.consumed.push(STAR);
+                    let slash_ch = self.advance(); // consume '/'
+                    if let Some(s) = slash_ch {
+                        self.state.consumed.push(s);
+                    }
                     self.push(Token::units(TokenKind::Slash, &[FSLASH], Some(vec![])));
                     return;
                 }
@@ -965,7 +1009,12 @@ impl Parser {
                     self.state.output = glob_units;
                     self.state.globstar = true;
 
-                    self.advance(); // consume '/'
+                    // L1226: consume(value + advance()) — star + slash both consumed
+                    self.state.consumed.push(STAR);
+                    let slash_ch = self.advance(); // consume '/'
+                    if let Some(s) = slash_ch {
+                        self.state.consumed.push(s);
+                    }
                     self.push(Token::units(TokenKind::Slash, &[FSLASH], Some(vec![])));
                     return;
                 }
@@ -988,6 +1037,7 @@ impl Parser {
 
                 self.state.output.extend_from_slice(&globstar_units);
                 self.state.globstar = true;
+                self.consume(&[STAR], 0); // L1242: consume(value)
                 return;
             }
         }
