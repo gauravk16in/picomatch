@@ -564,9 +564,13 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
         let mut prev_index: Option<usize> = None;
 
         for (idx, &slash) in slashes.iter().enumerate() {
+            // JS L354: `const n = prevIndex ? prevIndex + 1 : start;`
+            // JS `0` is falsy → when prev_index is Some(0), n = start (not 1).
+            // This mirrors the same prevIndex-falsy quirk as the trailing-part
+            // check below (L373: `if (prevIndex && ...)`).
             let n = match prev_index {
-                Some(p) => p + 1,
-                None => start,
+                Some(p) if p != 0 => p + 1,
+                _ => start,
             };
             let i = slash;
             // value = input.slice(n, i)
@@ -939,5 +943,29 @@ mod tests {
         assert!(st.max_depth.is_none());
         assert!(st.slashes.is_none());
         assert!(st.parts.is_none());
+    }
+
+    // Regression test for the prevIndex=0 falsy bug in parts assembly.
+    // JS L354: `const n = prevIndex ? prevIndex + 1 : start;` — when the
+    // first slash is at index 0, prevIndex becomes 0 after the first iteration,
+    // and JS treats `0` as falsy → n = start (not 1). The Rust port
+    // incorrectly used Some(0) => 0 + 1 = 1, producing wrong parts for
+    // inputs like `//` with parts:true.
+    #[test]
+    fn parts_double_slash_previndex_zero_falsy() {
+        // scan('//', {parts:true}) — JS: parts = ['/'] (not [''])
+        let st = scan("//", &ScanOptions::default().with_parts(true));
+        assert_eq!(
+            st.parts.as_deref(),
+            Some(&["/".to_string()][..]),
+            "parts should be ['/'] not [''] for input '//"
+        );
+        // Also check tokens
+        let st = scan("//", &ScanOptions::default().with_tokens(true));
+        assert_eq!(
+            st.tokens.as_ref().map(|t| &t[1].value),
+            Some(&"/".to_string()),
+            "token[1].value should be '/' not '' for input '//'"
+        );
     }
 }
