@@ -1,0 +1,8 @@
+{
+  "name": "picomatch",
+  "version": "0.0.0-bridge",
+  "description": "pmx Rust port — test adapter surface (ADAPTER_PLAN A2)",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT"
+}

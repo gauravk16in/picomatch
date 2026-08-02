@@ -1,0 +1,17 @@
+[package]
+name = "pmx-node"
+version = "0.1.0"
+edition = "2021"
+description = "napi-rs bridge exposing pmx ops to Node. TEST ADAPTER ONLY (constitution §2); never referenced by pmx-core."
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+pmx-cli = { path = "../pmx-cli" }
+napi = "2"
+napi-derive = "2"
+serde_json = "1"
+
+[build-dependencies]
+napi-build = "2"
