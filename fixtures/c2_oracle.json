@@ -2,7 +2,7 @@
  "meta": {
   "corpus": "c2-segments",
   "generator": "fixtures/extract-c2.js",
-  "reference": "../../picomatch-original (read-only checkout)",
+  "reference": "../../picomatch (read-only checkout)",
   "picomatchVersion": "4.0.5",
   "fieldPolicy": "u16-unit sequences for emitted text (canon.js); assert-all when no assert list"
  },

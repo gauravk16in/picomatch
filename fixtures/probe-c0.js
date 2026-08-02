@@ -11,7 +11,7 @@
  */
 
 const path = require('path');
-const parse = require(path.join(__dirname, '..', '..', 'picomatch', 'lib', 'parse'));
+const parse = require(path.join(__dirname, '..', '..', 'Main', 'lib', 'parse'));
 
 const units = s => Array.from({ length: s.length }, (_, i) => s.charCodeAt(i));
 

@@ -364,11 +364,13 @@ impl Parser {
             &[]
         };
 
-        if self.opts.literal_brackets() == Some(false) || utils::has_regex_chars(prev_val_sliced) {
+        if self.opts.literal_brackets() == Some(false)
+            || utils::has_regex_chars_units(prev_val_sliced)
+        {
             return Ok(());
         }
 
-        let escaped = utils::escape_regex(&prev_tok.value);
+        let escaped = utils::escape_regex_units(&prev_tok.value);
         let prev_len = prev_tok.value.len();
         if self.state.output.len() >= prev_len {
             self.state
@@ -653,11 +655,11 @@ impl Parser {
             return Err(PmxError::MissingOpening { c: '(' });
         }
 
-        if let Some(ext) = self.extglobs.last() {
-            if self.state.parens == ext.parens + 1 {
-                let frame = self.extglobs.pop().unwrap();
-                return self.extglobClose(frame);
-            }
+        if let Some(frame) = self
+            .extglobs
+            .pop_if(|ext| self.state.parens == ext.parens + 1)
+        {
+            return self.extglobClose(frame);
         }
 
         let out = if self.state.parens > 0 {
@@ -1155,7 +1157,7 @@ pub(crate) fn expand_range(args: &[Vec<u16>], options: &Options) -> Vec<u16> {
                 out.push(b'.' as u16);
                 out.push(b'.' as u16);
             }
-            let escaped = utils::escape_regex(item);
+            let escaped = utils::escape_regex_units(item);
             out.extend_from_slice(&escaped);
         }
         out

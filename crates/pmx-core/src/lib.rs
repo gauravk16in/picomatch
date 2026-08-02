@@ -9,8 +9,10 @@ pub mod constants;
 pub mod error;
 pub mod options;
 pub mod parse;
+pub mod scan;
 pub mod utils;
 
 pub use error::PmxError;
 pub use options::{ExtglobRecursion, Options};
 pub use parse::{fastpaths, parse, ParseState, Token, TokenKind};
+pub use scan::{scan, scan_utf16, ScanOptions, ScanState, ScanToken};

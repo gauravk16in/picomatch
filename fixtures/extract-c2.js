@@ -3,7 +3,7 @@
 /**
  * C2 corpus extractor — segment semantics: slash handling, dot handling,
  * and leading "./" collapse (lib/parse.js:L975-L991, L997-L1015).
- * Extracts test cases directly from original test files in picomatch-original:
+ * Extracts test cases directly from original test files in picomatch:
  *   - test/slashes-posix.js
  *   - test/dots-invalid.js
  *   - test/api.picomatch.js
@@ -16,7 +16,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const Mocha = require('mocha');
 
-const REF = path.join(__dirname, '..', '..', 'picomatch-original');
+const REF = path.join(__dirname, '..', '..', 'picomatch');
 const parsePath = require.resolve(path.join(REF, 'lib', 'parse'));
 const origParse = require(parsePath);
 
@@ -98,7 +98,7 @@ mocha.run(() => {
     meta: {
       corpus: 'c2-segments',
       generator: 'fixtures/extract-c2.js',
-      reference: path.join('..', '..', 'picomatch-original') + ' (read-only checkout)',
+      reference: path.join('..', '..', 'picomatch') + ' (read-only checkout)',
       picomatchVersion: require(path.join(REF, 'package.json')).version,
       fieldPolicy: 'u16-unit sequences for emitted text (canon.js); assert-all when no assert list'
     },

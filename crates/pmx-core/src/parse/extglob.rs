@@ -254,12 +254,12 @@ pub(crate) fn parse_repeated_extglob(
 pub(crate) fn build_char_class_star(chars: &[String]) -> Vec<u16> {
     let mut out = Vec::new();
     if chars.len() == 1 {
-        let esc = utils::escape_regex(&chars[0].encode_utf16().collect::<Vec<_>>());
+        let esc = utils::escape_regex_units(&chars[0].encode_utf16().collect::<Vec<_>>());
         out.extend_from_slice(&esc);
     } else {
         out.push(b'[' as u16);
         for ch in chars {
-            let esc = utils::escape_regex(&ch.encode_utf16().collect::<Vec<_>>());
+            let esc = utils::escape_regex_units(&ch.encode_utf16().collect::<Vec<_>>());
             out.extend_from_slice(&esc);
         }
         out.push(b']' as u16);
@@ -513,7 +513,7 @@ impl Parser {
                 None
             };
 
-            let esc_lit = utils::escape_regex(&literal);
+            let esc_lit = utils::escape_regex_units(&literal);
             let final_open_out = safe_output.unwrap_or(esc_lit);
 
             if token.tokens_index < self.state.tokens.len() {

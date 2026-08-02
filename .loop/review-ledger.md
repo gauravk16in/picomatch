@@ -6,3 +6,12 @@
 | C2 | 2026-08-01 | ACCEPT | 0 BLOCKER, 0 MAJOR, 0 MINOR |
 | C3 | 2026-08-01 | ACCEPT | 0 BLOCKER, 0 MAJOR, 0 MINOR |
 
+## Dispositions (Teammate 2 Chunk 1, 2026-08-01; historical rows above untouched)
+
+| c0-2 finding | disposition | evidence |
+|---|---|---|
+| MAJOR-1 — implementer owes DECISIONS.md number-transport entry | **RESOLVED** | tracked `DECISIONS.md` **D-01** (JSON/f64 transport rounding — landed in the C2 merge, PR #1) **and** workspace-root `DECISIONS.md` **D-014** (decimal-string transport; serde_json default f64 not correctly rounded, serde-rs/json#536; §4b adapter constraint) + convention bullet in `AGENTS.md` |
+| MINOR — windows globstar byte-pins missing | **RESOLVED (pre-existing, verified)** | `crates/pmx-core/src/parse/fragments.rs:85-102` `globstar_fragment_bytes_match_reference_windows` — 4 windows strings pinned; green under `cargo test` this chunk |
+| MINOR — stale corpus-sha comment in c0_foundation.rs | **RESOLVED** | corpora regenerated against `../Main` (extractor path repaired `../picomatch` → `../Main`); actual hashes computed after each regeneration and comments updated; verify-c0 39/39, verify-c1 55/55, double-regeneration byte-identical |
+| MINOR — workspace not a git repo | **SUPERSEDED by restructure** | workspace is now dual-checkout: `../Main` (origin/main `00cf02c`, read-only reference) + `./` (origin/rust-port; working branch `chirag-rust-port`), each an independent git clone |
+| MINOR — I-1 `braces`/`len` delta undeclared | **RESOLVED (pre-existing)** | declared in `C0_DESIGN.md:17` (post-review amendment note); brace frames remain C5-owned per design |
