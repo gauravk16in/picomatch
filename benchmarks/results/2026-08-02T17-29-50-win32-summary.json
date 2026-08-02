@@ -1,0 +1,453 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "harness_sha": "b19e762417ad75c4f11cf5ba3fa94abe33e9d950",
+    "dirty_tree": true,
+    "corpus_sha256": "70f7c2b85cca25916cb992b7985ecb6139e4b9986f780a7334f685cb22104cd6",
+    "corpus_path": "benchmarks\\scenarios.json"
+  },
+  "config": {
+    "warmup_iters": 500,
+    "samples": 10,
+    "iters_per_sample": 2000,
+    "pairs": 3,
+    "seed": 42,
+    "prng": "mulberry32",
+    "timer_js": "process.hrtime.bigint()",
+    "timer_rust": "std::time::Instant",
+    "bootstrap_resamples": 10000
+  },
+  "scenarios": [
+    {
+      "scenario_id": "S001",
+      "label": "plain-path-short",
+      "input": "foo/bar/baz.js",
+      "options": {},
+      "orientation": "latency",
+      "description": "Plain non-glob path, 3 segments",
+      "pairs": 3,
+      "point_estimate_ratio": 1.4792899408284024,
+      "median_ratio": 1.4792899408284024,
+      "mad_ratio": 0.06918084522450352,
+      "ci_95_low": 1.4101090956038989,
+      "ci_95_high": 1.6504464285714282,
+      "ci_overlap": false,
+      "all_ratios": [
+        1.4101090956038989,
+        1.4792899408284024,
+        1.6504464285714284
+      ]
+    },
+    {
+      "scenario_id": "S002",
+      "label": "plain-path-long",
+      "input": "src/components/deep/nested/path/to/module/file.tsx",
+      "options": {},
+      "orientation": "latency",
+      "description": "Plain non-glob path, many segments",
+      "pairs": 3,
+      "point_estimate_ratio": 1.2185447104856948,
+      "median_ratio": 1.2185447104856948,
+      "mad_ratio": 0.00773641731838004,
+      "ci_95_low": 1.1291646624979959,
+      "ci_95_high": 1.2262811278040748,
+      "ci_overlap": false,
+      "all_ratios": [
+        1.1291646624979959,
+        1.2262811278040748,
+        1.2185447104856948
+      ]
+    },
+    {
+      "scenario_id": "S003",
+      "label": "star-glob",
+      "input": "foo/bar/*.js",
+      "options": {},
+      "orientation": "latency",
+      "description": "Single star glob pattern",
+      "pairs": 3,
+      "point_estimate_ratio": 0.9472770001021763,
+      "median_ratio": 0.9472770001021763,
+      "mad_ratio": 0.013574153414343315,
+      "ci_95_low": 0.933702846687833,
+      "ci_95_high": 1.157793681270728,
+      "ci_overlap": true,
+      "all_ratios": [
+        0.9472770001021763,
+        1.157793681270728,
+        0.933702846687833
+      ]
+    },
+    {
+      "scenario_id": "S004",
+      "label": "question-mark",
+      "input": "foo/ba?.js",
+      "options": {},
+      "orientation": "latency",
+      "description": "Question mark glob pattern",
+      "pairs": 3,
+      "point_estimate_ratio": 0.390441384959516,
+      "median_ratio": 0.390441384959516,
+      "mad_ratio": 0.025597808806307742,
+      "ci_95_low": 0.23125851071454162,
+      "ci_95_high": 0.41603919376582377,
+      "ci_overlap": false,
+      "all_ratios": [
+        0.23125851071454165,
+        0.41603919376582377,
+        0.390441384959516
+      ]
+    },
+    {
+      "scenario_id": "S005",
+      "label": "globstar-deep",
+      "input": "./src/**/deep/**/*.js",
+      "options": {
+        "scanToEnd": true
+      },
+      "orientation": "throughput",
+      "description": "Double globstar with scanToEnd",
+      "pairs": 3,
+      "point_estimate_ratio": 0.9747168355717643,
+      "median_ratio": 0.9747168355717643,
+      "mad_ratio": 0.017561025361696014,
+      "ci_95_low": 0.4265498007968128,
+      "ci_95_high": 0.9922778609334603,
+      "ci_overlap": false,
+      "all_ratios": [
+        0.4265498007968128,
+        0.9922778609334603,
+        0.9747168355717643
+      ]
+    },
+    {
+      "scenario_id": "S006",
+      "label": "braces",
+      "input": "foo/{a,b,c}/*.js",
+      "options": {
+        "scanToEnd": true
+      },
+      "orientation": "throughput",
+      "description": "Brace expansion with scanToEnd",
+      "pairs": 3,
+      "point_estimate_ratio": 1.0493544161676647,
+      "median_ratio": 1.0493544161676647,
+      "mad_ratio": 0.15391393752107918,
+      "ci_95_low": 0.8954404786465855,
+      "ci_95_high": 1.3207410754631723,
+      "ci_overlap": true,
+      "all_ratios": [
+        0.8954404786465855,
+        1.3207410754631723,
+        1.0493544161676647
+      ]
+    },
+    {
+      "scenario_id": "S007",
+      "label": "brackets",
+      "input": "foo/[abc]/*.js",
+      "options": {
+        "scanToEnd": true
+      },
+      "orientation": "throughput",
+      "description": "Character class brackets with scanToEnd",
+      "pairs": 3,
+      "point_estimate_ratio": 0.965771356540289,
+      "median_ratio": 0.965771356540289,
+      "mad_ratio": 0.012609239199067424,
+      "ci_95_low": 0.9531621173412216,
+      "ci_95_high": 1.223943093532439,
+      "ci_overlap": true,
+      "all_ratios": [
+        0.9531621173412216,
+        1.223943093532439,
+        0.965771356540289
+      ]
+    },
+    {
+      "scenario_id": "S008",
+      "label": "extglob",
+      "input": "foo/+(bar|baz)/*.js",
+      "options": {
+        "scanToEnd": true
+      },
+      "orientation": "throughput",
+      "description": "Extglob with scanToEnd",
+      "pairs": 3,
+      "point_estimate_ratio": 1.138713438927218,
+      "median_ratio": 1.138713438927218,
+      "mad_ratio": 0.06458145398876236,
+      "ci_95_low": 0.9565114350041475,
+      "ci_95_high": 1.2032948929159804,
+      "ci_overlap": true,
+      "all_ratios": [
+        0.9565114350041475,
+        1.138713438927218,
+        1.2032948929159804
+      ]
+    },
+    {
+      "scenario_id": "S009",
+      "label": "negation",
+      "input": "!foo/bar/*.js",
+      "options": {},
+      "orientation": "latency",
+      "description": "Negated glob pattern",
+      "pairs": 3,
+      "point_estimate_ratio": 1.1684985378642736,
+      "median_ratio": 1.1684985378642736,
+      "mad_ratio": 0.09572722041370141,
+      "ci_95_low": 0.9666476856747741,
+      "ci_95_high": 1.264225758277975,
+      "ci_overlap": true,
+      "all_ratios": [
+        0.9666476856747741,
+        1.1684985378642736,
+        1.264225758277975
+      ]
+    },
+    {
+      "scenario_id": "S010",
+      "label": "negated-extglob",
+      "input": "!(foo)/bar/*.js",
+      "options": {
+        "scanToEnd": true
+      },
+      "orientation": "throughput",
+      "description": "Negated extglob with scanToEnd",
+      "pairs": 3,
+      "point_estimate_ratio": 2.093954843408594,
+      "median_ratio": 2.093954843408594,
+      "mad_ratio": 0.2087995903248001,
+      "ci_95_low": 1.885155253083794,
+      "ci_95_high": 2.638721351025332,
+      "ci_overlap": false,
+      "all_ratios": [
+        1.885155253083794,
+        2.638721351025332,
+        2.093954843408594
+      ]
+    },
+    {
+      "scenario_id": "S011",
+      "label": "escaped-metachar",
+      "input": "foo/\\[a\\]/*.js",
+      "options": {
+        "unescape": true
+      },
+      "orientation": "latency",
+      "description": "Escaped brackets with unescape option",
+      "pairs": 3,
+      "point_estimate_ratio": 1.4887734203140406,
+      "median_ratio": 1.4887734203140406,
+      "mad_ratio": 0.030039907700389668,
+      "ci_95_low": 1.458733512613651,
+      "ci_95_high": 1.5696807762621294,
+      "ci_overlap": false,
+      "all_ratios": [
+        1.4887734203140406,
+        1.458733512613651,
+        1.5696807762621294
+      ]
+    },
+    {
+      "scenario_id": "S012",
+      "label": "parts-basic",
+      "input": "foo/bar/baz/*.js",
+      "options": {
+        "parts": true
+      },
+      "orientation": "throughput",
+      "description": "Parts assembly on simple glob",
+      "pairs": 3,
+      "point_estimate_ratio": 1.7405103590145468,
+      "median_ratio": 1.7405103590145468,
+      "mad_ratio": 0.04172291617428581,
+      "ci_95_low": 1.6987874428402607,
+      "ci_95_high": 2.060202313492249,
+      "ci_overlap": false,
+      "all_ratios": [
+        2.060202313492249,
+        1.7405103590145468,
+        1.698787442840261
+      ]
+    },
+    {
+      "scenario_id": "S013",
+      "label": "tokens-basic",
+      "input": "foo/bar/**/*.js",
+      "options": {
+        "tokens": true
+      },
+      "orientation": "throughput",
+      "description": "Tokens assembly with globstar",
+      "pairs": 3,
+      "point_estimate_ratio": 1.6003362632217422,
+      "median_ratio": 1.6003362632217422,
+      "mad_ratio": 0.02053281285757147,
+      "ci_95_low": 1.4455445544554455,
+      "ci_95_high": 1.6208690760793136,
+      "ci_overlap": false,
+      "all_ratios": [
+        1.4455445544554455,
+        1.6208690760793136,
+        1.6003362632217422
+      ]
+    },
+    {
+      "scenario_id": "S014",
+      "label": "noext-globstar",
+      "input": "./src/**/*.js",
+      "options": {
+        "noext": true,
+        "scanToEnd": true
+      },
+      "orientation": "throughput",
+      "description": "Globstar with noext",
+      "pairs": 3,
+      "point_estimate_ratio": 0.7739462644826208,
+      "median_ratio": 0.7739462644826208,
+      "mad_ratio": 0.009718418308312438,
+      "ci_95_low": 0.6031378770851238,
+      "ci_95_high": 0.7836646827909333,
+      "ci_overlap": false,
+      "all_ratios": [
+        0.6031378770851238,
+        0.7739462644826208,
+        0.7836646827909333
+      ]
+    },
+    {
+      "scenario_id": "S015",
+      "label": "nonegate",
+      "input": "!foo/bar/*.js",
+      "options": {
+        "nonegate": true
+      },
+      "orientation": "latency",
+      "description": "Negation disabled",
+      "pairs": 3,
+      "point_estimate_ratio": 1.6901872494646093,
+      "median_ratio": 1.6901872494646093,
+      "mad_ratio": 0.08186260468548334,
+      "ci_95_low": 1.4285638070849336,
+      "ci_95_high": 1.7720498541500926,
+      "ci_overlap": false,
+      "all_ratios": [
+        1.7720498541500926,
+        1.4285638070849336,
+        1.6901872494646093
+      ]
+    },
+    {
+      "scenario_id": "S016",
+      "label": "noparen",
+      "input": "foo/(bar|baz)/*.js",
+      "options": {
+        "noparen": true
+      },
+      "orientation": "latency",
+      "description": "Parentheses not treated as glob",
+      "pairs": 3,
+      "point_estimate_ratio": 1.5218850160256412,
+      "median_ratio": 1.5218850160256412,
+      "mad_ratio": 0.021752654714833453,
+      "ci_95_low": 1.3965185612617808,
+      "ci_95_high": 1.5436376707404746,
+      "ci_overlap": false,
+      "all_ratios": [
+        1.5436376707404746,
+        1.3965185612617808,
+        1.5218850160256412
+      ]
+    },
+    {
+      "scenario_id": "S017",
+      "label": "bmp-unicode",
+      "input": "フォルダ/**/*.js",
+      "options": {
+        "parts": true
+      },
+      "orientation": "throughput",
+      "description": "BMP non-ASCII (CJK) with parts",
+      "pairs": 3,
+      "point_estimate_ratio": 0.7319326091198856,
+      "median_ratio": 0.7319326091198856,
+      "mad_ratio": 0.04240081205252677,
+      "ci_95_low": 0.6616915422885572,
+      "ci_95_high": 0.7743334211724123,
+      "ci_overlap": false,
+      "all_ratios": [
+        0.7319326091198856,
+        0.6616915422885572,
+        0.7743334211724123
+      ]
+    },
+    {
+      "scenario_id": "S018",
+      "label": "astral-unicode",
+      "input": "😀/*.js",
+      "options": {
+        "parts": true
+      },
+      "orientation": "latency",
+      "description": "Astral plane emoji with parts",
+      "pairs": 3,
+      "point_estimate_ratio": 0.8610804482354908,
+      "median_ratio": 0.8610804482354908,
+      "mad_ratio": 0.07008332962089392,
+      "ci_95_low": 0.7824296057924376,
+      "ci_95_high": 0.9311637778563847,
+      "ci_overlap": false,
+      "all_ratios": [
+        0.9311637778563847,
+        0.7824296057924376,
+        0.8610804482354908
+      ]
+    },
+    {
+      "scenario_id": "S019",
+      "label": "mixed-realistic",
+      "input": "./src/components/{Footer,Header}/**/*.{js,ts,jsx,tsx}",
+      "options": {
+        "scanToEnd": true
+      },
+      "orientation": "throughput",
+      "description": "Mixed realistic pattern combining braces, globstar, and extensions",
+      "pairs": 3,
+      "point_estimate_ratio": 1.8022038408144379,
+      "median_ratio": 1.8022038408144379,
+      "mad_ratio": 0.25655657843124957,
+      "ci_95_low": 1.4402396890520404,
+      "ci_95_high": 2.0587604192456874,
+      "ci_overlap": false,
+      "all_ratios": [
+        1.8022038408144379,
+        1.4402396890520404,
+        2.0587604192456874
+      ]
+    },
+    {
+      "scenario_id": "S020",
+      "label": "complex-parts-tokens",
+      "input": "./foo/@(bar)/**/*.js",
+      "options": {
+        "tokens": true
+      },
+      "orientation": "throughput",
+      "description": "Extglob + globstar + tokens",
+      "pairs": 3,
+      "point_estimate_ratio": 1.667703324808184,
+      "median_ratio": 1.667703324808184,
+      "mad_ratio": 0.03311058978653114,
+      "ci_95_low": 1.376741416947807,
+      "ci_95_high": 1.7008139145947152,
+      "ci_overlap": false,
+      "all_ratios": [
+        1.7008139145947152,
+        1.376741416947807,
+        1.667703324808184
+      ]
+    }
+  ]
+}

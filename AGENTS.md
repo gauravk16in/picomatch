@@ -37,4 +37,12 @@ Rust port of `micromatch/picomatch` v4.0.5, bug-for-bug (parity includes upstrea
 
 ## Current status
 
-C0 (foundation) and C1 (inline fastpath + NUL/escapes/quotes/text) done and accepted (`reviews/c0-1.md` rejected once, `c0-2.md` accepted). C2 (slash + dot segment semantics) merged via PR #1. **Scanner (`lib/scan.js` → `src/scan.rs`) complete (Teammate 2 Chunk 2, PR pending)** — `scan()`/`scan_utf16()` API, `ScanOptions`/`ScanState`/`ScanToken` types, `scanprobe` example, `scan-bridge.js` unchanged-test bridge, `scan_oracle.json` corpus (3072 cases), `attack-scan.js` differential (0 divergences). Unchanged `Main/test/api.scan.js` passes 40/40 against Rust. Next per PARSE_CHUNKS.md: **C3 (single wildcards `?` and `*` with BOS/dot guards)**. Before changing behavior of `*`, quotes, or dot-merge: read the staging notes in `src/parse/main_loop.rs` and the corpus rows they explain.
+C0 (foundation) and C1 (inline fastpath + NUL/escapes/quotes/text) done and accepted. C2 (slash + dot segment semantics) merged via PR #1.
+
+**Teammate 2 work — complete:**
+- **Chunk 1** (PR #2, merged): constants + utilities
+- **Chunk 2** (PR #3, merged): scanner — `scan()`/`scan_utf16()`, `ScanOptions`/`ScanState`/`ScanToken`, `scanprobe`, 3,072-case corpus, 0 divergences
+- **Chunk 3** (PR #4, merged): integrated differential validation — 19 fail-closed canaries, 12,723 comparisons, 0 divergences, `prevIndex=0` bug fix
+- **Chunk 4** (PR #5 reverted, PR #7 remediation): benchmarks — PR #5 was independently reviewed and found to have 5 blocking defects. PR #6 reverted PR #5. PR #7 is the independent replacement with semantic parity gate, process-pair design, cluster bootstrap, sidecar SHA-256, mutation-tested canaries, and honest mixed results (no universal speedup claimed).
+
+Next per PARSE_CHUNKS.md: **C3 (single wildcards `?` and `*` with BOS/dot guards)** — other teammates' work. Before changing behavior of `*`, quotes, or dot-merge: read the staging notes in `src/parse/main_loop.rs` and the corpus rows they explain.
