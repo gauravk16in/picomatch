@@ -54,6 +54,10 @@ function analyzeScenario(scenario, scenarioIndex, measurements, itersPerSample, 
     pairRatios.push(ratio);
   }
 
+  if (pairLogSpeedups.length === 0) {
+    throw new Error('No valid measurement pairs found for scenario ' + id);
+  }
+
   const bootRng = mulberry32(seed + scenarioIndex);
   const bootMedians = [];
   for (let b = 0; b < resamples; b++) {

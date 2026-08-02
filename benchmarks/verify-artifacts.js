@@ -101,16 +101,40 @@ function main() {
     }
     const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
 
+    // --- validate and normalize artifact provenance ---
+    if (!raw.provenance || typeof raw.provenance !== 'object') {
+      errors.push('Missing or invalid provenance object');
+      continue;
+    }
+    const prov = raw.provenance;
+    if (typeof prov.schedule_sha256 !== 'string' || prov.schedule_sha256.length === 0) {
+      errors.push('Missing or invalid provenance.schedule_sha256');
+      continue;
+    }
+    if (typeof prov.corpus_path !== 'string' || prov.corpus_path.length === 0) {
+      errors.push('Missing or invalid provenance.corpus_path');
+      continue;
+    }
+    const normalizedCorpusPath = prov.corpus_path.replace(/\\/g, '/');
+    if (normalizedCorpusPath.includes('..') || path.isAbsolute(normalizedCorpusPath)) {
+      errors.push('Invalid corpus_path: must be relative and confined beneath ROOT');
+      continue;
+    }
+    if (typeof prov.harness_sha !== 'string' || !/^[0-9a-f]{40}$/.test(prov.harness_sha)) {
+      errors.push('Invalid provenance.harness_sha: must be 40 hex characters');
+      continue;
+    }
+
     // --- schedule file binds to embedded schedule hash ---
     if (!fs.existsSync(schedulePath)) {
       errors.push('Missing schedule file: ' + schedulePath);
     } else {
       const schedSha = sha256(fs.readFileSync(schedulePath));
-      if (schedSha !== raw.provenance.schedule_sha256) {
-        errors.push('Schedule file hash ' + schedSha + ' != embedded schedule_sha256 ' + raw.provenance.schedule_sha256);
+      if (schedSha !== prov.schedule_sha256) {
+        errors.push('Schedule file hash ' + schedSha + ' != embedded schedule_sha256 ' + prov.schedule_sha256);
       }
       const onDisk = JSON.parse(fs.readFileSync(schedulePath, 'utf8'));
-      if (JSON.stringify(onDisk) !== JSON.stringify(raw.provenance.schedule)) {
+      if (JSON.stringify(onDisk) !== JSON.stringify(prov.schedule)) {
         errors.push('Schedule file entries differ from embedded provenance.schedule');
       }
     }
@@ -118,7 +142,7 @@ function main() {
     // --- derive expectations independently ---
     const cfg = raw.config || {};
     let corpusSha = null;
-    const corpusPath = path.join(ROOT, raw.provenance.corpus_path || '');
+    const corpusPath = path.join(ROOT, normalizedCorpusPath);
     if (fs.existsSync(corpusPath)) {
       corpusSha = sha256(fs.readFileSync(corpusPath));
     } else {
@@ -145,7 +169,7 @@ function main() {
       warmupIters: cfg.warmup_iters,
       seed: cfg.seed,
       corpusSha: corpusSha,
-      harnessSha: raw.provenance.harness_sha, // presence/consistency checked below
+      harnessSha: prov.harness_sha,
       dirtyTree: false,
       mode: 'final',
       schedule: derivedSchedule,
@@ -153,13 +177,13 @@ function main() {
     for (const e of rawErrors) errors.push(base + ' [' + e.code + '] ' + e.message);
 
     // --- harness commit exists and is HEAD or an ancestor of HEAD ---
-    const catFile = spawnSync('git', ['cat-file', '-t', raw.provenance.harness_sha], { cwd: ROOT, encoding: 'utf8' });
+    const catFile = spawnSync('git', ['cat-file', '-t', prov.harness_sha], { cwd: ROOT, encoding: 'utf8' });
     if (catFile.status !== 0 || catFile.stdout.trim() !== 'commit') {
-      errors.push('harness_sha ' + raw.provenance.harness_sha + ' is not a commit in this repository');
+      errors.push('harness_sha ' + prov.harness_sha + ' is not a commit in this repository');
     } else {
-      const anc = spawnSync('git', ['merge-base', '--is-ancestor', raw.provenance.harness_sha, 'HEAD'], { cwd: ROOT, encoding: 'utf8' });
+      const anc = spawnSync('git', ['merge-base', '--is-ancestor', prov.harness_sha, 'HEAD'], { cwd: ROOT, encoding: 'utf8' });
       if (anc.status !== 0) {
-        errors.push('harness_sha ' + raw.provenance.harness_sha + ' is not HEAD or an ancestor of HEAD');
+        errors.push('harness_sha ' + prov.harness_sha + ' is not HEAD or an ancestor of HEAD');
       }
     }
 

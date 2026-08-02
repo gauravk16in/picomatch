@@ -4,7 +4,7 @@
     "harness_sha": "14e3128cf458bca684927e76c54499e6bdfa305b",
     "dirty_tree": false,
     "corpus_sha256": "70f7c2b85cca25916cb992b7985ecb6139e4b9986f780a7334f685cb22104cd6",
-    "corpus_path": "benchmarks\\scenarios.json",
+    "corpus_path": "benchmarks/scenarios.json",
     "schedule_sha256": "8800b0ff1e4b422be512d5a00dc8fd956cb8dea1733a907a1a49b4c80471bf2b",
     "schedule": [
       {

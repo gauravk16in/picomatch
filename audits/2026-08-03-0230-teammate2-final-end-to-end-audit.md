@@ -151,11 +151,13 @@ Scanner microbench (counting allocator + Instant, ns/op best-of-5):
 | `node fixtures/attack-scan.js` | 0 | 4,932 comparisons, 0 divergences, 0 process failures |
 | `node fixtures/attack-integrated.js` | 0 | 4,189 compared, 0 divergences/process/transport failures |
 | `npx mocha --require ../Rust/fixtures/scan-bridge.js test/api.scan.js` (Main) | 0 | 40/40 passing against Rust, original file unchanged |
-| `node fixtures/verify-c0.js / verify-c1.js / verify-c2.js` | 0 | 39/39, 55/55, 487/487 deterministic |
+| `node fixtures/verify-c0.js` | 0 | 39/39 deterministic |
+| `node fixtures/verify-c1.js` | 0 | 55/55 deterministic |
+| `node fixtures/verify-c2.js` | 0 | 487/487 deterministic |
 | `node fixtures/run-integrated.js` | 0 | 16/16 steps green |
 | `node benchmarks/bench-canaries.js` | 0 | 67/67 mutations detected |
 | `node benchmarks/verify-artifacts.js benchmarks/results` | 0 | E2 final set verified incl. per-row summary recompute; 2 legacy sets skipped |
-| `node benchmarks/run-benchmarks.js --harness-sha 14e3128…` | 0 | final 20-pair run from clean H2; parity 20/20; digest+consumption equality 400/400 |
+| `node benchmarks/run-benchmarks.js --harness-sha 14e3128cf458bca684927e76c54499e6bdfa305b` | 0 | final 20-pair run from clean H2; parity 20/20; digest+consumption equality 400/400 |
 
 ## 16. Differential and adversarial evidence
 

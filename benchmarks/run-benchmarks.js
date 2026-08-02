@@ -120,6 +120,9 @@ function parseArgs() {
   if (opts.pilot && opts.harnessSha) {
     fail('--pilot and --harness-sha are mutually exclusive (final mode requires a non-pilot run)');
   }
+  if (!opts.pilot && !opts.harnessSha) {
+    fail('--harness-sha is required for non-pilot runs (use --pilot for reduced-setting runs without SHA binding)');
+  }
   return opts;
 }
 
@@ -390,7 +393,7 @@ function main() {
       harness_sha: headSha,
       dirty_tree: isDirty,
       corpus_sha256: corpusSha,
-      corpus_path: path.relative(ROOT, opts.scenarios),
+      corpus_path: path.relative(ROOT, opts.scenarios).replace(/\\/g, '/'),
       schedule_sha256: scheduleSha,
       schedule: schedule,
       scanbench_sha256: benchBinSha,

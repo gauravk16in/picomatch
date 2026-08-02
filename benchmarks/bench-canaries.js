@@ -176,7 +176,10 @@ function registerCli(name, exec, args, input) {
 
 const RUNNER = path.join(__dirname, 'run-benchmarks.js');
 const WORKER = path.join(__dirname, 'bench-worker.js');
-const SCANBENCH = path.join(ROOT, 'target', 'debug', 'examples', process.platform === 'win32' ? 'scanbench.exe' : 'scanbench');
+const scanbenchName = process.platform === 'win32' ? 'scanbench.exe' : 'scanbench';
+const scanbenchRelease = path.join(ROOT, 'target', 'release', 'examples', scanbenchName);
+const scanbenchDebug = path.join(ROOT, 'target', 'debug', 'examples', scanbenchName);
+const SCANBENCH = fs.existsSync(scanbenchRelease) ? scanbenchRelease : scanbenchDebug;
 
 registerCli('cli-runner-unknown-flag', process.execPath, [RUNNER, '--bogus'], null);
 registerCli('cli-runner-positional', process.execPath, [RUNNER, 'positional'], null);
@@ -260,6 +263,7 @@ function main() {
   for (const c of cliCanaries) {
     try {
       const out = spawnSync(c.exec, c.args, { input: c.input || undefined, encoding: 'utf8', timeout: 30000 });
+      if (out.error || out.status === null) throw new Error('CLI failed to start: ' + (out.error ? out.error.message : 'unknown'));
       if (out.status === 0) throw new Error('CLI accepted malformed input (exit 0): ' + c.args.slice(1).join(' '));
       executed++;
     } catch (e) { failed++; failures.push(c.name + ': ' + e.message); }

@@ -37,7 +37,7 @@ Rust port of `micromatch/picomatch` v4.0.5, bug-for-bug (parity includes upstrea
 
 ## Current status
 
-C0 (foundation) and C1 (inline fastpath + NUL/escapes/quotes/text) done and accepted. C2 (slash + dot segment semantics) merged via PR #1. C3–C9 parser chunks merged via later integration (incl. PR #8 `a2b1ce1`).
+C0 (foundation) and C1 (inline fastpath + NUL/escapes/quotes/text) done and accepted. C2 (slash + dot segment semantics) merged via PR #1. C3–C9 parser chunks merged via later integration (incl. PR #8 `a2b1ce1`); parser/matcher release completion remains other teammates' work.
 
 **Teammate 2 work — complete:**
 - **Chunk 1** (PR #2, merged): constants + utilities

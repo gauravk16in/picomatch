@@ -200,7 +200,12 @@ function validateRaw(raw, expected) {
   for (const m of measurements) {
     const perRuntime = {};
     for (const runtime of ['js', 'rust']) {
-      if (!m[runtime] || !Array.isArray(m[runtime].results)) continue;
+      if (!m[runtime] || !Array.isArray(m[runtime].results)) {
+        if (m[runtime] && !Array.isArray(m[runtime].results)) {
+          errors.push({ code: ErrorCodes.MALFORMED_MEASUREMENT, message: 'pair ' + m.pair_id + ' ' + runtime + ' missing or invalid results array' });
+        }
+        continue;
+      }
       const res = m[runtime].results;
       perRuntime[runtime] = res;
       const seenScenarios = new Set();
