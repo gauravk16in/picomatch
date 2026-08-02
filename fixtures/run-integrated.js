@@ -104,7 +104,7 @@ console.log('Platform: ' + process.platform);
 console.log('');
 
 // Step 0: Build probes
-console.log('[0/7] Building Rust probes (cargo build --examples)...');
+console.log('[0/8] Building Rust probes (cargo build --examples)...');
 const buildResult = runStep('build-probes', 'cargo', ['build', '--examples'], RUST_DIR, { timeout: 180000 });
 if (!stepPassed(buildResult)) {
   console.error('  FAILED: cargo build --examples exit=' + buildResult.exitCode);
@@ -126,7 +126,7 @@ const verifiers = [
   { label: 'verify-scan', script: 'fixtures/verify-scan.js' },
 ];
 
-console.log('[1/7] Deterministic corpus verifiers:');
+console.log('[1/8] Deterministic corpus verifiers:');
 for (const v of verifiers) {
   const r = runStep(v.label, NODE, [path.join(RUST_DIR, v.script)], RUST_DIR);
   steps.push(r);
@@ -146,7 +146,7 @@ const attacks = [
   { label: 'attack-scan', script: 'fixtures/attack-scan.js' },
 ];
 
-console.log('[2/7] Adversarial differential harnesses:');
+console.log('[2/8] Adversarial differential harnesses:');
 for (const a of attacks) {
   const r = runStep(a.label, NODE, [path.join(RUST_DIR, a.script)], RUST_DIR);
   steps.push(r);
@@ -159,7 +159,7 @@ for (const a of attacks) {
 console.log('');
 
 // Step 3: Unchanged-original-test bridges
-console.log('[3/7] Unchanged original test bridges:');
+console.log('[3/8] Unchanged original test bridges:');
 // npx.cmd needs shell:true on Windows; the command string is fixed
 // (no user-generated data interpolated), so shell is safe here.
 const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
@@ -179,7 +179,7 @@ if (!stepPassed(bridgeR)) console.error('    stderr: ' + bridgeR.stderr.trim().s
 console.log('');
 
 // Step 4: Rust fmt + clippy + test
-console.log('[4/7] Rust quality gates:');
+console.log('[4/8] Rust quality gates:');
 const gates = [
   { label: 'cargo-fmt', exec: 'cargo', args: ['fmt', '--check'] },
   { label: 'cargo-clippy', exec: 'cargo', args: ['clippy', '--workspace', '--all-targets', '--all-features', '--', '-D', 'warnings'] },
@@ -200,7 +200,7 @@ for (const g of gates) {
 console.log('');
 
 // Step 5: Integration attack set
-console.log('[5/7] Integration attack set:');
+console.log('[5/8] Integration attack set:');
 const intAttackR = runStep('attack-integrated', NODE, [path.join(RUST_DIR, 'fixtures', 'attack-integrated.js')], RUST_DIR, { timeout: 300000 });
 steps.push(intAttackR);
 if (stepPassed(intAttackR)) totalPass++; else totalFail++;
@@ -211,7 +211,7 @@ if (!stepPassed(intAttackR)) console.error('    stderr: ' + intAttackR.stderr.tr
 console.log('');
 
 // Step 6: Harness canary/self-tests
-console.log('[6/7] Harness canary/self-tests:');
+console.log('[6/8] Harness canary/self-tests:');
 const canaryR = runStep('canary-harness', NODE, [path.join(RUST_DIR, 'fixtures', 'canary-harness.js')], RUST_DIR, { timeout: 120000 });
 steps.push(canaryR);
 if (stepPassed(canaryR)) totalPass++; else totalFail++;
@@ -221,8 +221,19 @@ console.log('  ' + (stepPassed(canaryR) ? 'PASS' : 'FAIL') +
 if (!stepPassed(canaryR)) console.error('    stderr: ' + canaryR.stderr.trim().slice(0, 1000));
 console.log('');
 
-// Step 7: Original test hash verification (using node:crypto, not certutil)
-console.log('[7/7] Original test hash verification:');
+// Step 7: Benchmark validator/CLI/stats canaries
+console.log('[7/8] Benchmark canary/self-tests:');
+const benchCanaryR = runStep('bench-canaries', NODE, [path.join(RUST_DIR, 'benchmarks', 'bench-canaries.js')], RUST_DIR, { timeout: 180000 });
+steps.push(benchCanaryR);
+if (stepPassed(benchCanaryR)) totalPass++; else totalFail++;
+console.log('  ' + (stepPassed(benchCanaryR) ? 'PASS' : 'FAIL') +
+  ' bench-canaries (exit=' + benchCanaryR.exitCode + '): ' +
+  (benchCanaryR.stdout.trim().split('\n').pop() || '(no output)'));
+if (!stepPassed(benchCanaryR)) console.error('    stderr: ' + benchCanaryR.stderr.trim().slice(0, 1000));
+console.log('');
+
+// Step 8: Original test hash verification (using node:crypto, not certutil)
+console.log('[8/8] Original test hash verification:');
 const testFile = path.join(MAIN_DIR, 'test', 'api.scan.js');
 const expectedHash = '8abd94a2d7040911017d125bada4e5aaf5ee166bf5b37cd377d0378cb7174f36';
 let actualHash = '';

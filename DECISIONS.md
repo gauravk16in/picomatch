@@ -119,7 +119,7 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 - **Status:** Accepted (2026-08-02)
 - **Context:** PR #5 flattened JS samples from 3 process runs into one pool and bootstrapped at individual-sample level, violating independence. Rust ran only 1 process.
 - **Decision:** Both runtimes use equal fresh-process repetition. 20 process pairs, each with one fresh JS worker and one fresh Rust worker. Execution order deterministically randomized using seeded mulberry32 PRNG. Per-pair median ns/op is the process-level estimate. Log ratios bootstrapped at the process-pair level (cluster bootstrap).
-- **Evidence:** Research confirms cluster bootstrap is correct for correlated within-process data (https://en.wikipedia.org/wiki/Bootstrapping_(statistics)#Block_bootstrap).
+- **Evidence:** Cluster (pairs) bootstrap — resampling whole clusters with replacement — is the standard remedy when within-cluster samples are correlated: Cameron & Miller, "A Practitioner's Guide to Cluster-Robust Inference", *Journal of Human Resources* 50(2), 2015 (cameron.econ.ucdavis.edu/research/Cameron_Miller_JHR_2015_February.pdf, §IIF pairs cluster resampling); Davison & Hinkley, *Bootstrap Methods and their Application*, Cambridge University Press, 1997 (block/cluster resampling for dependent data). Small-cluster caveat (20 pairs) disclosed in BENCHMARKS.md limitations.
 - **Rejected:** Flattened individual-level bootstrap — rejected because it underestimates variance and produces anti-conservative CIs.
 
 ---
@@ -135,9 +135,10 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 
 ### D-021 — Honest operation definition: scanner plus result consumption
 
-- **Status:** Accepted (2026-08-02)
+- **Status:** SUPERSEDED by D-024 (2026-08-03, final audit F-04/F-05)
 - **Context:** PR #5 timed "scanner + BigInt checksum" for JS and "scanner + u64 checksum" for Rust, calling it pure scanner time.
 - **Decision:** The timed region honestly measures "scanner plus canonical result consumption". Both runtimes use the same u32 FNV-1a digest algorithm with native arithmetic (no BigInt). Rust uses `std::hint::black_box` for anti-optimization. The operation is named honestly in documentation.
+- **Superseded because:** the two digest implementations were never actually the same algorithm: JS folded `charCodeAt(i)&0xff` per UTF-16 unit while Rust folded UTF-8 bytes; JS folded `start`/depth as 4-byte u32 while Rust folded `usize`/f64 as 8 bytes; Rust folded an EMPTY `state.input` (scanbench called `scan_utf16` directly, which leaves `ScanState.input` empty) while JS folded the full input; and the validator never compared digests (MISMATCHED_DIGEST was defined but unused). Empirical: the committed raw artifact shows S001 js digest 2649926880 != rust 2876329472. Replaced by D-024.
 - **Rejected:** Pure scanner time claim — rejected because the digest is inside the timed region.
 
 ---
@@ -157,3 +158,36 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 - **Context:** PR #5's canaries copied validation logic instead of importing it, making them tautological. The validator never compared checksums.
 - **Decision:** One exported production validator (`benchmarks/validator.js`) used by the benchmark runner, analyzer, verifier, and all canaries. Canaries apply mutations to valid fixtures and require expected error codes. 31 canaries, all import the real validator.
 - **Rejected:** Copied validation in canaries — rejected because it cannot detect breakage in the production validator.
+
+---
+
+### D-024 — Timed operation: scanner + minimal symmetric consumption; canonical digest outside timing
+
+- **Status:** Accepted (2026-08-03, final audit F-04/F-05; supersedes D-021)
+- **Context:** The final audit verified that the D-021 digests were not the same algorithm (different encodings, field widths, and input handling), and that putting a rich per-field digest inside the timed loop made result consumption ~2.3x more expensive on the JS side than the old digest — i.e. the measured "scanner" operation was dominated by JS digest overhead, and the two runtimes were not doing the same work.
+- **Decision:**
+  1. **Timed region = scanner + minimal symmetric consumption.** Per call, both workers consume the state's scalar surface with an IDENTICAL op sequence (start, field unit-lengths, 7 state flags, 4 presence bits, array counts, per-part unit-lengths, per-token unit-length/depth/flags, maxDepth), mixed into one u32 accumulator. The accumulator is content-derived, so its value must match across runtimes per scenario (validator: CONSUMPTION_MISMATCH).
+  2. **Canonical rich digest OUTSIDE timing.** Once per scenario, each worker computes the full canonical FNV-1a digest (tag bytes, u32le length framing, UTF-16 code-unit encoding, explicit presence markers, Infinity => 0x7F800000). The spec is byte-identical across runtimes (empirically verified: all 20 scenario digests equal); the controller and validator require equality for every scenario and every process pair (MISMATCHED_DIGEST).
+  3. **Residual asymmetry is documented, not hidden:** Rust counts UTF-16 units (`encode_utf16().count()`) where V8 reads `.length` in O(1); this disfavors Rust slightly (bounded, cannot inflate a Rust win). `black_box` remains as best-effort anti-DCE on the Rust side; the accumulator forces materialization on both sides.
+- **Evidence:** final-audit measurements — old committed raw vs pilot raw per-iter times (JS digest ≈ 2.3x inflation removed); 20/20 digest + consumption equality across workers.
+- **Rejected:** (a) rich digest inside the timed loop — consumption cost asymmetry too large (dominates JS time); (b) scanner-only timing with `black_box` alone — `black_box` is best-effort, not a correctness guarantee, and JS has no equivalent; (c) per-side native encodings — that was the D-021 defect.
+
+---
+
+### D-025 — Artifact schema v2: mode, schedule, binary, and environment binding
+
+- **Status:** Accepted (2026-08-03, final audit F-09/F-10/F-12/F-13/F-14)
+- **Context:** v1 artifacts did not record pilot-vs-final mode (the committed pilot raw recorded the pre-harness base SHA and 3 pairs, indistinguishable in kind from final), the execution schedule lived in a shared fixed filename overwritten every run (not cryptographically bound), benchmark-binary hashes and the effective Cargo profile were unrecorded, and the standalone verifier validated with empty expectations.
+- **Decision:** `schema_version: 2` artifacts bind: `config.mode` ("pilot"|"final"; final requires `--harness-sha` + clean tree), `provenance.schedule_sha256` + the full schedule entries + a per-run `<timestamp>-<platform>-schedule.json` file, `provenance.scanbench_sha256`/`scanprobe_sha256`, effective Cargo profile (release, opt-level 3, default lto, codegen-units 16) + toolchain channel, environment metadata (platform/arch/CPU/node). The verifier selects exactly one final set, re-derives the schedule from seed+pairs, validates with full expectations, recomputes every summary row from raw via the shared `benchmarks/stats.js`, and recomputes binary hashes when present. Legacy v1 artifacts are reported as superseded and never accepted as final evidence.
+- **Rejected:** treating the shared `execution-schedule.json` filename as binding (ambiguous across runs); validating all artifacts uniformly (pilot cannot be mistaken for final).
+
+---
+
+### D-026 — Default Cargo release profile retained (LTO experiment rejected)
+
+- **Status:** Accepted (2026-08-03, final audit F-21)
+- **Context:** The benchmark binaries build with the default release profile (no `[profile.release]` override exists). Single-run comparisons suggested `lto = "thin"` might help.
+- **Decision:** Keep the default release profile. An interleaved A/B/A/B experiment (4 rounds x 20 scenarios, medians) showed thin LTO winning >3% on only 2/20 scenarios and LOSING >3% on 4/20 (ratios 0.962-1.057, no consistent direction); `codegen-units = 1` and fat LTO were similarly inconsistent. The earlier single-run gains were run-to-run noise. The effective profile is recorded in artifact provenance (D-025).
+- **Rejected:** committing an optimization flag on single-run evidence (noise, not signal).
+
+---

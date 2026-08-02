@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 
-// Benchmark controller — orchestrates semantic parity, process-pair execution,
-// statistics, and artifact writing. Refuses to run unless HEAD matches the
-// declared harness commit and the tree is clean.
+// Benchmark controller — orchestrates semantic parity, digest-equality gate,
+// process-pair execution, statistics, and artifact writing. Refuses to run
+// in final mode unless HEAD matches the declared harness commit and the tree
+// is clean.
 //
 // Usage: node benchmarks/run-benchmarks.js [options]
 //
@@ -16,8 +17,8 @@
 //   --seed <N>              PRNG seed (default 42)
 //   --results-dir <path>    output directory (default: benchmarks/results)
 //   --harness-sha <sha>     expected harness commit SHA (required for final run)
-//   --pilot                 reduced settings for quick validation
-//   --no-bridge             skip bridge overhead benchmark
+//   --pilot                 reduced settings for quick validation (cannot be
+//                           combined with explicit count flags)
 
 const { spawnSync } = require('child_process');
 const path = require('path');
@@ -26,7 +27,8 @@ const os = require('os');
 const crypto = require('node:crypto');
 
 const { mulberry32 } = require('./prng');
-const { validateRaw, validateSummary, ErrorCodes } = require('./validator');
+const { validateRaw, validateSummary } = require('./validator');
+const { analyzeScenario } = require('./stats');
 
 const ROOT = path.join(__dirname, '..');
 const MAIN_DIR = path.join(ROOT, '..', 'Main');
@@ -43,51 +45,82 @@ function parseArgs() {
     resultsDir: path.join(__dirname, 'results'),
     harnessSha: null,
     pilot: false,
-    noBridge: false,
   };
-  const validOpts = new Set(['--scenarios', '--pairs', '--warmup-iters', '--samples', '--iters-per-sample', '--seed', '--results-dir', '--harness-sha', '--pilot', '--no-bridge']);
+  const fail = (msg) => {
+    console.error('run-benchmarks: ' + msg);
+    process.exit(2);
+  };
+  const parseCount = (name, raw, allowZero) => {
+    if (!/^\d+$/.test(raw)) fail('invalid value for ' + name + ': ' + raw + ' (must be a non-negative integer)');
+    const v = Number(raw);
+    if (!Number.isSafeInteger(v)) fail('invalid value for ' + name + ': ' + raw + ' (unsafe integer)');
+    if (!allowZero && v <= 0) fail('invalid value for ' + name + ': ' + raw + ' (must be positive)');
+    return v;
+  };
+  const countFlags = new Set(['--pairs', '--warmup-iters', '--samples', '--iters-per-sample']);
+  const seen = new Set();
   for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    if (!validOpts.has(arg)) {
-      throw new Error('Unknown CLI option: ' + arg);
+    const flag = args[i];
+    if (flag === '--pilot') {
+      if (seen.has('pilot')) fail('duplicate flag: --pilot');
+      seen.add('pilot');
+      opts.pilot = true;
+      continue;
     }
-    switch (arg) {
-      case '--scenarios': opts.scenarios = args[++i]; break;
-      case '--pairs': opts.pairs = parseInt(args[++i], 10); break;
-      case '--warmup-iters': opts.warmupIters = parseInt(args[++i], 10); break;
-      case '--samples': opts.samples = parseInt(args[++i], 10); break;
-      case '--iters-per-sample': opts.itersPerSample = parseInt(args[++i], 10); break;
-      case '--seed': opts.seed = parseInt(args[++i], 10); break;
-      case '--results-dir': opts.resultsDir = args[++i]; break;
-      case '--harness-sha': opts.harnessSha = args[++i]; break;
-      case '--pilot': opts.pilot = true; break;
-      case '--no-bridge': opts.noBridge = true; break;
-    }
-  }
-  for (const [k, v] of Object.entries(opts)) {
-    if (['scenarios', 'resultsDir', 'harnessSha', 'pilot', 'noBridge'].includes(k)) continue;
-    if (typeof v !== 'number' || !Number.isInteger(v) || v <= 0) {
-      throw new Error('Invalid ' + k + ': ' + v + ' (must be positive integer)');
+    if (seen.has(flag)) fail('duplicate flag: ' + flag);
+    seen.add(flag);
+    switch (flag) {
+      case '--scenarios':
+        if (i + 1 >= args.length) fail('missing value for --scenarios');
+        opts.scenarios = args[++i];
+        break;
+      case '--pairs':
+        if (i + 1 >= args.length) fail('missing value for --pairs');
+        opts.pairs = parseCount('pairs', args[++i], false);
+        break;
+      case '--warmup-iters':
+        if (i + 1 >= args.length) fail('missing value for --warmup-iters');
+        opts.warmupIters = parseCount('warmup-iters', args[++i], false);
+        break;
+      case '--samples':
+        if (i + 1 >= args.length) fail('missing value for --samples');
+        opts.samples = parseCount('samples', args[++i], false);
+        break;
+      case '--iters-per-sample':
+        if (i + 1 >= args.length) fail('missing value for --iters-per-sample');
+        opts.itersPerSample = parseCount('iters-per-sample', args[++i], false);
+        break;
+      case '--seed':
+        if (i + 1 >= args.length) fail('missing value for --seed');
+        opts.seed = parseCount('seed', args[++i], true);
+        break;
+      case '--results-dir':
+        if (i + 1 >= args.length) fail('missing value for --results-dir');
+        opts.resultsDir = args[++i];
+        break;
+      case '--harness-sha':
+        if (i + 1 >= args.length) fail('missing value for --harness-sha');
+        opts.harnessSha = args[++i];
+        if (!/^[0-9a-f]{40}$/i.test(opts.harnessSha)) fail('malformed --harness-sha (expected 40 hex chars)');
+        break;
+      default:
+        fail('unknown argument: ' + flag);
     }
   }
   if (opts.pilot) {
+    const explicitCounts = countFlags.intersection(seen);
+    if (explicitCounts.size > 0) {
+      fail('--pilot cannot be combined with explicit count flags: ' + [...explicitCounts].join(', '));
+    }
     opts.pairs = 3;
     opts.warmupIters = 500;
     opts.samples = 10;
     opts.itersPerSample = 2000;
   }
+  if (opts.pilot && opts.harnessSha) {
+    fail('--pilot and --harness-sha are mutually exclusive (final mode requires a non-pilot run)');
+  }
   return opts;
-}
-
-function median(arr) {
-  const sorted = [...arr].sort((a, b) => a - b);
-  const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
-}
-
-function mad(arr) {
-  const med = median(arr);
-  return median(arr.map(x => Math.abs(x - med)));
 }
 
 // Encode input as UTF-16 code units for the Rust probe
@@ -229,6 +262,12 @@ function main() {
 
   const benchBin = path.join(ROOT, 'target', 'release', 'examples', 'scanbench');
   const probeBin = path.join(ROOT, 'target', 'release', 'examples', 'scanprobe');
+  const binExt = process.platform === 'win32' ? '.exe' : '';
+  const sha256File = (p) => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+  const benchBinSha = sha256File(benchBin + binExt);
+  const probeBinSha = sha256File(probeBin + binExt);
+  const toolchain = fs.readFileSync(path.join(ROOT, 'rust-toolchain.toml'), 'utf8');
+  const toolchainChannel = (toolchain.match(/channel\s*=\s*"([^"]+)"/) || [])[1] || 'unknown';
 
   console.error('\n[2] Running semantic parity gate...');
   const parity = runSemanticParity(scenarios, probeBin);
@@ -246,10 +285,15 @@ function main() {
   for (let p = 0; p < opts.pairs; p++) {
     schedule.push({ pair_id: p, rust_first: rng() < 0.5 });
   }
-  const schedulePath = path.join(opts.resultsDir, 'execution-schedule.json');
+  const dateStr = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  const platformStr = os.platform();
+  const runBase = dateStr + '-' + platformStr;
+  const schedulePath = path.join(opts.resultsDir, runBase + '-schedule.json');
   if (!fs.existsSync(opts.resultsDir)) fs.mkdirSync(opts.resultsDir, { recursive: true });
-  fs.writeFileSync(schedulePath, JSON.stringify(schedule, null, 2));
-  console.error('  Schedule saved (' + opts.pairs + ' pairs)');
+  const scheduleBuf = Buffer.from(JSON.stringify(schedule, null, 2));
+  fs.writeFileSync(schedulePath, scheduleBuf);
+  const scheduleSha = crypto.createHash('sha256').update(scheduleBuf).digest('hex');
+  console.error('  Schedule saved (' + opts.pairs + ' pairs, sha256 ' + scheduleSha.slice(0, 12) + '…)');
 
   console.error('\n[4] Running ' + opts.pairs + ' process pairs...');
   const measurements = [];
@@ -301,16 +345,65 @@ function main() {
   }
   console.error('  All pairs complete');
 
-  console.error('\n[5] Validating raw results...');
+  console.error('\n[5] Digest-equality gate (outside timing)...');
+  // The canonical digest is byte-identical across runtimes by spec; per
+  // scenario, every pair's JS digest must equal its Rust digest. The in-loop
+  // consumption accumulator is content-derived with an identical op sequence
+  // and must also match. Together these are whole-run semantic equality
+  // proofs on the measured result consumption.
+  let digestChecks = 0;
+  const digestMismatches = [];
+  for (const m of measurements) {
+    for (const jsRes of m.js.results) {
+      const rustRes = (m.rust.results || []).find(r => r.scenario_id === jsRes.scenario_id);
+      digestChecks++;
+      if (!rustRes || rustRes.digest !== jsRes.digest) {
+        digestMismatches.push('pair ' + m.pair_id + ' ' + jsRes.scenario_id +
+          ': js=' + jsRes.digest + ' rust=' + (rustRes ? rustRes.digest : 'missing'));
+      }
+      if (rustRes && rustRes.consumption !== jsRes.consumption) {
+        digestMismatches.push('pair ' + m.pair_id + ' ' + jsRes.scenario_id +
+          ' consumption: js=' + jsRes.consumption + ' rust=' + rustRes.consumption);
+      }
+    }
+  }
+  if (digestMismatches.length > 0) {
+    console.error('DIGEST/CONSUMPTION EQUALITY FAILED (' + digestMismatches.length + ' mismatches):');
+    for (const d of digestMismatches.slice(0, 10)) console.error('  ' + d);
+    process.exit(1);
+  }
+  console.error('  Digest + consumption equality OK (' + digestChecks + ' scenario/pair checks)');
+
+  console.error('\n[6] Validating raw results...');
+  const mode = opts.pilot ? 'pilot' : 'final';
   const rawArtifact = {
-    schema_version: 1,
+    schema_version: 2,
     provenance: {
       harness_sha: headSha,
       dirty_tree: isDirty,
       corpus_sha256: corpusSha,
       corpus_path: path.relative(ROOT, opts.scenarios),
+      schedule_sha256: scheduleSha,
+      schedule: schedule,
+      scanbench_sha256: benchBinSha,
+      scanprobe_sha256: probeBinSha,
+      cargo: {
+        profile: 'release',
+        opt_level: 3,
+        lto: 'default (off)',
+        codegen_units: 16,
+        toolchain_channel: toolchainChannel,
+      },
+      environment: {
+        platform: os.platform(),
+        os_release: os.release(),
+        arch: os.arch(),
+        cpu: (os.cpus()[0] || {}).model || 'unknown',
+        node: process.version,
+      },
     },
     config: {
+      mode: mode,
       warmup_iters: opts.warmupIters,
       samples: opts.samples,
       iters_per_sample: opts.itersPerSample,
@@ -334,6 +427,8 @@ function main() {
     corpusSha: corpusSha,
     harnessSha: opts.harnessSha ? headSha : null,
     dirtyTree: opts.harnessSha ? false : null,
+    mode: mode,
+    schedule: schedule,
   });
   if (rawErrors.length > 0) {
     console.error('RAW VALIDATION FAILED:');
@@ -342,62 +437,23 @@ function main() {
   }
   console.error('  Raw validation OK');
 
-  console.error('\n[6] Computing statistics...');
+  console.error('\n[7] Computing statistics...');
   const summary = {
-    schema_version: 1,
+    schema_version: 2,
     provenance: rawArtifact.provenance,
     config: rawArtifact.config,
     scenarios: [],
   };
 
   for (const scenario of scenarios) {
-    const id = scenario.id;
-    const pairLogSpeedups = [];
-    const pairRatios = [];
-
-    for (const m of measurements) {
-      const jsRes = (m.js.results || []).find(r => r.scenario_id === id);
-      const rustRes = (m.rust.results || []).find(r => r.scenario_id === id);
-      if (!jsRes || !rustRes) continue;
-      const jsPerIter = jsRes.sample_times_ns.map(ns => ns / opts.itersPerSample);
-      const rustPerIter = rustRes.sample_times_ns.map(ns => ns / opts.itersPerSample);
-      const jsMed = median(jsPerIter);
-      const rustMed = median(rustPerIter);
-      const ratio = jsMed / rustMed;
-      pairLogSpeedups.push(Math.log(ratio));
-      pairRatios.push(ratio);
-    }
-
-    const bootRng = mulberry32(opts.seed + scenarioIds.indexOf(id));
-    const bootMedians = [];
-    for (let b = 0; b < 10000; b++) {
-      const sample = [];
-      for (let j = 0; j < pairLogSpeedups.length; j++) {
-        sample.push(pairLogSpeedups[Math.floor(bootRng() * pairLogSpeedups.length)]);
-      }
-      bootMedians.push(median(sample));
-    }
-    bootMedians.sort((a, b) => a - b);
-    const ciLo = Math.exp(bootMedians[Math.floor(0.025 * bootMedians.length)]);
-    const ciHi = Math.exp(bootMedians[Math.ceil(0.975 * bootMedians.length) - 1]);
-    const pointEstimate = Math.exp(median(pairLogSpeedups));
-
-    summary.scenarios.push({
-      scenario_id: id,
-      label: scenario.label,
-      input: scenario.input,
-      options: scenario.options,
-      orientation: scenario.orientation,
-      description: scenario.description,
-      pairs: pairRatios.length,
-      point_estimate_ratio: pointEstimate,
-      median_ratio: median(pairRatios),
-      mad_ratio: mad(pairRatios),
-      ci_95_low: ciLo,
-      ci_95_high: ciHi,
-      ci_overlap: ciLo <= 1 && 1 <= ciHi,
-      all_ratios: pairRatios,
-    });
+    summary.scenarios.push(analyzeScenario(
+      scenario,
+      scenarioIds.indexOf(scenario.id),
+      measurements,
+      opts.itersPerSample,
+      opts.seed,
+      rawArtifact.config.bootstrap_resamples
+    ));
   }
 
   const summaryErrors = validateSummary(summary, {});
@@ -408,11 +464,9 @@ function main() {
   }
   console.error('  Summary validation OK');
 
-  console.error('\n[7] Writing artifacts...');
-  const dateStr = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-  const platformStr = os.platform();
-  const rawPath = path.join(opts.resultsDir, dateStr + '-' + platformStr + '-raw.json');
-  const summaryPath = path.join(opts.resultsDir, dateStr + '-' + platformStr + '-summary.json');
+  console.error('\n[8] Writing artifacts...');
+  const rawPath = path.join(opts.resultsDir, runBase + '-raw.json');
+  const summaryPath = path.join(opts.resultsDir, runBase + '-summary.json');
 
   fs.writeFileSync(rawPath, JSON.stringify(rawArtifact, null, 2));
   fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
