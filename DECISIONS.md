@@ -94,10 +94,11 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 
 ### D-017 — Scanner depth model: `Option<f64>` with `Infinity` for globstar
 
-- **Status**: Accepted (2026-08-02, Teammate 2 Chunk 2)
+- **Status**: Accepted (2026-08-02, Teammate 2 Chunk 2); **Errata appended (2026-08-03, final audit F-03)**
 - **Context**: `lib/scan.js` L26-L30 sets `token.depth = token.isGlobstar ? Infinity : 1` (only when `isPrefix !== true`), and `state.maxDepth` accumulates token depths. `maxDepth` is `Infinity` when any globstar token is present. JSON has no `Infinity` literal; the corpus/bridge must transport it as `{ "__num": "Infinity" }` per `canon.js`/D-014. A sentinel like `u32::MAX` would be lossy and diverge from JS `JSON.stringify(Infinity)` behavior.
-- **Decision**: `ScanToken.depth: Option<f64>` — `None` when `isPrefix === true` (JS omits the property), `Some(1.0)` or `Some(f64::INFINITY)` otherwise. `ScanState.max_depth: Option<f64>` — `None` when `tokens !== true` (property absent), `Some(0.0)` or `Some(f64::INFINITY)` when tokens are computed. The bridge/corpus encode `None` as absent and `Some(Infinity)` as `{ "__num": "Infinity" }`.
-- **Evidence**: `lib/scan.js` L26-L30, L356-L361, L375; D-014 (non-finite transport); `Rust/fixtures/canon.js` `encOptions`.
+- **Decision**: `ScanToken.depth: Option<f64>` — in practice always `Some` for real tokens: `Some(0.0)` initial, `Some(1.0)` or `Some(f64::INFINITY)` after the `depth()` call. `ScanState.max_depth: Option<f64>` — `None` when `tokens !== true` (property absent), `Some(0.0)`, a finite sum, or `Some(f64::INFINITY)` when tokens are computed. The bridge/corpus encode `None` as absent and `Some(Infinity)` as `{ "__num": "Infinity" }`.
+- **Errata (2026-08-03)**: the original text claimed JS "omits the property" for prefix tokens. **False**: every JS token is initialized `{ value: '', depth: 0, isGlob: false }` (scan.js L75/L159); `depth()` (L26-L30) skips prefix tokens, so they KEEP the initial `depth: 0` — the property is always present. Verified against the oracle: `scan('./a/b', {tokens:true})` → `{ value: './', depth: 0, isGlob: false, isPrefix: true }`. The implementation was always correct (`Some(0.0)` for prefix tokens); only this decision text and two code comments were wrong. Also corrected: `maxDepth` is an ACCUMULATION over token depths (0 for prefix tokens, 1 per non-prefix token, `Infinity` if any globstar), not merely "0 or Infinity".
+- **Evidence**: `lib/scan.js` L26-L30, L75, L159, L356-L361, L375; D-014 (non-finite transport); `Rust/fixtures/canon.js` `encOptions`.
 - **Rejected**: `u32` depth with a sentinel — rejected because it loses the `Infinity` observable and breaks JSON transport parity.
 - **Links**: D-013, D-014; `crates/pmx-core/src/scan.rs`; `Rust/fixtures/canon-scan.js`.
 
