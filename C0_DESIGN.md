@@ -8,7 +8,7 @@ Amendments from the maintainer review are folded in. Supersedes the in-chat desi
 
 ## Scoping correction (new — found while generating the corpus)
 
-The C0 Definition-of-Done in PARSE_CHUNKS.md over-reached: `'abc'`→`'abc'` needs C1's text branch; recovery fixtures (`'a['`, strictBrackets throws) only fire once C5/C6/C7's *open* branches increment their counters. **C0-pure observable surface** = guards + messages, `REPLACEMENTS` (`state.input`), `removePrefix` (`state.prefix`, retained full `state.input`), `state` defaults/shape, empty pattern, no-op recovery/rebuild paths. Branch-dependent behaviors are staged fixtures activating with their chunk (see `../pmx/fixtures/c0_oracle.json` `chunk` fields). C0 DoD here is amended accordingly.
+The C0 Definition-of-Done in PARSE_CHUNKS.md over-reached: `'abc'`→`'abc'` needs C1's text branch; recovery fixtures (`'a['`, strictBrackets throws) only fire once C5/C6/C7's *open* branches increment their counters. **C0-pure observable surface** = guards + messages, `REPLACEMENTS` (`state.input`), `removePrefix` (`state.prefix`, retained full `state.input`), `state` defaults/shape, empty pattern, no-op recovery/rebuild paths. Branch-dependent behaviors are staged fixtures activating with their chunk (see `fixtures/c0_oracle.json` `chunk` fields). C0 DoD here is amended accordingly.
 
 ## Amendments (folded in)
 
@@ -60,11 +60,11 @@ Later chunks land as `impl Parser` in `parse/braces.rs`, `parse/brackets.rs`, `p
 
 ## Test assets (this loop)
 
-`../pmx/fixtures/extract-c0.js` (corpus extractor against the reference checkout) → `c0_oracle.json` → `verify-c0.js` (re-drives the corpus, byte-compares) and `../pmx/crates/pmx-core/tests/c0_foundation.rs` (runs once C0 lands; asserts every corpus row byte-exactly).
+`fixtures/extract-c0.js` (corpus extractor against the read-only reference checkout `../Main`) → `c0_oracle.json` → `verify-c0.js` (re-drives the corpus, byte-compares) and `crates/pmx-core/tests/c0_foundation.rs` (runs once C0 lands; asserts every corpus row byte-exactly).
 
 ## Implementation findings (added post-review c0-1/c0-2)
 
 - **Fragment byte-pinning.** A `format!` paren misplacement in the globstar template passed all 16 C0 corpus rows because no active row *emits* fragments. Lesson now encoded as unit tests: every fragment template gets byte-pinned against the reference **in the chunk that defines it** (review c0-1 BLOCKER; the exact mistake shape the rulebook's second-catch rule watches).
 - **JS number formatting ≠ Rust Display.** JS `${max}` interpolation needs a `js_number()` helper (NaN/±Infinity/`-0`→`0`, exponent thresholds ≥1e21 /<1e-6, `+` on positive exponents). Verified over 10,000 random f64s vs V8. Domain note: `InputTooLong.max` is post-clamp (`Math.min(65536,x)`), so only negatives/subnormals are exotic.
 - **Ill-formed-UTF-16 outputs are real.** The inline fastpath escapes per UTF-16 code *unit*, splitting astral surrogate pairs with backslashes — the emitted regex source can be an ill-formed UTF-16 sequence, unrepresentable in a Rust `String`. C1 must decide: output buffer as `Vec<u16>` internally (public boundary still `String` where well-formed), or documented adapter-side handling. Corpus rows already carry `__u16` unit arrays for exactly this reason; unit-sequence comparison is the project standard.
-- **JSON-lines transports lose floats** (serdp side too): review c0-2 found the *probe's* serde_json reading numbers un-rounded without `float_roundtrip`. The §4b subprocess adapter must transport numbers as strings (`"num:"` prefix) — DECISIONS.md entry D-01 material.
+- **JSON-lines transports lose floats** (serdp side too): review c0-2 found the *probe's* serde_json reading numbers un-rounded without `float_roundtrip`. The §4b subprocess adapter must transport numbers as strings (`"num:"` prefix) — decided in root `DECISIONS.md` **D-014** (2026-08-01).

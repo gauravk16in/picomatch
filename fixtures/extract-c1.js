@@ -11,7 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-const REF = path.join(__dirname, '..', '..', 'picomatch');
+const REF = path.join(__dirname, '..', '..', 'Main');
 const parse = require(path.join(REF, 'lib', 'parse'));
 
 const { canonState } = require('./canon');
@@ -106,7 +106,7 @@ const doc = {
   meta: {
     corpus: 'c1-dispatcher',
     generator: 'fixtures/extract-c1.js',
-    reference: path.join('..', 'picomatch') + ' (read-only checkout)',
+    reference: path.join('..', 'Main') + ' (read-only checkout)',
     picomatchVersion: require(path.join(REF, 'package.json')).version,
     fieldPolicy: 'u16-unit sequences for emitted text (canon.js); assert-all when no assert list'
   },

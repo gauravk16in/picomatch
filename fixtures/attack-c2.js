@@ -9,7 +9,7 @@ const { execFileSync } = require('child_process');
 const path = require('path');
 const assert = require('assert');
 
-const REF = path.join(__dirname, '..', '..', 'picomatch');
+const REF = path.join(__dirname, '..', '..', 'Main');
 const parse = require(path.join(REF, 'lib', 'parse'));
 const { canonState } = require('./canon');
 
