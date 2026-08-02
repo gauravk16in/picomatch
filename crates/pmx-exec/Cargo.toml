@@ -1,0 +1,9 @@
+[package]
+name = "pmx-exec"
+version = "0.1.0"
+edition = "2021"
+description = "Executes JS-RegExp source strings produced by pmx-core with ECMAScript regex semantics (regress). Wired in A3 per ADAPTER_PLAN.md."
+
+[dependencies]
+regress = { version = "0.11", features = ["utf16"] }
+thiserror = "2"

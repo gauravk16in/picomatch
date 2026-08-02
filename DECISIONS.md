@@ -156,3 +156,38 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 - **Context:** PR #5's canaries copied validation logic instead of importing it, making them tautological. The validator never compared checksums.
 - **Decision:** One exported production validator (`benchmarks/validator.js`) used by the benchmark runner, analyzer, verifier, and all canaries. Canaries apply mutations to valid fixtures and require expected error codes. 31 canaries, all import the real validator.
 - **Rejected:** Copied validation in canaries — rejected because it cannot detect breakage in the production validator.
+
+---
+
+### D-024 — ECMAScript regex execution via `regress` (recorded astral-input class boundary)
+
+*(Restored from commit abba348's D-018 on 2026-08-03 after the rust-port rebase; number bumped because Teammate 2's D-018..D-023 series already occupies 18–23.)*
+
+- **Status**: Accepted (2026-08-02, Chunk A3; re-applied 2026-08-03)
+- **Context**: The reference delegates all matching to JavaScript's RegExp engine (V8): character classes like `[^/]` consume exactly one UTF-16 code unit. Our execution layer needed real JS semantics — including lookarounds/backreferences (`test/regex-features.js` uses them) — without linking Node/V8 (constitution §12).
+- **Decision**: `crates/pmx-exec` uses `regress` (pure-Rust, ECMAScript-targeting backtracking engine) with the `utf16` crate feature — inputs match as `&[u16]` via `find_from_utf16`; sources are `String::from_utf16`-decoded once per op. Public fn: `is_match(source_units, input_units, ExecFlags) -> Result<bool, ExecError>`. CLI op: `regexTest`; adapter surface: `picomatch.toRegex` (A3 wiring).
+- **Evidence**: `fixtures/attack-a3.js` — 148,488 (source, input) differential cases over the C0–C3 wildcard grammar: 0 divergences outside astral inputs; exactly 114 (0.077%) divergences, all one class: bracket classes (`[^…]`) against astral *input* characters coalesce a surrogate pair in this engine (V8 consumes one UTF-16 unit). Reproducer encoded as `engine_boundary_astral_class_is_documented` unit test in `crates/pmx-exec/src/lib.rs` — flips green when a fixed engine lands. No other class observed; engine errors 0/148k.
+- **Rejected**: `regex` crate (no backrefs/lookbehinds + leftmost-longest semantics changes behavior — upstream #154 class); forking/regress-patching inside A3 (out-of-scope theater relative to documenting and proceeding) — boundary is loud, bounded, and tracked here.
+- **Links**: constitution `../agents.md` §2/§12; ADAPTER_PLAN A3; `fixtures/attack-a3.js`.
+
+---
+
+### D-025 — napi-rs adapter (`pmx-node`) as TEST ADAPTER ONLY, with unsafe accounting
+
+*(Restored from commit abba348's D-019 on 2026-08-03 after the rust-port rebase; number bumped for the same reason as D-024.)*
+
+- **Status**: Accepted (2026-08-03, Chunk B3)
+- **Context**: The subprocess `--serve` adapter (§4b, zero FFI) is fully sufficient for parity but costs a process spawn per call (sync mocha surfaces). The constitution allows a napi adapter so long as it is *test adapter only* and `pmx-core` never depends on it (§2).
+- **Decision**: `crates/pmx-node` exposes ONE generic synchronous op, `bridge_op(payload) -> String`, delegating to `pmx_cli::dispatch` — the exact same implementation `pmx --serve` runs, so answers are byte-identical by construction. `_bridge` selects transport via `PMX_ADAPTER` env (default `serve`; `napi` requires the locally-built addon). Unsafe accounting table (rulebook §5):
+
+  | crate | unsafe blocks | unwrap/expect | panic! |
+  |---|---|---|---|
+  | pmx-core | 0 (`#![forbid(unsafe_code)]`) | 0 in lib | 0 |
+  | pmx-exec | 0 | 0 in lib | 0 |
+  | pmx-cli (lib+bin) | 0 | 0 | 0 |
+  | pmx-node | napi-derive macro-generated | 0 by hand | 0 |
+
+  The napi crate is explicitly excluded from the unsafe count per constitution §2 — no Node/V8/runtime is linked INTO the port; the addon *calls into the port*.
+- **Evidence**: `fixtures/b3-smoke.js` → transport-equal 16/16; `npm run parity` identical under both transports; `a2-smoke` green under both; workspace gates green.
+- **Cost**: second transport to keep; a build step (`cargo build -p pmx-node` + copy to `adapter/native/pmx_node.node`) documented in BUILD.md.
+- **Rejected**: napi first-party `#[napi]` typed surfaces per op (more surface to keep in parity) — one generic JSON op maintains the single-source dispatch in `pmx_cli::dispatch`.

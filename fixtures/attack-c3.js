@@ -1,100 +1,109 @@
 'use strict';
 
 /**
- * C3 differential attack harness — tests C3 wildcard surface against Rust c0probe.
+ * attack-c3.js — adversarial differential for C3's wildcard surface.
+ * Generates patterns from the C3-legal alphabet (no `**`, no paren/brace/
+ * bracket/pipe/comma, no extglob openers) × option matrix, and deep-compares
+ * Rust (examples/c3probe.rs) vs reference projections on:
+ * output units, consumed units, index, start, prefix, dot, counters, negated,
+ * backtrack, globstar, negatedExtglob, and full token streams.
+ *
  * node fixtures/attack-c3.js
  */
 
-const { execFileSync } = require('child_process');
 const path = require('path');
 const assert = require('assert');
+const { execFileSync, execFile } = require('child_process');
 
-const REF = path.join(__dirname, '..', '..', 'picomatch');
+const REF = path.join(__dirname, '..', '..', 'Main');
 const parse = require(path.join(REF, 'lib', 'parse'));
-const { canonState } = require('./canon');
+const { enc } = require('./canon');
 
-const cases = [];
-const add = (pattern, options) => cases.push({ i: cases.length, pattern, options: options || { fastpaths: false } });
+const E = '\u{1F600}';
 
-// --- category: qmark variants ---
-['?', '??', '???', 'a?', '?a', 'a?b', './?', 'a/?', '?/a', 'a/?/b', '.?', '?.', 'a.?', '?.a'].forEach(p => add(p));
-['?', 'a?', '?/a', '.?'].forEach(p => {
-  add(p, { fastpaths: false, dot: true });
-  add(p, { fastpaths: false, dot: false });
-  add(p, { fastpaths: false, windows: true });
-});
-
-// --- category: star variants ---
-['*', 'a*', '*a', 'a*b', './*', 'a/*', '*/a', 'a/*/b', '.*', '*.', 'a.*', '*.a'].forEach(p => add(p));
-['*', 'a*', '*/a', '.*'].forEach(p => {
-  add(p, { fastpaths: false, dot: true });
-  add(p, { fastpaths: false, dot: false });
-  add(p, { fastpaths: false, bash: true });
-  add(p, { fastpaths: false, capture: true });
-  add(p, { fastpaths: false, windows: true });
-  add(p, { fastpaths: false, strictSlashes: true });
-});
-
-// --- category: plus variants ---
-['+', 'a+', '+a', 'a+b', './+', 'a/+', '+/a'].forEach(p => add(p));
-['+', 'a+'].forEach(p => {
-  add(p, { fastpaths: false, regex: false });
-  add(p, { fastpaths: false, regex: true });
-});
-
-// --- category: lookaround and parens qmark ---
-['(?)', '(?=a)', '(?!a)', '(?<=a)', '(?<!a)', '(?<name>a)', '(?<a)'].forEach(p => add(p));
-
-// Cap at 300 cases
-cases.splice(300);
-
-console.log(`Generated ${cases.length} adversarial C3 attack cases.`);
-
-// Build stdin JSONL for Rust c0probe
-const inputJsonl = cases.map(c => JSON.stringify(c)).join('\n') + '\n';
-
-// Run Rust c0probe
-const probeBin = path.join(__dirname, '..', 'target', 'debug', 'examples', 'c0probe');
-const rustStdout = execFileSync(probeBin, [], { input: inputJsonl, encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 });
-
-const rustRows = rustStdout.trim().split('\n').filter(Boolean).map(l => JSON.parse(l));
-
-let pass = 0;
-let fail = 0;
-
-for (let i = 0; i < cases.length; i++) {
-  const c = cases[i];
-  const rust = rustRows[i];
-
-  let jsState;
+/** Reference projection, normalized exactly like c3probe's row. */
+function jsProject(i, pattern, options) {
   try {
-    const s = parse(c.pattern, c.options);
-    jsState = canonState(s);
+    const s = parse(pattern, options);
+    return {
+      i, kind: 'ok', index: s.index, start: s.start, dot: s.dot, prefix: s.prefix,
+      output: enc(s.output), consumed: enc(s.consumed), negated: s.negated,
+      backtrack: s.backtrack, brackets: s.brackets, braces: s.braces,
+      parens: s.parens, quotes: s.quotes, globstar: s.globstar,
+      negatedExtglob: s.negatedExtglob === true,
+      tokens: s.tokens.map(t => ({ type: t.type, value: enc(t.value), output: t.output === undefined ? null : enc(t.output) }))
+    };
   } catch (err) {
-    jsState = { kind: 'error', class: err.constructor.name, message: err.message };
-  }
-
-  let diff = false;
-  if (rust.kind === 'ok') {
-    const jsStart = jsState.start;
-    const jsPrefix = jsState.prefix;
-
-    if (rust.start !== jsStart) {
-      console.error(`FAIL case ${i} pattern "${c.pattern}": start rust=${rust.start} js=${jsStart}`);
-      diff = true;
-    }
-    if (rust.prefix !== jsPrefix) {
-      console.error(`FAIL case ${i} pattern "${c.pattern}": prefix rust="${rust.prefix}" js="${jsPrefix}"`);
-      diff = true;
-    }
-  }
-
-  if (diff) {
-    fail++;
-  } else {
-    pass++;
+    return { i, kind: 'error', class: err.constructor.name, message: err.message };
   }
 }
 
-console.log(`C3 Attack Results: ${pass}/${cases.length} passed, ${fail} failed.`);
-assert.strictEqual(fail, 0, `${fail} differential failures found in C3 attack!`);
+// ---- generator: C3-legal alphabet strings ----
+const UNITS = ['', 'a', 'b', '.', '/', '?', '*', '\\', '"', ' ', E];
+const pieces = ['a', '?', '*', '/', '.', '\\', '"', 'ab', '?.', '*a', 'a/', '\\\\', E, ' '];
+const patterns = new Set();
+for (const p of pieces) patterns.add(p);
+for (const a of pieces) for (const b of pieces) patterns.add(a + b);
+for (const a of pieces) for (const b of pieces) for (const c of ['a', '?', '*', '/']) {
+  patterns.add(a + b + c);
+}
+// explicit guard/site shapes
+for (const p of ['.', './', '/', 'a/', '/a', '.a', 'a.', '"', 'a"', '"a', '\\', '\\\\']) {
+  for (const q of ['?', '*', '?a', '*a', 'a?', 'a*']) patterns.add(p + q);
+}
+const optsMatrix = [
+  {}, { dot: true }, { bash: true }, { capture: true }, { windows: true },
+  { unescape: true }, { fastpaths: false }, { dot: true, bash: true },
+  { capture: true, bash: true }, { windows: true, dot: true }
+];
+
+const cases = [];
+let i = 0;
+for (const pattern of patterns) {
+  // never allow `**` (C8) — drop runs of adjacent stars
+  if (/\*\*/.test(pattern)) continue;
+  // never allow NUL of `(` issues: alphabet already safe; also drop bare '(' from "\\(" none here.
+  for (const options of optsMatrix) cases.push({ i: i++, pattern, options });
+}
+
+console.log(`attack-c3: ${cases.length} cases`);
+
+// ---- rust side: build + drive probe ----
+const lit = cases.map(c => JSON.stringify(c)).join('\n') + '\n';
+// Rust side driven via the prebuilt probe binary (no `cargo run` — spawns once)
+const rsOut = execFileSync(path.join(__dirname, '..', 'target', 'debug', 'examples', 'c3probe'), [], {
+  input: lit, encoding: 'utf8', maxBuffer: 1 << 26
+});
+const rs = new Map();
+for (const line of rsOut.split('\n')) {
+  if (line.trim()) rs.set(JSON.parse(line).i, JSON.parse(line));
+}
+
+let divergences = 0;
+for (const c of cases) {
+  const expected = jsProject(c.i, c.pattern, c.options);
+  let actual = rs.get(c.i);
+  if (!actual) {
+    divergences++;
+    console.log(JSON.stringify({ i: c.i, kind: 'missing-rs-row', c }));
+    continue;
+  }
+  // normalize actual: enc() fields arrive as {__u16} or plain strings from JS side;
+  // c3probe emits arrays/ints/bools directly. Canonicalize both through JS values.
+  const norm = v => (v && typeof v === 'object' && Array.isArray(v.__u16) ? { __u16: v.__u16 } : v);
+  const canonRow = r => ({
+    ...r,
+    output: JSON.stringify(norm(r.output)),
+    consumed: JSON.stringify(norm(r.consumed)),
+    prefix: JSON.stringify(norm(r.prefix)),
+    tokens: JSON.stringify(r.tokens ?? [])
+  });
+  try {
+    assert.deepStrictEqual(canonRow(actual), canonRow({ ...expected, kind: actual.kind }));
+  } catch (e) {
+    divergences++;
+    if (divergences <= 8) console.log(JSON.stringify({ i: c.i, c, expected: canonRow(expected), actual: canonRow(actual) }).slice(0, 900));
+  }
+}
+console.log(`divergences: ${divergences}`);
+process.exitCode = divergences === 0 ? 0 : 1;

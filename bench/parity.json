@@ -1,0 +1,75 @@
+{
+ "generatedBy": "fixtures/parity-run.js",
+ "files": [
+  {
+   "file": "stars.js",
+   "pass": 17,
+   "fail": 0,
+   "total": 17,
+   "failures": []
+  },
+  {
+   "file": "qmarks.js",
+   "pass": 10,
+   "fail": 0,
+   "total": 10,
+   "failures": []
+  },
+  {
+   "file": "non-globs.js",
+   "pass": 4,
+   "fail": 0,
+   "total": 4,
+   "failures": []
+  },
+  {
+   "file": "negation.js",
+   "pass": 13,
+   "fail": 0,
+   "total": 13,
+   "failures": []
+  },
+  {
+   "file": "dotfiles.js",
+   "pass": 23,
+   "fail": 0,
+   "total": 23,
+   "failures": []
+  },
+  {
+   "file": "wildmat.js",
+   "pass": 2,
+   "fail": 0,
+   "total": 2,
+   "failures": []
+  },
+  {
+   "file": "parens.js",
+   "pass": 2,
+   "fail": 0,
+   "total": 2,
+   "failures": []
+  },
+  {
+   "file": "brackets.js",
+   "pass": 3,
+   "fail": 0,
+   "total": 3,
+   "failures": []
+  },
+  {
+   "file": "slashes-posix.js",
+   "pass": 18,
+   "fail": 0,
+   "total": 18,
+   "failures": []
+  },
+  {
+   "file": "slashes-windows.js",
+   "pass": 12,
+   "fail": 0,
+   "total": 12,
+   "failures": []
+  }
+ ]
+}
