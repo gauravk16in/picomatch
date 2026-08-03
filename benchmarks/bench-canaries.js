@@ -291,8 +291,11 @@ function main() {
   // subprocess. Each must exit non-zero with a structured error message,
   // NOT crash with an uncaught exception.
   const VERIFY = path.join(__dirname, 'verify-artifacts.js');
-  const os = require('os');
-  const tmpDirBase = fs.mkdtempSync(path.join(os.tmpdir(), 'canary-verify-'));
+  // tmpDirBase MUST reside under ROOT so that corpus_path references
+  // (relative to ROOT) resolve within the repo and pass the verifier's
+  // ROOT confinement check. Using os.tmpdir() would cause the path to
+  // escape ROOT, rejecting the artifact before reaching the target code.
+  const tmpDirBase = fs.mkdtempSync(path.join(ROOT, 'target', 'canary-verify-'));
 
   function makeFinalRawBase() {
     const raw = makeValidRaw();
@@ -302,6 +305,17 @@ function main() {
       makeValidMeasurement(2, 5000, 20),
     ];
     return raw;
+  }
+
+  // A minimal valid summary so the verifier gets past the "Missing summary"
+  // check and reaches the target code path (corpus/schedule/recompute).
+  function makeMinimalSummary(raw) {
+    return {
+      schema_version: 2,
+      provenance: raw.provenance,
+      config: raw.config,
+      scenarios: [],
+    };
   }
 
   function runVerifierCanary(name, setupFn, expectedCode) {
@@ -321,7 +335,7 @@ function main() {
     }
   }
 
-  // Canary: corpus path pointing to a directory
+  // Canary: corpus path pointing to a directory — must produce MALFORMED_CORPUS
   try {
     runVerifierCanary('corpus-is-dir', (dir) => {
       const raw = makeFinalRawBase();
@@ -330,13 +344,13 @@ function main() {
       raw.provenance.corpus_path = path.relative(ROOT, corpusDir).replace(/\\/g, '/');
       raw.provenance.schedule_sha256 = 'a'.repeat(64);
       raw.provenance.harness_sha = 'b'.repeat(40);
-      const rawPath = path.join(dir, 'test-raw.json');
-      fs.writeFileSync(rawPath, JSON.stringify(raw));
-    });
+      fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), JSON.stringify(makeMinimalSummary(raw)));
+    }, 'MALFORMED_CORPUS');
     executed++;
   } catch (e) { failed++; failures.push('verify-corpus-is-dir: ' + e.message); }
 
-  // Canary: missing/unreadable corpus
+  // Canary: missing/unreadable corpus — must report corpus not found
   try {
     runVerifierCanary('corpus-missing', (dir) => {
       const raw = makeFinalRawBase();
@@ -344,33 +358,35 @@ function main() {
       raw.provenance.schedule_sha256 = 'a'.repeat(64);
       raw.provenance.harness_sha = 'b'.repeat(40);
       fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
-    });
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), JSON.stringify(makeMinimalSummary(raw)));
+    }, 'Referenced corpus not found');
     executed++;
   } catch (e) { failed++; failures.push('verify-corpus-missing: ' + e.message); }
 
-  // Canary: malformed corpus JSON
+  // Canary: malformed corpus JSON — must produce MALFORMED_CORPUS
   try {
     runVerifierCanary('corpus-malformed-json', (dir) => {
       const raw = makeFinalRawBase();
-      const corpusPath = path.join(dir, 'scenarios.json');
-      fs.writeFileSync(corpusPath, '{ invalid json !!!');
-      raw.provenance.corpus_path = path.relative(ROOT, corpusPath).replace(/\\/g, '/');
+      const corpusFile = path.join(dir, 'scenarios.json');
+      fs.writeFileSync(corpusFile, '{ invalid json !!!');
+      raw.provenance.corpus_path = path.relative(ROOT, corpusFile).replace(/\\/g, '/');
       raw.provenance.schedule_sha256 = 'a'.repeat(64);
       raw.provenance.harness_sha = 'b'.repeat(40);
       fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
-    });
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), JSON.stringify(makeMinimalSummary(raw)));
+    }, 'MALFORMED_CORPUS');
     executed++;
   } catch (e) { failed++; failures.push('verify-corpus-malformed-json: ' + e.message); }
 
-  // Canary: malformed raw JSON
+  // Canary: malformed raw JSON — must produce MALFORMED_RAW
   try {
     runVerifierCanary('raw-malformed-json', (dir) => {
       fs.writeFileSync(path.join(dir, 'test-raw.json'), '{ broken raw !!!');
-    });
+    }, 'MALFORMED_RAW');
     executed++;
   } catch (e) { failed++; failures.push('verify-raw-malformed-json: ' + e.message); }
 
-  // Canary: malformed summary JSON
+  // Canary: malformed summary JSON — must produce MALFORMED_SUMMARY
   try {
     runVerifierCanary('summary-malformed-json', (dir) => {
       const raw = makeFinalRawBase();
@@ -378,23 +394,24 @@ function main() {
       raw.provenance.harness_sha = 'b'.repeat(40);
       fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
       fs.writeFileSync(path.join(dir, 'test-summary.json'), '{ broken summary !!!');
-    });
+    }, 'MALFORMED_SUMMARY');
     executed++;
   } catch (e) { failed++; failures.push('verify-summary-malformed-json: ' + e.message); }
 
-  // Canary: malformed schedule JSON
+  // Canary: malformed schedule JSON — must produce MALFORMED_SCHEDULE
   try {
     runVerifierCanary('schedule-malformed-json', (dir) => {
       const raw = makeFinalRawBase();
       raw.provenance.schedule_sha256 = 'a'.repeat(64);
       raw.provenance.harness_sha = 'b'.repeat(40);
       fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), JSON.stringify(makeMinimalSummary(raw)));
       fs.writeFileSync(path.join(dir, 'test-schedule.json'), '{ broken schedule !!!');
-    });
+    }, 'MALFORMED_SCHEDULE');
     executed++;
   } catch (e) { failed++; failures.push('verify-schedule-malformed-json: ' + e.message); }
 
-  // Canary: missing results array followed by attempted recomputation
+  // Canary: missing results array followed by attempted recomputation — must produce MALFORMED_MEASUREMENT
   try {
     runVerifierCanary('missing-results-recompute', (dir) => {
       const raw = makeFinalRawBase();
@@ -402,7 +419,8 @@ function main() {
       raw.provenance.harness_sha = 'b'.repeat(40);
       raw.measurements[0].js = { runtime: 'js' }; // missing results array
       fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
-    });
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), JSON.stringify(makeMinimalSummary(raw)));
+    }, 'MALFORMED_MEASUREMENT');
     executed++;
   } catch (e) { failed++; failures.push('verify-missing-results-recompute: ' + e.message); }
 

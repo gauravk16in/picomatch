@@ -94,7 +94,9 @@ function main() {
     console.log('SKIP legacy artifact: ' + f);
   }
   if (finals.length === 0) {
-    console.error('VERIFICATION FAILED: no final artifact set found (schema_version 2, mode "final").');
+    console.error('VERIFICATION FAILED:');
+    console.error('  no final artifact set found (schema_version 2, mode "final").');
+    for (const e of errors) console.error('  ' + e);
     process.exit(1);
   }
   if (finals.length > 1) {
