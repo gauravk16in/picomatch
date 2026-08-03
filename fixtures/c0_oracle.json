@@ -2,7 +2,7 @@
  "meta": {
   "corpus": "c0-foundation",
   "generator": "fixtures/extract-c0.js",
-  "reference": "..\\Main (read-only checkout)",
+  "reference": "../Main (read-only checkout)",
   "picomatchVersion": "4.0.5",
   "assertKeys": [
    "input",

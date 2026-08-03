@@ -1,8 +1,11 @@
 [package]
 name = "pmx-node"
-version = "0.1.0"
-edition = "2021"
-description = "napi-rs bridge exposing pmx ops to Node. TEST ADAPTER ONLY (constitution §2); never referenced by pmx-core."
+description = "NAPI-rs bridge exposing pmx ops to Node.js. Test adapter only; never referenced by pmx-core."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
 
 [lib]
 crate-type = ["cdylib"]

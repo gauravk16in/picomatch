@@ -1,8 +1,14 @@
 [package]
 name = "pmx-core"
-version = "0.1.0"
-edition = "2021"
 description = "Pure-Rust port of picomatch v4.0.5 (bug-for-bug parity). Core compiler: pattern -> JS-RegExp source string."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
+readme = "../../README.md"
 
 [features]
 default = ["validate-regex"]

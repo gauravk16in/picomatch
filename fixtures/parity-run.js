@@ -4,7 +4,7 @@
  * parity-run.js
  *
  * Runs the original Picomatch test suites through the Rust adapter and
- * records per-file parity results into bench/parity.json.
+ * records per-file parity results into benchmarks/parity.json.
  *
  * Usage:
  *   node fixtures/parity-run.js
@@ -110,7 +110,7 @@ const output = {
 };
 
 fs.writeFileSync(
-  path.join(ROOT, 'bench', 'parity.json'),
+  path.join(ROOT, 'benchmarks', 'parity.json'),
   JSON.stringify(output, null, 2) + '\n'
 );
 
@@ -133,7 +133,7 @@ for (const row of rows) {
 
     if (row.failures.length > 5) {
       console.log(
-        `   ✗ … ${row.failures.length - 5} more (see bench/parity.json)`
+        `   ✗ … ${row.failures.length - 5} more (see benchmarks/parity.json)`
       );
     }
   }
@@ -150,7 +150,7 @@ console.log(`Tests     : ${totalTests}`);
 console.log(`Passed    : ${totalPass}`);
 console.log(`Failed    : ${totalFail}`);
 console.log(`Success   : ${((totalPass / Math.max(totalTests, 1)) * 100).toFixed(2)}%`);
-console.log(`Report    : bench/parity.json`);
+console.log(`Report    : benchmarks/parity.json`);
 console.log('='.repeat(70));
 
 process.exitCode = totalFail === 0 ? 0 : 2;

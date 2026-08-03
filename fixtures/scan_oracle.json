@@ -1,6 +1,6 @@
 {
  "meta": {
-  "reference": "D:\\picomatch\\Main",
+  "reference": "/Users/kr/port/Main",
   "tool": "fixtures/extract-scan.js",
   "indexUnits": "utf16_code_unit",
   "count": 3216

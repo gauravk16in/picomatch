@@ -1,13 +1,26 @@
-
+# Rust build artifacts
 /target/
+
+# Node.js
 node_modules/
-/node_modules
 .npm/
+
+# OS artifacts
 .DS_Store
+
+# Fuzz artifacts (cargo-fuzz)
+fuzz/target/
+fuzz/artifacts/
+fuzz/corpus/
+fuzz/Cargo.lock
+
+# Internal process artifacts
+.loop/
+
+# NAPI build artifacts (platform-specific binaries)
+adapter/native/*.node
+
+# Root-level JS files from the original picomatch (we are the Rust port)
 /lib
 /index.js
 /posix.js
-/package.json
-
-# napi build artifacts (platform-specific binaries)
-adapter/native/*.node
