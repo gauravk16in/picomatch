@@ -1,6 +1,14 @@
 # ADAPTER_PLAN.md — JS↔Rust adapter, build system, CI (chunked, one at a time)
 
+> **[HISTORICAL DOCUMENT — Plan completed as of PR #11, 2026-08-03]**
+> This plan was fully executed. All stages S0–C1 are DONE (see status lines below).
+> The current source of truth for architecture is `README.md`, `docs/decisions.md`,
+> and `AGENTS.md`. This document is preserved as a record of planning decisions and
+> rationale; references to removed files (`LATEST-UPDATES.md`, `BUILD.md`) and
+> old path conventions are **intentionally retained** for historical accuracy.
+
 This plan sequence is from the constitution (`../agents.md` §2 crates layout, §4 test parity, §4b subprocess adapter, §9 benchmarks, §11 loop discipline, §12 prohibitions). It parallels the parser track (C0–C9) without interrupting it.
+
 
 **Order of work rule (same as parser): exactly ONE sub-chunk at a time; each ends with a green verification gate; nothing proceeds while red.**
 

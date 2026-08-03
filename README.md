@@ -100,13 +100,12 @@ For full API reference, options table, and struct definitions, see [**docs/api.m
 
 ## Verification
 
-### For Judges & Contributors
+### Rust-only (no Node.js required)
 
 ```bash
 # Prerequisites: Rust 1.97.1+ (auto-installed via rust-toolchain.toml)
-# Optional: Node.js 22+ for differential parity testing
 
-# One-command verification
+# Verify format + lint + all Rust tests
 make verify
 
 # Or run gates individually:
@@ -115,13 +114,21 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 ```
 
-### Differential Parity Testing (requires Node.js + [picomatch](https://github.com/micromatch/picomatch) v4.0.5 at `../Main`)
+### Differential Parity Testing (requires Node.js 22+ and picomatch v4.0.5)
 
 ```bash
+# Step 1: point PICOMATCH_REF at a local v4.0.5 checkout
+git clone --branch 4.0.5 --depth 1 https://github.com/micromatch/picomatch.git ../Main
+export PICOMATCH_REF="$(cd ../Main && pwd)"
+
+# Step 2: run differential gates
 node fixtures/run-integrated.js      # 16-step integrated harness
 node fixtures/attack-scan.js         # Adversarial scanner attacks
 node fixtures/attack-integrated.js   # Adversarial parser attacks
-node benchmarks/bench-canaries.js    # 69 mutation-tested canaries
+
+# Step 3: run benchmark canaries (build scanbench first)
+cargo build --release --example scanbench
+node benchmarks/bench-canaries.js    # 79 mutation-tested canaries
 ```
 
 See [docs/judging-evidence.md](docs/judging-evidence.md) for PR timeline, SHA hashes, and full correctness evidence.

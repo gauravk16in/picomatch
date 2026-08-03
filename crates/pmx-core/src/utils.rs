@@ -60,7 +60,7 @@ pub fn is_regex_char(s: &str) -> bool {
 
 /// utils.js:L14 — `escapeRegex(str)`: prefix every SPECIAL_CHARS member with
 /// `\`. &str inputs are well-formed, so char-wise == unit-wise here
-/// (the Vec<u16> route for possibly-ill-formed emitted text is
+/// (the `Vec<u16>` route for possibly-ill-formed emitted text is
 /// `push_escape_regex_unit`). Call sites: parse.js:L34, L235-L236, L552,
 /// L766, L860.
 pub fn escape_regex(s: &str) -> String {

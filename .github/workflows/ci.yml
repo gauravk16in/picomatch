@@ -1,8 +1,8 @@
-﻿name: CI
+name: CI
 
 on:
   push:
-    branches: [rust-port, review-remediation]
+    branches: [rust-port, review-remediation, chirag-rust-port-final-judge-ready-polish]
   pull_request:
     branches: [rust-port]
 
