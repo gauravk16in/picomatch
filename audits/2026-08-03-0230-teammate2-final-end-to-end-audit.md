@@ -303,3 +303,47 @@ PR #10 (`90ee46b`, parser review remediation) also touched `benchmarks/verify-ar
 ### 25.4 Validation of this addendum's fixes
 
 `node benchmarks/bench-canaries.js` 72/72; `node benchmarks/verify-artifacts.js benchmarks/results` verifies the E2 final set (exit 0); a fresh pilot run writes POSIX `corpus_path` and is rejected as final evidence (exit 1); `cargo fmt --check` / `clippy -D warnings` / `cargo test --workspace` (incl. teammates' new crates) green; `node fixtures/run-integrated.js` 16/16; Main `npm test` 1977/1977, tree clean.
+
+## 26. Post-review addendum 3 (2026-08-03, PR #11 post-merge-verify review remediation)
+
+### 26.1 Copilot review findings on PR #11 (two unresolved threads)
+
+Copilot identified two valid crash paths in `verify-artifacts.js`:
+
+1. **Unprotected filesystem and JSON operations** — the verifier performed `fs.readFileSync(corpusPath)` and `JSON.parse(fs.readFileSync(...))` guarded only by `existsSync`. An artifact could point to a directory (EISDIR), an unreadable file, invalid JSON, or an unexpected filesystem object, causing an uncaught exception instead of a structured `VERIFICATION FAILED` result. This applied to raw classification, summary reads, schedule reads, and corpus reads.
+
+2. **Analysis continues after structural validation fails** — `validateRaw()` correctly detected missing/malformed `results` arrays, but the verifier then continued into `analyzeScenario(..., raw.measurements, ...)` which dereferences `m.js.results`/`m.rust.results`, crashing on malformed measurements.
+
+### 26.2 Fixes applied
+
+| Fix | Description |
+|---|---|
+| Raw classification guarded | `JSON.parse(fs.readFileSync(...))` for raw artifact classification wrapped in try/catch, records `[MALFORMED_RAW]` error, skips to legacy |
+| Summary read guarded | Summary `readFileSync`+`JSON.parse` wrapped in try/catch, records `[MALFORMED_SUMMARY]` error |
+| Schedule read guarded | Schedule file `readFileSync`+`JSON.parse` wrapped in try/catch, records `[MALFORMED_SCHEDULE]` error |
+| Corpus read guarded | Corpus `statSync` (isFile check) + `readFileSync`+`JSON.parse` wrapped in try/catch, records `[MALFORMED_CORPUS]` error (directory, unreadable, invalid JSON, non-array) |
+| Recomputation skipped on structural failure | If `validateRaw()` returns `MALFORMED_MEASUREMENT`, `MISSING_PAIR`, `MISSING_RUNTIME`, or `WRONG_PROCESS_COUNT`, summary recomputation is skipped (records `[SKIP_RECOMPUTE]`), preventing `analyzeScenario` from dereferencing invalid `m.js.results`/`m.rust.results` |
+| Recomputation try/catch | `analyzeScenario` call wrapped in try/catch, records `[RECOMPUTE_CRASH]` instead of uncaught exception |
+| Summary null guard | Recomputation skipped when summary is null or has no scenarios array |
+
+### 26.3 CI workflow fix
+
+The `adapter-parity` CI job built only `cargo build --release -p pmx-cli` but not the `scanbench` example. The fail-closed canary suite (which hard-errors if neither release nor debug `scanbench` exists) would fail because the required executable was never built. Added `cargo build --release --example scanbench` step before running benchmark canaries.
+
+### 26.4 New mutation canaries (7)
+
+| Canary | Tests |
+|---|---|
+| `verify-corpus-is-dir` | corpus_path pointing to a directory results in `[MALFORMED_CORPUS]` not crash |
+| `verify-corpus-missing` | corpus_path pointing to nonexistent file results in error not crash |
+| `verify-corpus-malformed-json` | corpus file with invalid JSON results in `[MALFORMED_CORPUS]` not crash |
+| `verify-raw-malformed-json` | raw artifact file with invalid JSON results in `[MALFORMED_RAW]` not crash |
+| `verify-summary-malformed-json` | summary file with invalid JSON results in `[MALFORMED_SUMMARY]` not crash |
+| `verify-schedule-malformed-json` | schedule file with invalid JSON results in `[MALFORMED_SCHEDULE]` not crash |
+| `verify-missing-results-recompute` | missing results array results in `[SKIP_RECOMPUTE]` not crash in `analyzeScenario` |
+
+Total canaries: 72 + 7 = **79/79 green**.
+
+### 26.5 Validation
+
+`node benchmarks/bench-canaries.js` 79/79; `cargo fmt --check` 0; `cargo clippy --workspace --all-targets -- -D warnings` 0; `node benchmarks/verify-artifacts.js benchmarks/results` (E2 final set: binary hash mismatches are pre-existing — binaries rebuilt locally, not from harness commit).

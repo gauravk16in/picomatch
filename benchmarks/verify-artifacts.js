@@ -21,7 +21,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('node:crypto');
 const { spawnSync } = require('child_process');
-const { validateRaw, validateSummary } = require('./validator');
+const { ErrorCodes, validateRaw, validateSummary } = require('./validator');
 const { analyzeScenario } = require('./stats');
 const { mulberry32 } = require('./prng');
 
@@ -73,7 +73,14 @@ function main() {
   // and legacy schema v1 artifacts (superseded pre-H2 evidence).
   const finals = [];
   for (const f of rawFiles) {
-    const raw = JSON.parse(fs.readFileSync(path.join(resultsDir, f), 'utf8'));
+    let raw;
+    try {
+      raw = JSON.parse(fs.readFileSync(path.join(resultsDir, f), 'utf8'));
+    } catch (e) {
+      errors.push(f + ' [MALFORMED_RAW] failed to read or parse raw artifact: ' + e.message);
+      legacy.push(f + ' (unreadable/malformed — skipped)');
+      continue;
+    }
     if (raw.schema_version === 2 && raw.config && raw.config.mode === 'final') {
       const base = f.replace(/-raw\.json$/, '');
       finals.push({ base, raw });
@@ -154,19 +161,28 @@ function main() {
       errors.push('Missing summary for final set: ' + summaryPath);
       continue;
     }
-    const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+    let summary = null;
+    try {
+      summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+    } catch (e) {
+      errors.push(base + ' [MALFORMED_SUMMARY] failed to read or parse summary: ' + e.message);
+    }
 
     // --- schedule file binds to embedded schedule hash ---
     if (!fs.existsSync(schedulePath)) {
       errors.push('Missing schedule file: ' + schedulePath);
     } else {
-      const schedSha = sha256(fs.readFileSync(schedulePath));
-      if (schedSha !== prov.schedule_sha256) {
-        errors.push('Schedule file hash ' + schedSha + ' != embedded schedule_sha256 ' + prov.schedule_sha256);
-      }
-      const onDisk = JSON.parse(fs.readFileSync(schedulePath, 'utf8'));
-      if (JSON.stringify(onDisk) !== JSON.stringify(prov.schedule)) {
-        errors.push('Schedule file entries differ from embedded provenance.schedule');
+      try {
+        const schedSha = sha256(fs.readFileSync(schedulePath));
+        if (schedSha !== prov.schedule_sha256) {
+          errors.push('Schedule file hash ' + schedSha + ' != embedded schedule_sha256 ' + prov.schedule_sha256);
+        }
+        const onDisk = JSON.parse(fs.readFileSync(schedulePath, 'utf8'));
+        if (JSON.stringify(onDisk) !== JSON.stringify(prov.schedule)) {
+          errors.push('Schedule file entries differ from embedded provenance.schedule');
+        }
+      } catch (e) {
+        errors.push(base + ' [MALFORMED_SCHEDULE] failed to read or parse schedule file: ' + e.message);
       }
     }
 
@@ -181,8 +197,22 @@ function main() {
     let scenarioIds = [];
     let scenarioDocs = [];
     if (corpusSha) {
-      scenarioDocs = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
-      scenarioIds = scenarioDocs.map(s => s.id);
+      try {
+        const stat = fs.statSync(corpusPath);
+        if (!stat.isFile()) {
+          errors.push(base + ' [MALFORMED_CORPUS] corpus_path is not a file: ' + corpusPath);
+        } else {
+          scenarioDocs = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
+          if (!Array.isArray(scenarioDocs)) {
+            errors.push(base + ' [MALFORMED_CORPUS] corpus file does not contain a JSON array: ' + corpusPath);
+            scenarioDocs = [];
+          } else {
+            scenarioIds = scenarioDocs.map(s => s.id);
+          }
+        }
+      } catch (e) {
+        errors.push(base + ' [MALFORMED_CORPUS] failed to read or parse corpus file: ' + e.message);
+      }
     }
     // Re-derive the seeded schedule rather than trusting the embedded one.
     const rng = mulberry32(cfg.seed >>> 0);
@@ -206,6 +236,18 @@ function main() {
     });
     for (const e of rawErrors) errors.push(base + ' [' + e.code + '] ' + e.message);
 
+    // If structural validation of the raw artifact failed (missing/malformed
+    // measurements, missing runtimes, missing results arrays), the raw data
+    // is NOT safe to pass to analyzeScenario — it dereferences m.js.results
+    // and m.rust.results unconditionally. Skip summary recomputation for this
+    // artifact and continue collecting/reporting validation errors.
+    const hasStructuralErrors = rawErrors.some(e =>
+      e.code === ErrorCodes.MALFORMED_MEASUREMENT ||
+      e.code === ErrorCodes.MISSING_PAIR ||
+      e.code === ErrorCodes.MISSING_RUNTIME ||
+      e.code === ErrorCodes.WRONG_PROCESS_COUNT
+    );
+
     // --- harness commit exists and is HEAD or an ancestor of HEAD ---
     const catFile = spawnSync('git', ['cat-file', '-t', prov.harness_sha], { cwd: ROOT, encoding: 'utf8' });
     if (catFile.status !== 0 || catFile.stdout.trim() !== 'commit') {
@@ -226,22 +268,37 @@ function main() {
     for (const e of summaryErrors) errors.push(base + ' [' + e.code + '] ' + e.message);
 
     // --- independent recomputation of every summary row from raw ---
-    for (const scenario of scenarioDocs) {
-      const recomputed = analyzeScenario(
-        scenario,
-        scenarioIds.indexOf(scenario.id),
-        raw.measurements,
-        cfg.iters_per_sample,
-        cfg.seed,
-        cfg.bootstrap_resamples
-      );
-      const committed = summary.scenarios.find(s => s.scenario_id === scenario.id);
-      if (!committed) {
-        errors.push(base + ' summary missing scenario row: ' + scenario.id);
-        continue;
-      }
-      if (!summaryRowsMatch(committed, recomputed)) {
-        errors.push(base + ' summary row for ' + scenario.id + ' does not recompute from raw (altered or from another run)');
+    // Skip recomputation when structural validation failed: analyzeScenario
+    // dereferences m.js.results / m.rust.results and will crash on malformed
+    // measurements. Also skip when the summary itself failed to parse.
+    if (hasStructuralErrors) {
+      errors.push(base + ' [SKIP_RECOMPUTE] summary recomputation skipped due to structural raw validation errors');
+    } else if (!summary || !Array.isArray(summary.scenarios)) {
+      errors.push(base + ' [SKIP_RECOMPUTE] summary is null or has no scenarios array — cannot recompute');
+    } else {
+      for (const scenario of scenarioDocs) {
+        let recomputed;
+        try {
+          recomputed = analyzeScenario(
+            scenario,
+            scenarioIds.indexOf(scenario.id),
+            raw.measurements,
+            cfg.iters_per_sample,
+            cfg.seed,
+            cfg.bootstrap_resamples
+          );
+        } catch (e) {
+          errors.push(base + ' [RECOMPUTE_CRASH] scenario ' + scenario.id + ' threw during recomputation: ' + e.message);
+          continue;
+        }
+        const committed = summary.scenarios.find(s => s.scenario_id === scenario.id);
+        if (!committed) {
+          errors.push(base + ' summary missing scenario row: ' + scenario.id);
+          continue;
+        }
+        if (!summaryRowsMatch(committed, recomputed)) {
+          errors.push(base + ' summary row for ' + scenario.id + ' does not recompute from raw (altered or from another run)');
+        }
       }
     }
 

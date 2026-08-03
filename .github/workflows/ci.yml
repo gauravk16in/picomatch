@@ -37,6 +37,8 @@ jobs:
           node-version: '22'
       - name: Build pmx-cli
         run: cargo build --release -p pmx-cli
+      - name: Build scanbench example
+        run: cargo build --release --example scanbench
       - name: Install Node dependencies
         run: npm ci || npm install
       - name: Run corpus verification
