@@ -5,9 +5,10 @@ members = [
     "crates/pmx-exec",
     "crates/pmx-cli",
     "crates/pmx-node",
+    "picomatch-tui",
 ]
 
-exclude = ["fuzz", "picomatch-tui"]
+exclude = ["fuzz"]
 
 [workspace.package]
 version = "0.1.0"
