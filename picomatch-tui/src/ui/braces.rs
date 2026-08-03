@@ -29,8 +29,10 @@ fn find_matching_close(s: &str, open: usize) -> Option<usize> {
     None
 }
 
-pub fn expand_braces_demo(pattern: &str) -> Vec<String> {
-    expand_braces_limited(pattern, MAX_EXPANSION)
+pub fn expand_braces_demo(pattern: &str) -> (Vec<String>, bool) {
+    let results = expand_braces_limited(pattern, MAX_EXPANSION);
+    let truncated = results.len() >= MAX_EXPANSION;
+    (results, truncated)
 }
 
 fn expand_braces_limited(pattern: &str, limit: usize) -> Vec<String> {
@@ -44,14 +46,26 @@ fn expand_braces_limited(pattern: &str, limit: usize) -> Vec<String> {
             let suffix = &pattern[end + 1..];
             let inner = &pattern[start + 1..end];
 
-            // Try numeric range: {1..5}
+            // Try numeric range: {1..5} or {01..05}
             if let Some((a, b)) = inner.split_once("..") {
                 if let (Ok(start_num), Ok(end_num)) = (a.parse::<i32>(), b.parse::<i32>()) {
+                    // Determine zero-padding width from the wider bound string
+                    let pad_width = a.len().max(b.len());
+                    let needs_pad =
+                        a.len() > 1 && a.starts_with('0') || b.len() > 1 && b.starts_with('0');
                     let step = if start_num <= end_num { 1 } else { -1 };
                     let mut results = Vec::new();
                     let mut current = start_num;
                     loop {
-                        results.push(format!("{prefix}{current}{suffix}"));
+                        if needs_pad {
+                            results.push(format!(
+                                "{prefix}{:0width$}{suffix}",
+                                current,
+                                width = pad_width
+                            ));
+                        } else {
+                            results.push(format!("{prefix}{current}{suffix}"));
+                        }
                         if results.len() >= limit {
                             break;
                         }
@@ -162,13 +176,20 @@ pub fn render_braces_tab(f: &mut Frame, app: &mut App, area: Rect) {
         .split(chunks[1]);
 
     // Left: Expansion Outputs List
-    let expanded_list = expand_braces_demo(&app.brace_input);
+    let (expanded_list, truncated) = expand_braces_demo(&app.brace_input);
+
+    let title = if truncated {
+        format!(
+            " 📦 Expanded Patterns ({}) [TRUNCATED at {}] ",
+            expanded_list.len(),
+            MAX_EXPANSION
+        )
+    } else {
+        format!(" 📦 Expanded Patterns ({}) ", expanded_list.len())
+    };
 
     let list_block = Block::default()
-        .title(Span::styled(
-            format!(" 📦 Expanded Patterns ({}) ", expanded_list.len()),
-            app.theme.block_title_style(),
-        ))
+        .title(Span::styled(title, app.theme.block_title_style()))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 

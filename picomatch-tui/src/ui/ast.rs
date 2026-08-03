@@ -107,6 +107,13 @@ pub fn render_ast_tab(f: &mut Frame, app: &mut App, area: Rect) {
     let pmx_opts = app.options.to_pmx_options();
     let parse_res = pmx_core::parse(&app.pattern_input, &pmx_opts);
 
+    // Cache token count for key handler clamping
+    if let Ok(ref p) = parse_res {
+        app.token_count = p.tokens.len();
+    } else {
+        app.token_count = 0;
+    }
+
     // Left: Parse State metrics
     let parse_block = Block::default()
         .title(Span::styled(

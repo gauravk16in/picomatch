@@ -151,7 +151,9 @@ fn handle_nav_tab_key(app: &mut App, code: KeyCode) {
                 }
             }
             KeyCode::Down => {
-                app.selected_token_index += 1;
+                if app.token_count > 0 && app.selected_token_index + 1 < app.token_count {
+                    app.selected_token_index += 1;
+                }
             }
             _ => {}
         },
@@ -211,13 +213,12 @@ fn run_app(
                         return Ok(())
                     }
                     (KeyCode::Esc, _) => return Ok(()),
-                    // Tab/Shift+Tab are always global for tab navigation
-                    (KeyCode::Right, KeyModifiers::NONE) | (KeyCode::Tab, KeyModifiers::NONE) => {
+                    // Tab/BackTab are always global for tab navigation
+                    (KeyCode::Tab, KeyModifiers::NONE) => {
                         app.next_tab();
                         continue;
                     }
-                    (KeyCode::Left, KeyModifiers::NONE)
-                    | (KeyCode::BackTab, KeyModifiers::SHIFT) => {
+                    (KeyCode::BackTab, _) => {
                         app.prev_tab();
                         continue;
                     }
@@ -227,6 +228,21 @@ fn run_app(
                 // On text-editing tabs, route char keys to the editor first
                 // so letters/digits can be typed instead of triggering shortcuts
                 let is_editing = matches!(app.active_tab, Tab::LiveMatcher | Tab::BraceStudio);
+
+                // Left/Right for tab nav only on non-editing tabs
+                if !is_editing {
+                    match key.code {
+                        KeyCode::Right => {
+                            app.next_tab();
+                            continue;
+                        }
+                        KeyCode::Left => {
+                            app.prev_tab();
+                            continue;
+                        }
+                        _ => {}
+                    }
+                }
 
                 if is_editing {
                     match app.active_tab {

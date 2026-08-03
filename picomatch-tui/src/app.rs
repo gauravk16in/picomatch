@@ -137,6 +137,7 @@ pub struct App {
     pub selected_preset_index: usize,
 
     pub selected_token_index: usize,
+    pub token_count: usize,
 
     pub benchmark_stats: BenchmarkStats,
 
@@ -264,6 +265,7 @@ impl App {
             preset_list,
             selected_preset_index: 0,
             selected_token_index: 0,
+            token_count: 0,
             benchmark_stats: BenchmarkStats::default(),
             show_help: false,
             tick_count: 0,
