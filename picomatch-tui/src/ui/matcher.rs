@@ -12,9 +12,9 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            Constraint::Length(5),  // Input & Options bar
-            Constraint::Min(10),    // Matcher split (Table & Regex Box)
-            Constraint::Length(3),  // Quick Stats Footer
+            Constraint::Length(5), // Input & Options bar
+            Constraint::Min(10),   // Matcher split (Table & Regex Box)
+            Constraint::Length(3), // Quick Stats Footer
         ])
         .split(area);
 
@@ -26,20 +26,42 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // Input Block
     let input_block = Block::default()
-        .title(Span::styled(" 🎯 Enter Glob Pattern ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " 🎯 Enter Glob Pattern ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.active_border_style());
 
     let input_text = vec![
         Line::from(vec![
-            Span::styled("Pattern: ", Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
-            Span::styled(&app.pattern_input, Style::default().fg(app.theme.text).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "Pattern: ",
+                Style::default()
+                    .fg(app.theme.primary)
+                    .add_modifier(Modifier::BOLD),
+            ),
+            Span::styled(
+                &app.pattern_input,
+                Style::default()
+                    .fg(app.theme.text)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::styled("█", Style::default().fg(app.theme.accent)),
         ]),
         Line::from(vec![
-            Span::styled("Type to match in real-time | ", Style::default().fg(app.theme.muted)),
-            Span::styled("Active Candidates: ", Style::default().fg(app.theme.secondary)),
-            Span::styled(format!("{}", app.candidate_paths.len()), Style::default().fg(app.theme.accent)),
+            Span::styled(
+                "Type to match in real-time | ",
+                Style::default().fg(app.theme.muted),
+            ),
+            Span::styled(
+                "Active Candidates: ",
+                Style::default().fg(app.theme.secondary),
+            ),
+            Span::styled(
+                format!("{}", app.candidate_paths.len()),
+                Style::default().fg(app.theme.accent),
+            ),
         ]),
     ];
     let input_p = Paragraph::new(input_text).block(input_block);
@@ -47,14 +69,19 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // Options Checkbox Grid
     let opts_block = Block::default()
-        .title(Span::styled(" ⚙️ Compiler Options [←/→/Space] ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " ⚙️ Compiler Options [←/→/Space] ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
     let opt_style = |idx: usize, val: bool| {
         let is_selected = idx == app.active_option_index;
         let mut s = if val {
-            Style::default().fg(app.theme.success).add_modifier(Modifier::BOLD)
+            Style::default()
+                .fg(app.theme.success)
+                .add_modifier(Modifier::BOLD)
         } else {
             Style::default().fg(app.theme.muted)
         };
@@ -73,15 +100,36 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
     };
 
     let opts_line1 = Line::from(vec![
-        Span::styled(opt_checkbox("nocase", app.options.nocase), opt_style(0, app.options.nocase)),
-        Span::styled(opt_checkbox("dot", app.options.dot), opt_style(1, app.options.dot)),
-        Span::styled(opt_checkbox("bash", app.options.bash), opt_style(2, app.options.bash)),
-        Span::styled(opt_checkbox("nonegate", app.options.nonegate), opt_style(3, app.options.nonegate)),
+        Span::styled(
+            opt_checkbox("nocase", app.options.nocase),
+            opt_style(0, app.options.nocase),
+        ),
+        Span::styled(
+            opt_checkbox("dot", app.options.dot),
+            opt_style(1, app.options.dot),
+        ),
+        Span::styled(
+            opt_checkbox("bash", app.options.bash),
+            opt_style(2, app.options.bash),
+        ),
+        Span::styled(
+            opt_checkbox("nonegate", app.options.nonegate),
+            opt_style(3, app.options.nonegate),
+        ),
     ]);
     let opts_line2 = Line::from(vec![
-        Span::styled(opt_checkbox("noextglob", app.options.noextglob), opt_style(4, app.options.noextglob)),
-        Span::styled(opt_checkbox("contains", app.options.contains), opt_style(5, app.options.contains)),
-        Span::styled(opt_checkbox("windows", app.options.windows), opt_style(6, app.options.windows)),
+        Span::styled(
+            opt_checkbox("noextglob", app.options.noextglob),
+            opt_style(4, app.options.noextglob),
+        ),
+        Span::styled(
+            opt_checkbox("contains", app.options.contains),
+            opt_style(5, app.options.contains),
+        ),
+        Span::styled(
+            opt_checkbox("windows", app.options.windows),
+            opt_style(6, app.options.windows),
+        ),
     ]);
 
     let opts_p = Paragraph::new(vec![opts_line1, opts_line2]).block(opts_block);
@@ -97,7 +145,10 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // Left: Match Results Table
     let table_block = Block::default()
-        .title(Span::styled(" 📄 Candidate File Matches [↑/↓ to scroll] ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " 📄 Candidate File Matches [↑/↓ to scroll] ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
@@ -118,7 +169,9 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
         };
 
         let path_style = if res.is_match {
-            Style::default().fg(app.theme.text).add_modifier(Modifier::BOLD)
+            Style::default()
+                .fg(app.theme.text)
+                .add_modifier(Modifier::BOLD)
         } else {
             Style::default().fg(app.theme.muted)
         };
@@ -143,9 +196,24 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
     }
 
     let header_row = Row::new(vec![
-        Span::styled("STATUS", Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
-        Span::styled("PATH", Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
-        Span::styled("LATENCY", Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
+        Span::styled(
+            "STATUS",
+            Style::default()
+                .fg(app.theme.primary)
+                .add_modifier(Modifier::BOLD),
+        ),
+        Span::styled(
+            "PATH",
+            Style::default()
+                .fg(app.theme.primary)
+                .add_modifier(Modifier::BOLD),
+        ),
+        Span::styled(
+            "LATENCY",
+            Style::default()
+                .fg(app.theme.primary)
+                .add_modifier(Modifier::BOLD),
+        ),
     ])
     .bottom_margin(1);
 
@@ -170,7 +238,10 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // Compiled Regex Box
     let regex_block = Block::default()
-        .title(Span::styled(" 🔬 Compiled JS-Regex Output ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " 🔬 Compiled JS-Regex Output ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
@@ -180,31 +251,45 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
             vec![
                 Line::from(vec![
                     Span::styled("Engine: ", Style::default().fg(app.theme.muted)),
-                    Span::styled("regress (ECMAScript UTF-16)", Style::default().fg(app.theme.primary)),
+                    Span::styled(
+                        "regress (ECMAScript UTF-16)",
+                        Style::default().fg(app.theme.primary),
+                    ),
                 ]),
                 Line::from(""),
-                Line::from(vec![
-                    Span::styled("Regex Source: ", Style::default().fg(app.theme.secondary)),
-                ]),
-                Line::from(vec![
-                    Span::styled(regex_str, Style::default().fg(app.theme.accent).add_modifier(Modifier::BOLD)),
-                ]),
+                Line::from(vec![Span::styled(
+                    "Regex Source: ",
+                    Style::default().fg(app.theme.secondary),
+                )]),
+                Line::from(vec![Span::styled(
+                    regex_str,
+                    Style::default()
+                        .fg(app.theme.accent)
+                        .add_modifier(Modifier::BOLD),
+                )]),
                 Line::from(""),
                 Line::from(vec![
                     Span::styled("Consumed Units: ", Style::default().fg(app.theme.muted)),
-                    Span::styled(format!("{:?}", String::from_utf16_lossy(&parsed.consumed)), Style::default().fg(app.theme.text)),
+                    Span::styled(
+                        format!("{:?}", String::from_utf16_lossy(&parsed.consumed)),
+                        Style::default().fg(app.theme.text),
+                    ),
                     Span::styled(" | Backtrack: ", Style::default().fg(app.theme.muted)),
-                    Span::styled(format!("{}", parsed.backtrack), Style::default().fg(app.theme.text)),
+                    Span::styled(
+                        format!("{}", parsed.backtrack),
+                        Style::default().fg(app.theme.text),
+                    ),
                 ]),
             ]
         }
         Err(err) => vec![
-            Line::from(vec![
-                Span::styled("Syntax/Parse Error: ", Style::default().fg(app.theme.error).add_modifier(Modifier::BOLD)),
-            ]),
-            Line::from(vec![
-                Span::styled(err, Style::default().fg(app.theme.text)),
-            ]),
+            Line::from(vec![Span::styled(
+                "Syntax/Parse Error: ",
+                Style::default()
+                    .fg(app.theme.error)
+                    .add_modifier(Modifier::BOLD),
+            )]),
+            Line::from(vec![Span::styled(err, Style::default().fg(app.theme.text))]),
         ],
     };
 
@@ -215,7 +300,10 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // AST Quick Features Box
     let state_block = Block::default()
-        .title(Span::styled(" 📊 Pattern State Flags ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " 📊 Pattern State Flags ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
@@ -223,28 +311,54 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
         Ok(p) => vec![
             Line::from(vec![
                 Span::styled("Prefix: ", Style::default().fg(app.theme.secondary)),
-                Span::styled(format!("{:?}", p.prefix), Style::default().fg(app.theme.text)),
+                Span::styled(
+                    format!("{:?}", p.prefix),
+                    Style::default().fg(app.theme.text),
+                ),
             ]),
             Line::from(vec![
                 Span::styled("Negated: ", Style::default().fg(app.theme.muted)),
-                Span::styled(format!("{}", p.negated), if p.negated { Style::default().fg(app.theme.warning) } else { Style::default().fg(app.theme.text) }),
+                Span::styled(
+                    format!("{}", p.negated),
+                    if p.negated {
+                        Style::default().fg(app.theme.warning)
+                    } else {
+                        Style::default().fg(app.theme.text)
+                    },
+                ),
                 Span::styled(" | Globstar: ", Style::default().fg(app.theme.muted)),
-                Span::styled(format!("{}", p.globstar), if p.globstar { Style::default().fg(app.theme.accent) } else { Style::default().fg(app.theme.text) }),
+                Span::styled(
+                    format!("{}", p.globstar),
+                    if p.globstar {
+                        Style::default().fg(app.theme.accent)
+                    } else {
+                        Style::default().fg(app.theme.text)
+                    },
+                ),
             ]),
             Line::from(vec![
                 Span::styled("Braces Depth: ", Style::default().fg(app.theme.muted)),
                 Span::styled(format!("{}", p.braces), Style::default().fg(app.theme.text)),
                 Span::styled(" | Brackets: ", Style::default().fg(app.theme.muted)),
-                Span::styled(format!("{}", p.brackets), Style::default().fg(app.theme.text)),
+                Span::styled(
+                    format!("{}", p.brackets),
+                    Style::default().fg(app.theme.text),
+                ),
             ]),
             Line::from(vec![
                 Span::styled("Parens Depth: ", Style::default().fg(app.theme.muted)),
                 Span::styled(format!("{}", p.parens), Style::default().fg(app.theme.text)),
                 Span::styled(" | Neg Extglob: ", Style::default().fg(app.theme.muted)),
-                Span::styled(format!("{}", p.negated_extglob), Style::default().fg(app.theme.success)),
+                Span::styled(
+                    format!("{}", p.negated_extglob),
+                    Style::default().fg(app.theme.success),
+                ),
             ]),
         ],
-        Err(_) => vec![Line::from(Span::styled("No AST metrics available", Style::default().fg(app.theme.muted)))],
+        Err(_) => vec![Line::from(Span::styled(
+            "No AST metrics available",
+            Style::default().fg(app.theme.muted),
+        ))],
     };
 
     let state_p = Paragraph::new(state_lines).block(state_block);
@@ -262,13 +376,29 @@ pub fn render_matcher_tab(f: &mut Frame, app: &mut App, area: Rect) {
     };
 
     let footer_line = Line::from(vec![
-        Span::styled(" Summary: ", Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
+        Span::styled(
+            " Summary: ",
+            Style::default()
+                .fg(app.theme.primary)
+                .add_modifier(Modifier::BOLD),
+        ),
         Span::styled(format!("{match_count} Matches"), app.theme.match_badge()),
         Span::raw("  "),
-        Span::styled(format!("{} Misses", match_results.len() - match_count), app.theme.mismatch_badge()),
+        Span::styled(
+            format!("{} Misses", match_results.len() - match_count),
+            app.theme.mismatch_badge(),
+        ),
         Span::raw("  │  "),
-        Span::styled("Avg Evaluation Time: ", Style::default().fg(app.theme.muted)),
-        Span::styled(format!("{avg_micros:.3} µs / path"), Style::default().fg(app.theme.accent).add_modifier(Modifier::BOLD)),
+        Span::styled(
+            "Avg Evaluation Time: ",
+            Style::default().fg(app.theme.muted),
+        ),
+        Span::styled(
+            format!("{avg_micros:.3} µs / path"),
+            Style::default()
+                .fg(app.theme.accent)
+                .add_modifier(Modifier::BOLD),
+        ),
         Span::raw("  │  "),
         Span::styled("Status: ", Style::default().fg(app.theme.muted)),
         Span::styled(&app.status_message, Style::default().fg(app.theme.text)),

@@ -8,37 +8,102 @@ use ratatui::{
 
 use crate::app::App;
 
-pub fn expand_braces_demo(pattern: &str) -> Vec<String> {
-    // Simple demo expansion for common patterns like {a,b} and {1..5}
-    if let (Some(start), Some(end)) = (pattern.find('{'), pattern.find('}')) {
-        let prefix = &pattern[..start];
-        let suffix = &pattern[end + 1..];
-        let inner = &pattern[start + 1..end];
+const MAX_EXPANSION: usize = 200;
 
-        if let Some((a, b)) = inner.split_once("..") {
-            if let (Ok(start_num), Ok(end_num)) = (a.parse::<i32>(), b.parse::<i32>()) {
-                let step = if start_num <= end_num { 1 } else { -1 };
-                let mut results = Vec::new();
-                let mut current = start_num;
-                loop {
-                    results.push(format!("{prefix}{current}{suffix}"));
-                    if current == end_num {
-                        break;
-                    }
-                    current += step;
+/// Find the index of the matching closing brace, handling nesting.
+fn find_matching_close(s: &str, open: usize) -> Option<usize> {
+    let bytes = s.as_bytes();
+    let mut depth = 0usize;
+    for i in open..bytes.len() {
+        match bytes[i] {
+            b'{' => depth += 1,
+            b'}' => {
+                depth -= 1;
+                if depth == 0 {
+                    return Some(i);
                 }
-                return results;
             }
+            _ => {}
         }
+    }
+    None
+}
 
-        let options: Vec<&str> = inner.split(',').collect();
-        let mut results = Vec::new();
-        for opt in options {
-            let expanded_sub = format!("{prefix}{opt}{suffix}");
-            let sub_expanded = expand_braces_demo(&expanded_sub);
-            results.extend(sub_expanded);
+pub fn expand_braces_demo(pattern: &str) -> Vec<String> {
+    expand_braces_limited(pattern, MAX_EXPANSION)
+}
+
+fn expand_braces_limited(pattern: &str, limit: usize) -> Vec<String> {
+    if limit == 0 {
+        return vec![pattern.to_string()];
+    }
+
+    if let Some(start) = pattern.find('{') {
+        if let Some(end) = find_matching_close(pattern, start) {
+            let prefix = &pattern[..start];
+            let suffix = &pattern[end + 1..];
+            let inner = &pattern[start + 1..end];
+
+            // Try numeric range: {1..5}
+            if let Some((a, b)) = inner.split_once("..") {
+                if let (Ok(start_num), Ok(end_num)) = (a.parse::<i32>(), b.parse::<i32>()) {
+                    let step = if start_num <= end_num { 1 } else { -1 };
+                    let mut results = Vec::new();
+                    let mut current = start_num;
+                    loop {
+                        results.push(format!("{prefix}{current}{suffix}"));
+                        if results.len() >= limit {
+                            break;
+                        }
+                        if current == end_num {
+                            break;
+                        }
+                        current += step;
+                    }
+                    return results;
+                }
+
+                // Try character range: {a..z}
+                let a_chars: Vec<char> = a.chars().collect();
+                let b_chars: Vec<char> = b.chars().collect();
+                if a_chars.len() == 1 && b_chars.len() == 1 {
+                    let start_ch = a_chars[0] as u32;
+                    let end_ch = b_chars[0] as u32;
+                    let step: i64 = if start_ch <= end_ch { 1 } else { -1 };
+                    let mut results = Vec::new();
+                    let mut current = start_ch as i64;
+                    loop {
+                        if let Some(ch) = char::from_u32(current as u32) {
+                            results.push(format!("{prefix}{ch}{suffix}"));
+                        }
+                        if results.len() >= limit {
+                            break;
+                        }
+                        if current == end_ch as i64 {
+                            break;
+                        }
+                        current += step;
+                    }
+                    return results;
+                }
+            }
+
+            // Comma-separated: {a,b,c}
+            let options: Vec<&str> = inner.split(',').collect();
+            let mut results = Vec::new();
+            for opt in options {
+                if results.len() >= limit {
+                    break;
+                }
+                let expanded_sub = format!("{prefix}{opt}{suffix}");
+                let budget = limit.saturating_sub(results.len());
+                let sub_expanded = expand_braces_limited(&expanded_sub, budget);
+                results.extend(sub_expanded);
+            }
+            results
+        } else {
+            vec![pattern.to_string()]
         }
-        results
     } else {
         vec![pattern.to_string()]
     }
@@ -55,19 +120,35 @@ pub fn render_braces_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // 1. Input Box
     let input_block = Block::default()
-        .title(Span::styled(" ⚡ Brace & Extglob Expansion Studio ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " ⚡ Brace & Extglob Expansion Studio ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.active_border_style());
 
     let input_lines = vec![
         Line::from(vec![
-            Span::styled("Brace Expression: ", Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
-            Span::styled(&app.brace_input, Style::default().fg(app.theme.text).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "Brace Expression: ",
+                Style::default()
+                    .fg(app.theme.primary)
+                    .add_modifier(Modifier::BOLD),
+            ),
+            Span::styled(
+                &app.brace_input,
+                Style::default()
+                    .fg(app.theme.text)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::styled("█", Style::default().fg(app.theme.accent)),
         ]),
         Line::from(vec![
             Span::styled("Examples: ", Style::default().fg(app.theme.muted)),
-            Span::styled("{a,b,{1..3}}  |  src/{core,exec}/*.rs  |  c{0..5}_test.rs", Style::default().fg(app.theme.secondary)),
+            Span::styled(
+                "{a,b,{1..3}}  |  src/{core,exec}/*.rs  |  c{0..5}_test.rs",
+                Style::default().fg(app.theme.secondary),
+            ),
         ]),
     ];
 
@@ -84,7 +165,10 @@ pub fn render_braces_tab(f: &mut Frame, app: &mut App, area: Rect) {
     let expanded_list = expand_braces_demo(&app.brace_input);
 
     let list_block = Block::default()
-        .title(Span::styled(format!(" 📦 Expanded Patterns ({}) ", expanded_list.len()), app.theme.block_title_style()))
+        .title(Span::styled(
+            format!(" 📦 Expanded Patterns ({}) ", expanded_list.len()),
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
@@ -93,8 +177,16 @@ pub fn render_braces_tab(f: &mut Frame, app: &mut App, area: Rect) {
         .enumerate()
         .map(|(idx, exp)| {
             let line = Line::from(vec![
-                Span::styled(format!(" {:02}. ", idx + 1), Style::default().fg(app.theme.muted)),
-                Span::styled(exp, Style::default().fg(app.theme.accent).add_modifier(Modifier::BOLD)),
+                Span::styled(
+                    format!(" {:02}. ", idx + 1),
+                    Style::default().fg(app.theme.muted),
+                ),
+                Span::styled(
+                    exp,
+                    Style::default()
+                        .fg(app.theme.accent)
+                        .add_modifier(Modifier::BOLD),
+                ),
             ]);
             ListItem::new(line)
         })
@@ -105,46 +197,94 @@ pub fn render_braces_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // Right: Extglob & Brace Reference Card
     let guide_block = Block::default()
-        .title(Span::styled(" 📚 Extglob & Brace Pattern Guide ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " 📚 Extglob & Brace Pattern Guide ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
     let guide_text = vec![
-        Line::from(vec![
-            Span::styled("Picomatch Extglob Syntax Rules:", Style::default().fg(app.theme.secondary).add_modifier(Modifier::BOLD)),
-        ]),
+        Line::from(vec![Span::styled(
+            "Picomatch Extglob Syntax Rules:",
+            Style::default()
+                .fg(app.theme.secondary)
+                .add_modifier(Modifier::BOLD),
+        )]),
         Line::from(""),
         Line::from(vec![
             Span::styled(" @(pattern) ", app.theme.match_badge()),
-            Span::styled(" Matches EXACTLY ONE of given patterns", Style::default().fg(app.theme.text)),
+            Span::styled(
+                " Matches EXACTLY ONE of given patterns",
+                Style::default().fg(app.theme.text),
+            ),
         ]),
         Line::from(vec![
             Span::styled(" !(pattern) ", app.theme.mismatch_badge()),
-            Span::styled(" Matches ANYTHING EXCEPT given patterns", Style::default().fg(app.theme.text)),
+            Span::styled(
+                " Matches ANYTHING EXCEPT given patterns",
+                Style::default().fg(app.theme.text),
+            ),
         ]),
         Line::from(vec![
-            Span::styled(" ?(pattern) ", Style::default().fg(app.theme.background).bg(app.theme.warning).add_modifier(Modifier::BOLD)),
-            Span::styled(" Matches ZERO OR ONE of given patterns", Style::default().fg(app.theme.text)),
+            Span::styled(
+                " ?(pattern) ",
+                Style::default()
+                    .fg(app.theme.background)
+                    .bg(app.theme.warning)
+                    .add_modifier(Modifier::BOLD),
+            ),
+            Span::styled(
+                " Matches ZERO OR ONE of given patterns",
+                Style::default().fg(app.theme.text),
+            ),
         ]),
         Line::from(vec![
-            Span::styled(" *(pattern) ", Style::default().fg(app.theme.background).bg(app.theme.primary).add_modifier(Modifier::BOLD)),
-            Span::styled(" Matches ZERO OR MORE of given patterns", Style::default().fg(app.theme.text)),
+            Span::styled(
+                " *(pattern) ",
+                Style::default()
+                    .fg(app.theme.background)
+                    .bg(app.theme.primary)
+                    .add_modifier(Modifier::BOLD),
+            ),
+            Span::styled(
+                " Matches ZERO OR MORE of given patterns",
+                Style::default().fg(app.theme.text),
+            ),
         ]),
         Line::from(vec![
-            Span::styled(" +(pattern) ", Style::default().fg(app.theme.background).bg(app.theme.accent).add_modifier(Modifier::BOLD)),
-            Span::styled(" Matches ONE OR MORE of given patterns", Style::default().fg(app.theme.text)),
+            Span::styled(
+                " +(pattern) ",
+                Style::default()
+                    .fg(app.theme.background)
+                    .bg(app.theme.accent)
+                    .add_modifier(Modifier::BOLD),
+            ),
+            Span::styled(
+                " Matches ONE OR MORE of given patterns",
+                Style::default().fg(app.theme.text),
+            ),
         ]),
         Line::from(""),
-        Line::from(vec![
-            Span::styled("Brace Sequences:", Style::default().fg(app.theme.secondary).add_modifier(Modifier::BOLD)),
-        ]),
+        Line::from(vec![Span::styled(
+            "Brace Sequences:",
+            Style::default()
+                .fg(app.theme.secondary)
+                .add_modifier(Modifier::BOLD),
+        )]),
         Line::from(vec![
             Span::styled(" {a..z} ", Style::default().fg(app.theme.primary)),
-            Span::styled(" Character sequence ranges", Style::default().fg(app.theme.text)),
+            Span::styled(
+                " Character sequence ranges",
+                Style::default().fg(app.theme.text),
+            ),
         ]),
         Line::from(vec![
             Span::styled(" {1..100} ", Style::default().fg(app.theme.accent)),
-            Span::styled(" Numeric sequence ranges", Style::default().fg(app.theme.text)),
+            Span::styled(
+                " Numeric sequence ranges",
+                Style::default().fg(app.theme.text),
+            ),
         ]),
     ];
 

@@ -2,7 +2,7 @@
 
 An insanely decorative, feature-rich interactive Terminal User Interface (TUI) built in Rust to demonstrate the power, performance, and features of the [`picomatch-rust`](../README.md) library (`pmx-core`, `pmx-exec`, `pmx-cli`).
 
-![Picomatch TUI Demo](https://raw.githubusercontent.com/gauravk16in/picomatch/master/docs/assets/tui-demo.png)
+![Picomatch TUI Demo](https://github.com/user-attachments/assets/6b3fc102-2377-429c-9c31-aa76630013fe)
 
 ---
 

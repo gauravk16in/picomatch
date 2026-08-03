@@ -21,7 +21,10 @@ pub fn render_tree_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // 1. Header Bar
     let header_block = Block::default()
-        .title(Span::styled(" 🌳 Interactive Workspace Directory Explorer ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " 🌳 Interactive Workspace Directory Explorer ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
@@ -29,10 +32,21 @@ pub fn render_tree_tab(f: &mut Frame, app: &mut App, area: Rect) {
     let regex_res = pmx_core::parse(&app.pattern_input, &pmx_opts);
 
     let header_line = Line::from(vec![
-        Span::styled(" Active Filter Glob: ", Style::default().fg(app.theme.muted)),
-        Span::styled(&app.pattern_input, Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
+        Span::styled(
+            " Active Filter Glob: ",
+            Style::default().fg(app.theme.muted),
+        ),
+        Span::styled(
+            &app.pattern_input,
+            Style::default()
+                .fg(app.theme.primary)
+                .add_modifier(Modifier::BOLD),
+        ),
         Span::raw("  │  "),
-        Span::styled("Press 't' to change theme | Use ↑/↓ to navigate files", Style::default().fg(app.theme.muted)),
+        Span::styled(
+            "Press 't' to change theme | Use ↑/↓ to navigate files",
+            Style::default().fg(app.theme.muted),
+        ),
     ]);
     let header_p = Paragraph::new(header_line).block(header_block);
     f.render_widget(header_p, chunks[0]);
@@ -45,7 +59,10 @@ pub fn render_tree_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // Left: File Tree List
     let tree_block = Block::default()
-        .title(Span::styled(" 📁 Workspace Directory Structure ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " 📁 Workspace Directory Structure ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.active_border_style());
 
@@ -90,7 +107,9 @@ pub fn render_tree_tab(f: &mut Frame, app: &mut App, area: Rect) {
         };
 
         let text_style = if is_matched {
-            Style::default().fg(app.theme.text).add_modifier(Modifier::BOLD)
+            Style::default()
+                .fg(app.theme.text)
+                .add_modifier(Modifier::BOLD)
         } else {
             Style::default().fg(app.theme.muted)
         };
@@ -98,7 +117,9 @@ pub fn render_tree_tab(f: &mut Frame, app: &mut App, area: Rect) {
         let is_selected = idx == app.selected_path_index;
         let mut row_style = Style::default();
         if is_selected {
-            row_style = row_style.bg(app.theme.surface).add_modifier(Modifier::UNDERLINED);
+            row_style = row_style
+                .bg(app.theme.surface)
+                .add_modifier(Modifier::UNDERLINED);
         }
 
         let line = Line::from(vec![
@@ -116,7 +137,10 @@ pub fn render_tree_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // Right: Selected File Inspector
     let detail_block = Block::default()
-        .title(Span::styled(" 🔍 File & Glob Highlight Inspector ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " 🔍 File & Glob Highlight Inspector ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
@@ -136,7 +160,12 @@ pub fn render_tree_tab(f: &mut Frame, app: &mut App, area: Rect) {
     let detail_lines = vec![
         Line::from(vec![
             Span::styled("Selected File: ", Style::default().fg(app.theme.secondary)),
-            Span::styled(&selected_path, Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                &selected_path,
+                Style::default()
+                    .fg(app.theme.primary)
+                    .add_modifier(Modifier::BOLD),
+            ),
         ]),
         Line::from(""),
         Line::from(vec![
@@ -149,16 +178,31 @@ pub fn render_tree_tab(f: &mut Frame, app: &mut App, area: Rect) {
         ]),
         Line::from(""),
         Line::from(vec![
-            Span::styled("Workspace Tree Coverage: ", Style::default().fg(app.theme.muted)),
             Span::styled(
-                format!("{matched_files} / {total_files} files matched ({:.1}%)", (matched_files as f64 / total_files as f64) * 100.0),
-                Style::default().fg(app.theme.accent).add_modifier(Modifier::BOLD),
+                "Workspace Tree Coverage: ",
+                Style::default().fg(app.theme.muted),
+            ),
+            Span::styled(
+                if total_files == 0 {
+                    format!("{matched_files} / {total_files} files matched (0.0%)")
+                } else {
+                    format!(
+                        "{matched_files} / {total_files} files matched ({:.1}%)",
+                        (matched_files as f64 / total_files as f64) * 100.0
+                    )
+                },
+                Style::default()
+                    .fg(app.theme.accent)
+                    .add_modifier(Modifier::BOLD),
             ),
         ]),
         Line::from(""),
         Line::from(vec![
             Span::styled("Directory Depth: ", Style::default().fg(app.theme.muted)),
-            Span::styled(format!("{}", selected_path.split('/').count()), Style::default().fg(app.theme.text)),
+            Span::styled(
+                format!("{}", selected_path.split('/').count()),
+                Style::default().fg(app.theme.text),
+            ),
             Span::styled(" levels", Style::default().fg(app.theme.muted)),
         ]),
         Line::from(""),

@@ -33,10 +33,21 @@ pub fn draw(f: &mut Frame, app: &mut App) {
 
     let header_title = Line::from(vec![
         Span::styled(" ⚡ PICOMATCH RUST v0.1.0 ", app.theme.title_style()),
-        Span::styled(" │ High-Performance ECMAScript Glob Engine ", Style::default().fg(app.theme.text)),
+        Span::styled(
+            " │ High-Performance ECMAScript Glob Engine ",
+            Style::default().fg(app.theme.text),
+        ),
         Span::styled(" │ Theme: ", Style::default().fg(app.theme.muted)),
-        Span::styled(app.theme.kind.name(), Style::default().fg(app.theme.accent).add_modifier(Modifier::BOLD)),
-        Span::styled(" [Press 't' to change] ", Style::default().fg(app.theme.muted)),
+        Span::styled(
+            app.theme.kind.name(),
+            Style::default()
+                .fg(app.theme.accent)
+                .add_modifier(Modifier::BOLD),
+        ),
+        Span::styled(
+            " [Press 't' to change] ",
+            Style::default().fg(app.theme.muted),
+        ),
     ]);
 
     let header_p = Paragraph::new(header_title).block(header_block);
@@ -47,16 +58,26 @@ pub fn draw(f: &mut Frame, app: &mut App) {
         .iter()
         .map(|t| {
             Line::from(vec![
-                Span::styled(format!("[{}] ", t.shortcut()), Style::default().fg(app.theme.accent)),
+                Span::styled(
+                    format!("[{}] ", t.shortcut()),
+                    Style::default().fg(app.theme.accent),
+                ),
                 Span::raw(t.title()),
             ])
         })
         .collect();
 
-    let tab_index = Tab::ALL.iter().position(|t| *t == app.active_tab).unwrap_or(0);
+    let tab_index = Tab::ALL
+        .iter()
+        .position(|t| *t == app.active_tab)
+        .unwrap_or(0);
 
     let tabs = Tabs::new(tab_titles)
-        .block(Block::default().borders(Borders::ALL).border_style(app.theme.border_style()))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .border_style(app.theme.border_style()),
+        )
         .select(tab_index)
         .style(app.theme.inactive_tab_style())
         .highlight_style(app.theme.active_tab_style());
@@ -75,13 +96,27 @@ pub fn draw(f: &mut Frame, app: &mut App) {
 
     // 4. Bottom Keyboard Shortcuts Legend
     let legend_line = Line::from(vec![
-        Span::styled(" Shortcuts: ", Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
-        Span::styled("1-6", Style::default().fg(app.theme.accent)), Span::styled(" Switch Tab  │  ", Style::default().fg(app.theme.muted)),
-        Span::styled("Tab/Shift+Tab", Style::default().fg(app.theme.accent)), Span::styled(" Nav  │  ", Style::default().fg(app.theme.muted)),
-        Span::styled("t", Style::default().fg(app.theme.accent)), Span::styled(" Cycle Theme  │  ", Style::default().fg(app.theme.muted)),
-        Span::styled("b", Style::default().fg(app.theme.accent)), Span::styled(" Toggle Benchmark  │  ", Style::default().fg(app.theme.muted)),
-        Span::styled("?", Style::default().fg(app.theme.accent)), Span::styled(" Help Overlay  │  ", Style::default().fg(app.theme.muted)),
-        Span::styled("q / Esc", Style::default().fg(app.theme.error)), Span::styled(" Quit", Style::default().fg(app.theme.muted)),
+        Span::styled(
+            " Shortcuts: ",
+            Style::default()
+                .fg(app.theme.primary)
+                .add_modifier(Modifier::BOLD),
+        ),
+        Span::styled("1-6", Style::default().fg(app.theme.accent)),
+        Span::styled(" Switch Tab  │  ", Style::default().fg(app.theme.muted)),
+        Span::styled("Tab/Shift+Tab", Style::default().fg(app.theme.accent)),
+        Span::styled(" Nav  │  ", Style::default().fg(app.theme.muted)),
+        Span::styled("t", Style::default().fg(app.theme.accent)),
+        Span::styled(" Cycle Theme  │  ", Style::default().fg(app.theme.muted)),
+        Span::styled("b", Style::default().fg(app.theme.accent)),
+        Span::styled(
+            " Toggle Benchmark  │  ",
+            Style::default().fg(app.theme.muted),
+        ),
+        Span::styled("?", Style::default().fg(app.theme.accent)),
+        Span::styled(" Help Overlay  │  ", Style::default().fg(app.theme.muted)),
+        Span::styled("q / Esc", Style::default().fg(app.theme.error)),
+        Span::styled(" Quit", Style::default().fg(app.theme.muted)),
     ]);
 
     let legend_p = Paragraph::new(legend_line);
@@ -104,14 +139,20 @@ fn render_help_modal(f: &mut Frame, app: &App, area: Rect) {
     f.render_widget(Clear, popup_area);
 
     let modal_block = Block::default()
-        .title(Span::styled(" ❓ Picomatch TUI Help & Keybindings [Press Esc/? to Close] ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " ❓ Picomatch TUI Help & Keybindings [Press Esc/? to Close] ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.active_border_style());
 
     let help_text = vec![
-        Line::from(vec![
-            Span::styled("Navigation Controls:", Style::default().fg(app.theme.secondary).add_modifier(Modifier::BOLD)),
-        ]),
+        Line::from(vec![Span::styled(
+            "Navigation Controls:",
+            Style::default()
+                .fg(app.theme.secondary)
+                .add_modifier(Modifier::BOLD),
+        )]),
         Line::from("  • 1 - 6 or Left/Right Arrows : Switch active feature tab"),
         Line::from("  • Tab / Shift+Tab           : Cycle through interactive controls"),
         Line::from("  • Up / Down Arrows          : Navigate candidate list / preset selection"),
@@ -120,9 +161,12 @@ fn render_help_modal(f: &mut Frame, app: &App, area: Rect) {
         Line::from("  • t                         : Cycle between 4 decorative color themes"),
         Line::from("  • q / Esc                   : Exit application"),
         Line::from(""),
-        Line::from(vec![
-            Span::styled("Library Overview (`picomatch-rust`):", Style::default().fg(app.theme.secondary).add_modifier(Modifier::BOLD)),
-        ]),
+        Line::from(vec![Span::styled(
+            "Library Overview (`picomatch-rust`):",
+            Style::default()
+                .fg(app.theme.secondary)
+                .add_modifier(Modifier::BOLD),
+        )]),
         Line::from("  • pmx-core  : Pure-Rust state machine compiler for glob patterns"),
         Line::from("  • pmx-exec  : ECMAScript UTF-16 regex execution layer using regress"),
         Line::from("  • pmx-cli   : Subprocess & napi-rs transport adapter layer"),
