@@ -10,10 +10,6 @@ const utils = require('./lib/utils');
 const scan = require('./lib/scan');
 const { bridge, bridgeRaw, u16s } = require('./_bridge');
 
-const todo = name => {
-  throw new Error(`TODO(pmx): ${name}`);
-};
-
 /* unit-decoding helper for source/state fields (survives lone surrogates) */
 const dec = u16s;
 

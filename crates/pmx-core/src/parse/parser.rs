@@ -246,7 +246,6 @@ impl Parser {
     }
 
     /// L475-L484 — counter+stack ops (single mutation point).
-    #[allow(dead_code)] // first callers land in C5-C7; recovery uses decrement
     pub(crate) fn increment(&mut self, kind: CounterKind) {
         self.counter_mut(kind, 1);
         self.stack.push(kind);
@@ -290,6 +289,10 @@ impl Parser {
         if self.state.backtrack {
             self.state.output.clear();
             for token in &self.state.tokens {
+                // JS L1313: `token.output != null ? token.output : token.value`
+                // Note: this is a NULL check, NOT a truthiness check — empty string
+                // output IS used here (unlike the brace-close rebuild at L931 which
+                // uses `t.output || t.value` where '' is falsy).
                 let piece = token.output.as_deref().unwrap_or(&token.value);
                 self.state.output.extend_from_slice(piece);
                 if let Some(suffix) = &token.suffix {
@@ -307,7 +310,7 @@ impl Parser {
         for (kind, opener, closer) in [
             (CounterKind::Brackets, '[', ']'),
             (CounterKind::Parens, '(', ')'),
-            (CounterKind::Braces, '(', '}'), // BUG-001: brace open emits '(' as output, not '{'
+            (CounterKind::Braces, '{', '}'), // JS L1298: escapeLast(output, '{') — no-ops because output has '(' not '{'; bug-for-bug per constitution §1
         ] {
             while self.counter(kind) > 0 {
                 if self.opts.strict_brackets() {

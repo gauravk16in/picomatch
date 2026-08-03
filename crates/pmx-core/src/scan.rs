@@ -9,6 +9,11 @@
 //! Option surface (D-015): `parts`, `scanToEnd`, `tokens`, `noext`, `nonegate`,
 //! `noparen`, `unescape` — a **distinct** set from the parser `Options`.
 //!
+//! **Convention note**: This module uses `as usize` for index arithmetic (not
+//! `try_into().ok()` as the parser side does). This was a deliberate trade during
+//! the scanner performance audit — all `as usize` sites are guarded by `0..len`
+//! range checks, so the casts are lossless. See AGENTS.md conventions.
+//!
 //! Depth model (D-017): `Option<f64>` with `Infinity` for globstar tokens.
 
 use crate::constants::{
@@ -599,7 +604,9 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
             // value = input.slice(n, i)
             let value = slice_units_to_string(units, n, i);
             if opts.tokens == Some(true) {
-                let toks = state.tokens.as_mut().unwrap();
+                let Some(toks) = state.tokens.as_mut() else {
+                    continue;
+                };
                 if idx == 0 && start != 0 {
                     toks[idx].is_prefix = Some(true);
                     toks[idx].value = state.prefix.clone();
@@ -621,8 +628,7 @@ pub fn scan_utf16(units: &[u16], opts: &ScanOptions) -> ScanState {
             if pi != 0 && pi + 1 < units.len() {
                 let value = slice_units_to_string(units, pi + 1, units.len());
                 parts.push(value.clone());
-                if opts.tokens == Some(true) {
-                    let toks = state.tokens.as_mut().unwrap();
+                if let (Some(true), Some(toks)) = (opts.tokens, state.tokens.as_mut()) {
                     let last = toks.len().saturating_sub(1);
                     if last < toks.len() {
                         toks[last].value = value;

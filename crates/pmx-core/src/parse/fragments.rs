@@ -9,11 +9,9 @@ use crate::options::Options;
 #[derive(Debug)]
 pub(crate) struct Fragments {
     pub star: String,
-    #[allow(dead_code)] // emitted from C3/C8 (globstar handling)
     pub globstar: String,
-    #[allow(dead_code)] // emitted from C3/C7 (capturing star/extglob outputs)
+    #[allow(dead_code)] // callers use opts.capture() directly; field kept for structural parity
     pub capture: &'static str,
-    #[allow(dead_code)] // emitted from C3 star guard selection (parse.js:L399)
     pub nodot: &'static str,
     pub qmark_no_dot: &'static str,
 }

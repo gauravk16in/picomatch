@@ -44,6 +44,10 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 
 ---
 
+*(D-05 intentionally skipped — numbering gap from early draft reorganization.)*
+
+---
+
 ### D-06: Extglob & ReDoS Triage Parity
 
 - **Original**: `lib/parse.js` L48-L347 & L523-L600 handles ReDoS vulnerability analysis for repeated extglobs (`analyzeRepeatedExtglob`), single-character star extglob consolidation, `!(...)` magic suffix parsing via sub-`parse(rest, { fastpaths: false })`, and `opts.maxExtglobRecursion`.
@@ -67,6 +71,10 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 - **Port**: Implemented `negate()` method in `main_loop.rs` adhering to exact parity counting and De Morgan paren boundary guards.
 - **Why**: Ensures leading `!`, `!!`, `!!!`, `!(...)`, `!!(...)`, `!a.js`, and `opts.nonegate` match V8 parse state output byte-for-byte.
 - **Cost**: None; verified across 73 oracle cases and 57 adversarial cases.
+
+---
+
+*(D-09 through D-014 intentionally skipped — numbering gap from early draft reorganization.)*
 
 ---
 
