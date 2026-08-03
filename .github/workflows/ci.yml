@@ -31,6 +31,12 @@ jobs:
     needs: check
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout Main (JavaScript reference)
+        uses: actions/checkout@v4
+        with:
+          repository: micromatch/picomatch
+          ref: '4.0.5'
+          path: Main
       - uses: dtolnay/rust-toolchain@stable
       - uses: actions/setup-node@v4
         with:
