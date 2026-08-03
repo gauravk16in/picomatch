@@ -63,16 +63,14 @@ fn handle_live_matcher_key(app: &mut App, code: KeyCode) {
             app.pattern_input.insert(app.cursor_position, c);
             app.cursor_position += byte_len;
         }
-        KeyCode::Backspace => {
-            if app.cursor_position > 0 {
-                let prev = app.pattern_input[..app.cursor_position]
-                    .char_indices()
-                    .last()
-                    .map(|(i, _)| i)
-                    .unwrap_or(0);
-                app.cursor_position = prev;
-                app.pattern_input.remove(app.cursor_position);
-            }
+        KeyCode::Backspace if app.cursor_position > 0 => {
+            let prev = app.pattern_input[..app.cursor_position]
+                .char_indices()
+                .last()
+                .map(|(i, _)| i)
+                .unwrap_or(0);
+            app.cursor_position = prev;
+            app.pattern_input.remove(app.cursor_position);
         }
         _ => {}
     }
@@ -86,16 +84,14 @@ fn handle_brace_editor_key(app: &mut App, code: KeyCode) {
             app.brace_input.insert(app.brace_cursor, c);
             app.brace_cursor += byte_len;
         }
-        KeyCode::Backspace => {
-            if app.brace_cursor > 0 {
-                let prev = app.brace_input[..app.brace_cursor]
-                    .char_indices()
-                    .last()
-                    .map(|(i, _)| i)
-                    .unwrap_or(0);
-                app.brace_cursor = prev;
-                app.brace_input.remove(app.brace_cursor);
-            }
+        KeyCode::Backspace if app.brace_cursor > 0 => {
+            let prev = app.brace_input[..app.brace_cursor]
+                .char_indices()
+                .last()
+                .map(|(i, _)| i)
+                .unwrap_or(0);
+            app.brace_cursor = prev;
+            app.brace_input.remove(app.brace_cursor);
         }
         _ => {}
     }
@@ -137,10 +133,8 @@ fn handle_nav_tab_key(app: &mut App, code: KeyCode) {
                     app.selected_path_index -= 1;
                 }
             }
-            KeyCode::Down => {
-                if app.selected_path_index + 1 < app.tree_paths.len() {
-                    app.selected_path_index += 1;
-                }
+            KeyCode::Down if app.selected_path_index + 1 < app.tree_paths.len() => {
+                app.selected_path_index += 1;
             }
             _ => {}
         },
@@ -150,10 +144,10 @@ fn handle_nav_tab_key(app: &mut App, code: KeyCode) {
                     app.selected_token_index -= 1;
                 }
             }
-            KeyCode::Down => {
-                if app.token_count > 0 && app.selected_token_index + 1 < app.token_count {
-                    app.selected_token_index += 1;
-                }
+            KeyCode::Down
+                if app.token_count > 0 && app.selected_token_index + 1 < app.token_count =>
+            {
+                app.selected_token_index += 1;
             }
             _ => {}
         },

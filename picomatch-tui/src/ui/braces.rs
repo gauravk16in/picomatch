@@ -14,8 +14,8 @@ const MAX_EXPANSION: usize = 200;
 fn find_matching_close(s: &str, open: usize) -> Option<usize> {
     let bytes = s.as_bytes();
     let mut depth = 0usize;
-    for i in open..bytes.len() {
-        match bytes[i] {
+    for (i, &byte) in bytes.iter().enumerate().skip(open) {
+        match byte {
             b'{' => depth += 1,
             b'}' => {
                 depth -= 1;

@@ -209,7 +209,7 @@ pub fn render_tree_tab(f: &mut Frame, app: &mut App, area: Rect) {
         Line::from(vec![
             Span::styled("Base Name: ", Style::default().fg(app.theme.muted)),
             Span::styled(
-                selected_path.split('/').last().unwrap_or(""),
+                selected_path.split('/').next_back().unwrap_or(""),
                 Style::default().fg(app.theme.text),
             ),
         ]),

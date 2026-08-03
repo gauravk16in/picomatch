@@ -103,7 +103,7 @@ pub fn render_benchmark_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // Left: Throughput & Gauge
     let ops_sec = app.benchmark_stats.ops_per_sec();
-    let gauge_ratio = ((ops_sec as f64 / 1_000_000.0).min(1.0)) as f64; // Max scaled at 1M ops/sec
+    let gauge_ratio = (ops_sec as f64 / 1_000_000.0).min(1.0); // Max scaled at 1M ops/sec
 
     let gauge_block = Block::default()
         .title(Span::styled(

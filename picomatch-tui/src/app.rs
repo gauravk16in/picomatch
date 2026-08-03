@@ -61,8 +61,10 @@ pub struct OptionsState {
 
 impl OptionsState {
     pub fn to_pmx_options(&self) -> Options {
-        let mut o = Options::default();
-        o.nocase = Some(self.nocase);
+        let mut o = Options {
+            nocase: Some(self.nocase),
+            ..Default::default()
+        };
         o = o.with_dot(self.dot);
         o = o.with_bash(self.bash);
         o = o.with_nonegate(self.nonegate);
@@ -109,11 +111,9 @@ impl BenchmarkStats {
     }
 
     pub fn ops_per_sec(&self) -> u64 {
-        if self.total_nanos == 0 {
-            0
-        } else {
-            ((self.total_ops as u128 * 1_000_000_000) / self.total_nanos) as u64
-        }
+        (self.total_ops as u128 * 1_000_000_000)
+            .checked_div(self.total_nanos)
+            .unwrap_or(0) as u64
     }
 }
 
@@ -401,11 +401,9 @@ impl App {
             self.benchmark_stats.matched_ops += batch_matched;
             self.benchmark_stats.total_nanos += batch_nanos;
 
-            let current_ops_sec = if batch_nanos > 0 {
-                ((batch_ops as u128 * 1_000_000_000) / batch_nanos) as u64
-            } else {
-                0
-            };
+            let current_ops_sec = (batch_ops as u128 * 1_000_000_000)
+                .checked_div(batch_nanos)
+                .unwrap_or(0) as u64;
 
             self.benchmark_stats.ops_history.push(current_ops_sec);
             if self.benchmark_stats.ops_history.len() > 30 {
