@@ -2,17 +2,17 @@
  "generatedBy": "fixtures/parity-run.js",
  "files": [
   {
-   "file": "api.posix.js",
-   "pass": 2,
-   "fail": 0,
-   "total": 2,
-   "failures": []
-  },
-  {
    "file": "api.picomatch.js",
    "pass": 24,
    "fail": 0,
    "total": 24,
+   "failures": []
+  },
+  {
+   "file": "api.posix.js",
+   "pass": 2,
+   "fail": 0,
+   "total": 2,
    "failures": []
   },
   {
