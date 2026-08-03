@@ -25,10 +25,17 @@ if (MODE === 'napi') {
   }
 }
 
-/** Single JSONL op; returns the decoded answer row or throws the adapter's error. */
+/** Single JSONL op; returns the decoded answer row or throws the adapter's error.
+ * If options.expandRange is a JS function and PMX_ADAPTER=napi, the callback is
+ * shipped into the parse loop via bridgeOpExpand (BUG-005's protocol).
+ * The subprocess transport can't ship callbacks — documented in BUG-005. */
 function bridgeRaw(payload) {
   let answer;
-  if (MODE === 'napi') {
+  if (MODE === 'napi' && payload && payload.options && typeof payload.options.expandRange === 'function') {
+    const expandFn = payload.options.expandRange;
+    const wire = { ...payload, options: { ...payload.options, expandRange: undefined } };
+    answer = JSON.parse(nativeMod.bridgeOpExpand(JSON.stringify(wire), expandFn));
+  } else if (MODE === 'napi') {
     answer = JSON.parse(nativeMod.bridgeOp(JSON.stringify(payload)));
   } else {
     answer = spawnAnswer(payload);

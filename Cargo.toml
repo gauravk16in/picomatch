@@ -1,3 +1,10 @@
 [workspace]
 resolver = "2"
-members = ["crates/pmx-core", "crates/pmx-exec", "crates/pmx-cli", "crates/pmx-node"]
+members = [
+    "crates/pmx-core",
+    "crates/pmx-exec",
+    "crates/pmx-cli",
+    "crates/pmx-node",
+]
+
+exclude = ["fuzz"]
