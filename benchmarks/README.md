@@ -49,6 +49,6 @@ node benchmarks/verify-artifacts.js benchmarks/results
 | `scanbench.rs` | Rust in-process worker (uses `black_box`) |
 | `validator.js` | Shared production validator (fail closed) |
 | `stats.js` | Shared statistics (median/MAD/analyzeScenario) |
-| `bench-canaries.js` | Mutation-tested canary suite (69 canaries) |
+| `bench-canaries.js` | Mutation-tested canary suite (72 canaries) |
 | `prng.js` | Deterministic PRNG (mulberry32) |
 | `verify-artifacts.js` | Standalone final-evidence verifier |

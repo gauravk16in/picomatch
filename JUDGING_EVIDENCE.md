@@ -56,13 +56,13 @@ A full-repository final audit of Teammate 2's work ran on branch `chirag-rust-po
 - **Cluster bootstrap:** 10,000 resamples at process-pair level (Cameron & Miller JHR 2015; Davison & Hinkley 1997)
 - **Schema v2 artifacts:** mode (pilot|final), binary SHA-256, effective Cargo profile + toolchain, environment metadata
 - **Fail-closed validator + verifier:** verifier selects exactly one final set and independently recomputes every summary row from raw
-- **Mutation-tested canaries:** 69 canaries (validator mutations + real-CLI canaries + stats synthetic fixture), all importing the production validator
+- **Mutation-tested canaries:** 72 canaries (validator mutations + real-CLI canaries + stats synthetic fixture), all importing the production validator
 
 ## Correctness Evidence
 
 - `cargo test`: 66 unit + 2 integration, 0 failed
 - `cargo fmt --check` / `cargo clippy -D warnings`: clean
-- `node fixtures/run-integrated.js`: 16/16 steps green (includes scanner corpus 3,216/3,216 deterministic, attack-scan 4,932 comparisons/0 divergences, attack-integrated 4,189/0, unchanged-original-test bridge 40/40, 19 harness canaries, 69 benchmark canaries, original-test hash pin)
+- `node fixtures/run-integrated.js`: 16/16 steps green (includes scanner corpus 3,216/3,216 deterministic, attack-scan 4,932 comparisons/0 divergences, attack-integrated 4,189/0, unchanged-original-test bridge 40/40, 19 harness canaries, 72 benchmark canaries, original-test hash pin)
 - Original mocha suite (JavaScript oracle): 1977/1977 unchanged
 - Semantic parity: 20/20 scenarios pass `deepStrictEqual`
 

@@ -96,6 +96,7 @@ function runCanary(c) {
 
 register('missing-runtime', (raw) => { raw.measurements[0].rust = null; }, ErrorCodes.MISSING_RUNTIME);
 register('duplicate-runtime', (raw) => { raw.measurements[0].rust.runtime = 'js'; }, ErrorCodes.MISSING_RUNTIME);
+register('missing-results-array', (raw) => { raw.measurements[0].js = { runtime: 'js' }; }, ErrorCodes.MALFORMED_MEASUREMENT);
 register('missing-pair', (raw) => { raw.measurements = raw.measurements.slice(0, 2); }, ErrorCodes.WRONG_PROCESS_COUNT);
 register('duplicate-pair-id', (raw) => { raw.measurements[1].pair_id = 0; }, ErrorCodes.DUPLICATE_PAIR_ID);
 register('noncontiguous-pair-id', (raw) => { raw.measurements[2].pair_id = 3; raw.measurements[2].js.results.forEach(r => r.pair_id = 3); raw.measurements[2].rust.results.forEach(r => r.pair_id = 3); }, ErrorCodes.NONCONTIGUOUS_PAIR_ID);
@@ -128,6 +129,7 @@ register('total-ops-mismatch', (raw) => { raw.measurements[0].js.results[0].tota
 register('mismatched-digest', (raw) => { raw.measurements[1].rust.results[0].digest = 54321; }, ErrorCodes.MISMATCHED_DIGEST);
 register('malformed-digest', (raw) => { raw.measurements[1].rust.results[0].digest = -5; }, ErrorCodes.MALFORMED_DIGEST);
 register('consumption-mismatch', (raw) => { raw.measurements[1].rust.results[0].consumption = 111; }, ErrorCodes.CONSUMPTION_MISMATCH);
+register('consumption-missing', (raw) => { delete raw.measurements[0].js.results[0].consumption; }, ErrorCodes.MALFORMED_DIGEST);
 register('wrong-execution-order', (raw) => { const tmp = raw.measurements[1]; raw.measurements[1] = raw.measurements[2]; raw.measurements[2] = tmp; }, ErrorCodes.WRONG_EXECUTION_ORDER);
 register('schedule-measurement-contradiction', (raw) => { raw.measurements[1].rust_first = false; }, ErrorCodes.WRONG_EXECUTION_ORDER);
 register('wrong-schedule', (raw) => { raw.provenance.schedule[1].rust_first = false; raw.measurements[1].rust_first = false; }, ErrorCodes.WRONG_SCHEDULE);
@@ -137,6 +139,7 @@ register('full-is-not-final', (raw) => { raw.config.mode = 'full'; }, ErrorCodes
 register('missing-binary-hashes', (raw) => { delete raw.provenance.scanbench_sha256; }, ErrorCodes.MISSING_PROVENANCE);
 register('config-mismatch', (raw) => { raw.config.samples = 10; }, ErrorCodes.CONFIG_MISMATCH);
 register('bootstrap-too-few', (raw) => { raw.config.bootstrap_resamples = 100; }, ErrorCodes.BOOTSTRAP_TOO_FEW);
+register('bootstrap-missing', (raw) => { delete raw.config.bootstrap_resamples; }, ErrorCodes.BOOTSTRAP_TOO_FEW);
 register('schema-version', (raw) => { raw.schema_version = 1; }, ErrorCodes.SCHEMA_VERSION);
 
 // ---------- summary canaries ----------
@@ -176,7 +179,15 @@ function registerCli(name, exec, args, input) {
 
 const RUNNER = path.join(__dirname, 'run-benchmarks.js');
 const WORKER = path.join(__dirname, 'bench-worker.js');
-const SCANBENCH = path.join(ROOT, 'target', 'debug', 'examples', process.platform === 'win32' ? 'scanbench.exe' : 'scanbench');
+// Resolve scanbench from EITHER build mode — silently skipping the scanbench
+// canaries when the debug binary is absent would be a fail-open coverage hole
+// (run-benchmarks.js builds --release; a debug build may not exist).
+const SCANBENCH_CANDIDATES = ['release', 'debug'].map(m =>
+  path.join(ROOT, 'target', m, 'examples', process.platform === 'win32' ? 'scanbench.exe' : 'scanbench'));
+const SCANBENCH = SCANBENCH_CANDIDATES.find(p => fs.existsSync(p));
+if (!SCANBENCH) {
+  throw new Error('[bench-canaries] scanbench binary not found in release or debug examples. Run `cargo build --example scanbench` (or `--release`) first.');
+}
 
 registerCli('cli-runner-unknown-flag', process.execPath, [RUNNER, '--bogus'], null);
 registerCli('cli-runner-positional', process.execPath, [RUNNER, 'positional'], null);
@@ -191,12 +202,10 @@ registerCli('cli-worker-unknown-flag', process.execPath, [WORKER, '--bogus'], nu
 registerCli('cli-worker-fractional', process.execPath, [WORKER, '--samples', '2.5'], null);
 registerCli('cli-worker-zero', process.execPath, [WORKER, '--samples', '0'], null);
 registerCli('cli-worker-missing-value', process.execPath, [WORKER, '--samples'], null);
-if (fs.existsSync(SCANBENCH)) {
-  registerCli('cli-scanbench-unknown-flag', SCANBENCH, ['--bogus'], '[]\n');
-  registerCli('cli-scanbench-malformed', SCANBENCH, ['--samples', 'abc'], '[]\n');
-  registerCli('cli-scanbench-missing-value', SCANBENCH, ['--samples'], '[]\n');
-  registerCli('cli-scanbench-negative', SCANBENCH, ['--samples', '-1'], '[]\n');
-}
+registerCli('cli-scanbench-unknown-flag', SCANBENCH, ['--bogus'], '[]\n');
+registerCli('cli-scanbench-malformed', SCANBENCH, ['--samples', 'abc'], '[]\n');
+registerCli('cli-scanbench-missing-value', SCANBENCH, ['--samples'], '[]\n');
+registerCli('cli-scanbench-negative', SCANBENCH, ['--samples', '-1'], '[]\n');
 
 // ---------- statistics synthetic fixture (hand-verifiable) ----------
 
@@ -260,6 +269,12 @@ function main() {
   for (const c of cliCanaries) {
     try {
       const out = spawnSync(c.exec, c.args, { input: c.input || undefined, encoding: 'utf8', timeout: 30000 });
+      // Fail closed: a process that failed to START (spawn error / null
+      // status) is a canary failure, not a pass. Only a non-zero exit
+      // status from a successfully started process is the expected
+      // rejection of malformed input.
+      if (out.error) throw new Error('process failed to start: ' + out.error.message);
+      if (out.status === null) throw new Error('process terminated by signal ' + out.signal + ' (no exit status)');
       if (out.status === 0) throw new Error('CLI accepted malformed input (exit 0): ' + c.args.slice(1).join(' '));
       executed++;
     } catch (e) { failed++; failures.push(c.name + ': ' + e.message); }

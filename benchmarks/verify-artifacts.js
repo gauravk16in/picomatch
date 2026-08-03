@@ -99,6 +99,42 @@ function main() {
     const summaryPath = path.join(resultsDir, base + '-summary.json');
     const schedulePath = path.join(resultsDir, base + '-schedule.json');
 
+    // --- validate provenance BEFORE use (trust boundary) ---
+    // Missing/malformed provenance, an escaping corpus path, or a malformed
+    // harness SHA must produce validation errors, not crashes or silent use.
+    const provErrors = [];
+    const prov = (raw.provenance && typeof raw.provenance === 'object') ? raw.provenance : {};
+    if (!raw.provenance || typeof raw.provenance !== 'object') {
+      provErrors.push('missing or malformed provenance object');
+    }
+    if (typeof prov.schedule_sha256 !== 'string' || !/^[0-9a-f]{64}$/i.test(prov.schedule_sha256)) {
+      provErrors.push('malformed provenance.schedule_sha256');
+    }
+    if (!Array.isArray(prov.schedule)) {
+      provErrors.push('malformed provenance.schedule (not an array)');
+    }
+    if (typeof prov.harness_sha !== 'string' || !/^[0-9a-f]{40}$/i.test(prov.harness_sha)) {
+      provErrors.push('malformed provenance.harness_sha (expected 40 hex chars)');
+    }
+    let corpusPath = null;
+    if (typeof prov.corpus_path !== 'string' || prov.corpus_path.length === 0) {
+      provErrors.push('malformed provenance.corpus_path');
+    } else {
+      // Normalize both slash styles (Windows-generated artifacts stay
+      // readable on POSIX) and confine the resolved path beneath ROOT.
+      const normalized = prov.corpus_path.replace(/\\/g, '/');
+      const resolved = path.resolve(ROOT, normalized);
+      if (resolved !== ROOT && !resolved.startsWith(ROOT + path.sep)) {
+        provErrors.push('corpus_path escapes the repository root: ' + prov.corpus_path);
+      } else {
+        corpusPath = resolved;
+      }
+    }
+    if (provErrors.length > 0) {
+      for (const e of provErrors) errors.push(base + ' [MISSING_PROVENANCE] ' + e);
+      continue;
+    }
+
     // --- sidecars ---
     for (const p of [rawPath, summaryPath]) {
       const sidecar = p + '.sha256';
@@ -125,11 +161,11 @@ function main() {
       errors.push('Missing schedule file: ' + schedulePath);
     } else {
       const schedSha = sha256(fs.readFileSync(schedulePath));
-      if (schedSha !== raw.provenance.schedule_sha256) {
-        errors.push('Schedule file hash ' + schedSha + ' != embedded schedule_sha256 ' + raw.provenance.schedule_sha256);
+      if (schedSha !== prov.schedule_sha256) {
+        errors.push('Schedule file hash ' + schedSha + ' != embedded schedule_sha256 ' + prov.schedule_sha256);
       }
       const onDisk = JSON.parse(fs.readFileSync(schedulePath, 'utf8'));
-      if (JSON.stringify(onDisk) !== JSON.stringify(raw.provenance.schedule)) {
+      if (JSON.stringify(onDisk) !== JSON.stringify(prov.schedule)) {
         errors.push('Schedule file entries differ from embedded provenance.schedule');
       }
     }
@@ -137,8 +173,6 @@ function main() {
     // --- derive expectations independently ---
     const cfg = raw.config || {};
     let corpusSha = null;
-    const rawCorpus = (raw.provenance.corpus_path || '').replace(/[\\/]/g, path.sep);
-    const corpusPath = path.join(ROOT, rawCorpus);
     if (fs.existsSync(corpusPath)) {
       corpusSha = sha256(fs.readFileSync(corpusPath));
     } else {
@@ -165,7 +199,7 @@ function main() {
       warmupIters: cfg.warmup_iters,
       seed: cfg.seed,
       corpusSha: corpusSha,
-      harnessSha: raw.provenance.harness_sha, // presence/consistency checked below
+      harnessSha: prov.harness_sha, // presence/consistency checked below
       dirtyTree: false,
       mode: 'final',
       schedule: derivedSchedule,
@@ -173,13 +207,13 @@ function main() {
     for (const e of rawErrors) errors.push(base + ' [' + e.code + '] ' + e.message);
 
     // --- harness commit exists and is HEAD or an ancestor of HEAD ---
-    const catFile = spawnSync('git', ['cat-file', '-t', raw.provenance.harness_sha], { cwd: ROOT, encoding: 'utf8' });
+    const catFile = spawnSync('git', ['cat-file', '-t', prov.harness_sha], { cwd: ROOT, encoding: 'utf8' });
     if (catFile.status !== 0 || catFile.stdout.trim() !== 'commit') {
-      errors.push('harness_sha ' + raw.provenance.harness_sha + ' is not a commit in this repository');
+      errors.push('harness_sha ' + prov.harness_sha + ' is not a commit in this repository');
     } else {
-      const anc = spawnSync('git', ['merge-base', '--is-ancestor', raw.provenance.harness_sha, 'HEAD'], { cwd: ROOT, encoding: 'utf8' });
+      const anc = spawnSync('git', ['merge-base', '--is-ancestor', prov.harness_sha, 'HEAD'], { cwd: ROOT, encoding: 'utf8' });
       if (anc.status !== 0) {
-        errors.push('harness_sha ' + raw.provenance.harness_sha + ' is not HEAD or an ancestor of HEAD');
+        errors.push('harness_sha ' + prov.harness_sha + ' is not HEAD or an ancestor of HEAD');
       }
     }
 
@@ -217,7 +251,7 @@ function main() {
       const binPath = path.join(ROOT, 'target', 'release', 'examples', name + ext);
       if (fs.existsSync(binPath)) {
         const actual = sha256(fs.readFileSync(binPath));
-        if (actual !== raw.provenance[key]) {
+        if (actual !== prov[key]) {
           errors.push('Local ' + name + ' binary hash differs from provenance ' + key + ' (binary not rebuilt from the harness commit, or provenance forged)');
         }
       } else {

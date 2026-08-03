@@ -45,6 +45,7 @@ const ErrorCodes = {
   WRONG_SAMPLES: 'WRONG_SAMPLES',
   SAMPLE_LENGTH_MISMATCH: 'SAMPLE_LENGTH_MISMATCH',
   TOTAL_OPS_MISMATCH: 'TOTAL_OPS_MISMATCH',
+  MALFORMED_MEASUREMENT: 'MALFORMED_MEASUREMENT',
   WRONG_WARMUP: 'WRONG_WARMUP',
   WRONG_MODE: 'WRONG_MODE',
   MISSING_PROVENANCE: 'MISSING_PROVENANCE',
@@ -94,7 +95,9 @@ function validateRaw(raw, expected) {
   if (cfg.prng !== expPrng) {
     errors.push({ code: ErrorCodes.UNKNOWN_PRNG, message: 'expected prng ' + expPrng + ', got ' + cfg.prng });
   }
-  if (cfg.bootstrap_resamples !== undefined && cfg.bootstrap_resamples < 10000) {
+  if (cfg.bootstrap_resamples === undefined) {
+    errors.push({ code: ErrorCodes.BOOTSTRAP_TOO_FEW, message: 'bootstrap_resamples is required (missing)' });
+  } else if (cfg.bootstrap_resamples < 10000) {
     errors.push({ code: ErrorCodes.BOOTSTRAP_TOO_FEW, message: 'bootstrap_resamples must be >= 10000, got ' + cfg.bootstrap_resamples });
   }
 
@@ -200,6 +203,12 @@ function validateRaw(raw, expected) {
   for (const m of measurements) {
     const perRuntime = {};
     for (const runtime of ['js', 'rust']) {
+      if (m[runtime] && !Array.isArray(m[runtime].results)) {
+        // Fail closed: a present runtime with a missing/malformed results
+        // array must not be silently skipped (review finding: js:
+        // { runtime: 'js' } with no results previously passed validateRaw).
+        errors.push({ code: ErrorCodes.MALFORMED_MEASUREMENT, message: 'pair ' + m.pair_id + ' ' + runtime + ' missing or invalid results array' });
+      }
       if (!m[runtime] || !Array.isArray(m[runtime].results)) continue;
       const res = m[runtime].results;
       perRuntime[runtime] = res;
@@ -260,6 +269,9 @@ function validateRaw(raw, expected) {
         }
         if (!isU32(r.digest)) {
           errors.push({ code: ErrorCodes.MALFORMED_DIGEST, message: 'pair ' + m.pair_id + ' ' + runtime + ' ' + r.scenario_id + ' digest is not a u32: ' + r.digest });
+        }
+        if (!isU32(r.consumption)) {
+          errors.push({ code: ErrorCodes.MALFORMED_DIGEST, message: 'pair ' + m.pair_id + ' ' + runtime + ' ' + r.scenario_id + ' consumption is required and must be a u32: ' + r.consumption });
         }
       }
       if (expScenarios.length > 0) {

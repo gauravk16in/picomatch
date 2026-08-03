@@ -54,6 +54,14 @@ function analyzeScenario(scenario, scenarioIndex, measurements, itersPerSample, 
     pairRatios.push(ratio);
   }
 
+  // Fail closed on scenarios with no matching js+rust results: without this,
+  // medians over empty arrays silently yield NaN summary rows (the documented
+  // contract is to throw on non-finite intermediate values). The verifier
+  // calls this on externally-supplied raw data without the controller's gates.
+  if (pairRatios.length === 0) {
+    throw new Error('no valid process pairs for scenario ' + id + ' (no matching js+rust results)');
+  }
+
   const bootRng = mulberry32(seed + scenarioIndex);
   const bootMedians = [];
   for (let b = 0; b < resamples; b++) {
