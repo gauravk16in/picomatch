@@ -452,3 +452,226 @@ verifications report "STILL DIVERGED" while the fix was already correct in sourc
 **Rule**: rebuild the binary (`cargo build --workspace` or `-p pmx-cli`) before any
 parity probe conclusion. The c3probe example and the pmx-cli binary build separately;
 only one was current.
+
+---
+
+## BUG-007 — Literal equality shortcut `input === glob` bypasses regex evaluation
+
+**Severity:** Low (Rust already correct — no user-visible impact)
+**Affected:** picomatch ≤ v4.0.5 (all known versions); Rust port unaffected
+**Surface:** matcher (lib/picomatch.js `picomatch.test`)
+**Source audit ID:** BUG-07
+**Upstream references:** PR #176 (unmerged), Issue #71
+**Status in Rust port:** Already fixed — Rust omits the shortcut
+
+### Description
+
+JS `picomatch.test()` (L139) checks `input === glob` before regex evaluation.
+This causes patterns like `[1-5]` to match the literal string `"[1-5]"` because
+the equality check short-circuits before the regex engine runs.
+
+### Independent reproduction against picomatch v4.0.5
+
+```js
+const pm = require('picomatch');
+pm.isMatch('[1-5]', '[1-5]'); // true  ← should be false (only 1-5 should match)
+pm.isMatch('3', '[1-5]');     // true  ← correct
+```
+
+Rust port returns `false` for `isMatch('[1-5]', '[1-5]')` — correct behavior.
+
+### Expected behavior and evidence
+
+PR #176 proposes removing the shortcut. The regex `[^/]*?[1-5]` does not match
+the literal `[1-5]` string, so the shortcut is a false positive.
+
+### Security/compatibility impact
+
+No security impact. The shortcut causes a false positive for bracket patterns
+matching their own literal text. Rust correctly omits this shortcut.
+
+### Fix in Rust port
+
+No fix needed — Rust already produces correct output. This is an intentional
+divergence from JS (documented here for completeness).
+
+### Before / After
+
+| Case | JS v4.0.5 | Rust |
+|---|---|---|
+| `isMatch('[1-5]', '[1-5]')` | `true` (wrong) | `false` (correct) |
+| `isMatch('3', '[1-5]')` | `true` (correct) | `true` (correct) |
+
+### Verification
+
+Differential test: `scratch/verify-rust.js` BUG-07 — JS: true, Rust: false.
+
+### Remaining limitations
+
+None.
+
+---
+
+## BUG-008 — Globstar in non-final extglob alternatives diverges from JS
+
+**Severity:** Medium (1 parity divergence in extglob with `**` in non-final alternatives)
+**Affected:** picomatch ≤ v4.0.5; Rust port
+**Surface:** parser (lib/parse.js L946-L951, L493-L496)
+**Source audit ID:** BUG-09
+**Upstream references:** PR #177 (unmerged)
+**Status in Rust port:** Open — Rust emits full globstar for all alternatives; JS downgrades non-final alternatives
+
+### Description
+
+In `!(a/**|b/**)`, JS only the last alternative's `**` compiles to a real globstar.
+Non-final alternatives' `**` is silently downgraded to `[^/]*?`. This is because
+the `|` token is pushed as `{ type: 'text', value: '|' }` (L950), never
+`type: 'pipe'`. The globstar-downgrade guard at L496 checks `tok.type === 'pipe'`
+which is dead code.
+
+Rust treats all alternatives equally, emitting full globstar for every `**`.
+
+### Independent reproduction against picomatch v4.0.5
+
+```js
+const pm = require('picomatch');
+pm('!(a/**|b/**)**', {dot:true})('a/x/y'); // true  ← JS downgrades first **
+pm('!(b/**|a/**)**', {dot:true})('a/x/y'); // false ← correct (last alt gets real **)
+```
+
+Rust returns `false` for the first case (emits real globstar for first `**`).
+
+**Regex comparison:**
+```
+JS:   a\/(?!\.{1,2}(?:\/|$))[^/]*?  ← first ** is [^/]*? (star, not globstar)
+Rust: a\/(?!\.{1,2}(?:\/|$))(?:...).*?  ← first ** is full globstar
+```
+
+### Expected behavior and evidence
+
+PR #177 proposes fixing the pipe token type. The JS behavior is an unintentional
+bug — the guard at L496 was intended to handle this case but `type: 'pipe'` is
+never set. Rust's behavior is arguably more correct, but it's a parity divergence.
+
+### Security/compatibility impact
+
+No security impact. The divergence affects matching results for extglob patterns
+with `**` in non-final alternatives.
+
+### Fix in Rust port
+
+To match JS parity: push `|` as `type: 'pipe'` inside extglobs and add the
+globstar demotion guard. Alternatively, document as intentional divergence
+(Rust behavior is more correct).
+
+### Before / After
+
+| Case | JS v4.0.5 | Rust current | Intended |
+|---|---|---|---|
+| `!(a/**\|b/**)**` vs `a/x/y` | true | false | true (parity) |
+
+### Verification
+
+Differential test: `scratch/verify-rust.js` BUG-09a — JS: true, Rust: false.
+
+### Remaining limitations
+
+Fix not yet implemented — documented as open parity divergence.
+
+---
+
+## BUG-009 — `matchBase` not implemented in Rust CLI adapter
+
+**Severity:** Medium (adapter-level; `matchBase`/`basename`/`format` options not handled)
+**Affected:** Rust CLI dispatch (`crates/pmx-cli/src/lib.rs`)
+**Surface:** adapter/matcher
+**Source audit ID:** BUG-14, BUG-15, BUG-26
+**Upstream references:** PR #106 (unmerged), PR #190 (unmerged)
+**Status in Rust port:** Open — CLI dispatch has no `matchBase` routing
+
+### Description
+
+JS `picomatch.test()` (L128-L156) routes to `picomatch.matchBase()` (basename
+extraction) when `opts.matchBase === true` or `opts.basename === true`. The Rust
+CLI dispatch (`dispatch_with_options`) has no such routing — it always does a
+full regex test via `regexTest`. This causes divergences for patterns with
+`matchBase: true`.
+
+Additionally, the `format` option is ignored when `matchBase: true` in JS (a
+separate JS bug — BUG-26 in the source report), and `format` is not part of the
+Rust CLI protocol at all.
+
+### Independent reproduction against picomatch v4.0.5
+
+```js
+const pm = require('picomatch');
+// matchBase routes to basename matching
+pm.isMatch('foo/bar.js', 'foo/*.js', { matchBase: true }); // false (JS uses basename "bar.js" against "foo/*.js")
+pm.isMatch('packages/pkg-2/examples/.eslintrc.yaml', '!**/examples/**', { matchBase: true, dot: true }); // true
+```
+
+Rust CLI returns `true` and `false` respectively (no basename extraction).
+
+### Expected behavior and evidence
+
+`matchBase` is a documented picomatch option. PR #106 proposes `matchBase`
+should only apply to slashless patterns. The Rust CLI adapter should either
+implement basename extraction or document this as a known limitation.
+
+### Security/compatibility impact
+
+No security impact. The divergence affects matching results when `matchBase`
+option is used through the CLI adapter.
+
+### Fix in Rust port
+
+Two options:
+1. Implement `matchBase` routing in CLI dispatch (extract basename, test against regex)
+2. Document as known CLI limitation (the `serve` transport is a parse/scan/makeRe
+   interface, not a full picomatch matcher)
+
+### Before / After
+
+| Case | JS v4.0.5 | Rust current | Intended |
+|---|---|---|---|
+| `foo/bar.js` vs `foo/*.js` with `matchBase` | false | true | false (parity) |
+| `!**/examples/**` with `matchBase` | true | false | true (parity) |
+
+### Verification
+
+Differential tests: `scratch/verify-rust.js` BUG-14, BUG-15.
+
+### Remaining limitations
+
+Fix not yet implemented — documented as open adapter limitation. The `format`
+option (BUG-26) is also not in the CLI protocol; it would need a callback
+mechanism similar to `expandRange`.
+
+---
+
+## Audit dispositions (non-bug entries)
+
+The following source-report claims were investigated and dispositioned but do
+not warrant canonical bug entries because they are intentional behavior,
+duplicates, performance observations, or not applicable to Rust.
+
+| Source ID | Disposition | Evidence |
+|---|---|---|
+| BUG-01, BUG-17 | INTENTIONAL_DOCUMENTED_BEHAVIOR | `\1`-`\9` are standard JS regex backreferences; picomatch documents regex syntax support. Report's claim that `a1` matches was false (independently verified). |
+| BUG-02, BUG-13 | INTENTIONAL_DOCUMENTED_BEHAVIOR | Fastpath `\/?` is controlled by `strictSlashes` option; D-03 documents fastpath/slow-path divergence. |
+| BUG-03, BUG-04 | RUST_NOT_APPLICABLE | Rust uses static structs with no prototype chain. No user-controlled key lookup on these objects. |
+| BUG-05 | INTENTIONAL_DOCUMENTED_BEHAVIOR | Silent `/$^/` fallback is documented API; `debug:true` throws. |
+| BUG-06 | INTENTIONAL_DOCUMENTED_BEHAVIOR | `[!...]` negation requires `posix:true` per README. |
+| BUG-08 | PARITY_MATCH | Rust matches JS behavior for `**` adjacent to literals. |
+| BUG-10, BUG-18 | DUPLICATE | Same root cause as extglob `**` semantics; Rust matches JS. |
+| BUG-11 | UPSTREAM_FIXED_IN_4_0_5 | Multi-branch extglob fixed in 4.0.5; Rust matches. |
+| BUG-12 | INTENTIONAL_DOCUMENTED_BEHAVIOR | `parts:true` vs `tokens:true` trigger different splitting by design. |
+| BUG-19 | UPSTREAM_FIXED_IN_4_0_5 | `matchBase` windows forwarding fixed in 4.0.5; Rust matches. |
+| BUG-21 | PERFORMANCE_OBSERVATION | `state.consumed` is observable state (used in oracle comparisons). |
+| BUG-22 | PERFORMANCE_OBSERVATION | `peek` default parameter is micro-optimization; not user-visible. |
+| BUG-23 | RUST_NOT_APPLICABLE | `navigator.platform` is browser-only; Rust has no browser. |
+| BUG-24 | PERFORMANCE_OBSERVATION | Input length cap (65536) bounds output. |
+| BUG-25 | PERFORMANCE_OBSERVATION | No complexity experiment provided; "code review confirmed" is insufficient. |
+| BUG-27 | INTENTIONAL_DOCUMENTED_BEHAVIOR | Empty alternative triggers ReDoS safeguard `risky:true` by design. |
+| CVE-2026-33671 | KNOWN_CVE_FIXED_UPSTREAM | ReDoS fixed in 4.0.4; Rust has `analyzeRepeatedExtglob` safeguard. |
+| CVE-2026-33672 | KNOWN_CVE_FIXED_UPSTREAM | POSIX method injection fixed in 4.0.4 with `__proto__: null`; Rust uses match-based lookup. |
