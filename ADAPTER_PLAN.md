@@ -46,6 +46,10 @@ This plan sequence is from the constitution (`../agents.md` §2 crates layout, �
 - Tasks: `adapter/` package mirroring the required require-paths:
   - `adapter/package.json` = `{"name":"picomatch"}` so tests' `require('..')` resolves here;
   - `adapter/index.js`, `adapter/posix.js`, `adapter/lib/scan.js`, `adapter/lib/utils.js` — thin forwarders spawning **one long-lived** `pmx --serve` process; cover the scan/utils APIs first (they exist end-to-end; `index/posix` initially expose only what parse supports today and throw explicit `TODO(pmx): …` for unsupported *match* paths — never silent stubs).
+    > **Implementation note (2026-08-03):** The current adapter uses synchronous
+    > `execFileSync` spawn-per-op for correctness-first parity testing. The long-lived
+    > process optimization is deferred to a future performance chunk. The napi transport
+    > (`PMX_ADAPTER=napi`) bypasses this entirely.
 - Verify: `node -e` assertions per surface vs reference on corpus-derived cases; shim handles malformed input without crashing the worker.
 
 ## A3 — `pmx-exec`: ECMAScript regex execution (dependency for all boolean parity)

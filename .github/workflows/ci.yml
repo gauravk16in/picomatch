@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [rust-port, review-remediation]
+  pull_request:
+    branches: [rust-port]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    name: Rust checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Format check
+        run: cargo fmt --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Tests
+        run: cargo test --workspace
+
+  adapter-parity:
+    name: Adapter parity (Node.js)
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build pmx-cli
+        run: cargo build --release -p pmx-cli
+      - name: Install Node dependencies
+        run: npm ci || npm install
+      - name: Run corpus verification
+        run: |
+          for f in fixtures/verify-c*.js; do
+            echo "--- $f ---"
+            node "$f"
+          done
+      - name: Run benchmark canaries
+        run: node benchmarks/bench-canaries.js

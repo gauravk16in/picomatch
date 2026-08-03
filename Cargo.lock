@@ -169,6 +169,7 @@ dependencies = [
 name = "pmx-core"
 version = "0.1.0"
 dependencies = [
+ "regress",
  "serde",
  "serde_json",
  "thiserror",

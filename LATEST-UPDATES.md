@@ -36,6 +36,10 @@ Alongside: a teammate independently ported the smaller public API (`scan.js`, pl
 
 ## Where we are right now (as of today)
 
+> **Note (2026-08-03):** All parser chunks C0–C9 are complete and merged. The adapter
+> achieves 1974/1977 parity (99.85%). See `AGENTS.md` "Current status" section for the
+> canonical, maintained status. The section below is historical and preserved for context.
+
 ### Finished and frozen (do not change without a chunk-level reason)
 
 | Chunk | What it is | Proof |

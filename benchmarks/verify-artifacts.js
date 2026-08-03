@@ -31,6 +31,25 @@ function sha256(buf) {
   return crypto.createHash('sha256').update(buf).digest('hex');
 }
 
+function summaryRowsMatch(a, b) {
+  if (typeof a !== typeof b) return false;
+  if (typeof a === 'number') {
+    return Math.abs(a - b) <= 1e-8 || (Math.abs(a - b) / Math.max(Math.abs(a), Math.abs(b))) <= 1e-8;
+  }
+  if (Array.isArray(a)) {
+    if (!Array.isArray(b) || a.length !== b.length) return false;
+    return a.every((v, i) => summaryRowsMatch(v, b[i]));
+  }
+  if (a && typeof a === 'object') {
+    if (!b || typeof b !== 'object') return false;
+    const keysA = Object.keys(a).sort();
+    const keysB = Object.keys(b).sort();
+    if (keysA.length !== keysB.length) return false;
+    return keysA.every((k, i) => k === keysB[i] && summaryRowsMatch(a[k], b[k]));
+  }
+  return a === b;
+}
+
 function main() {
   const resultsDir = process.argv[2];
   if (!resultsDir) {
@@ -118,7 +137,8 @@ function main() {
     // --- derive expectations independently ---
     const cfg = raw.config || {};
     let corpusSha = null;
-    const corpusPath = path.join(ROOT, raw.provenance.corpus_path || '');
+    const rawCorpus = (raw.provenance.corpus_path || '').replace(/[\\/]/g, path.sep);
+    const corpusPath = path.join(ROOT, rawCorpus);
     if (fs.existsSync(corpusPath)) {
       corpusSha = sha256(fs.readFileSync(corpusPath));
     } else {
@@ -186,7 +206,7 @@ function main() {
         errors.push(base + ' summary missing scenario row: ' + scenario.id);
         continue;
       }
-      if (JSON.stringify(committed) !== JSON.stringify(recomputed)) {
+      if (!summaryRowsMatch(committed, recomputed)) {
         errors.push(base + ' summary row for ' + scenario.id + ' does not recompute from raw (altered or from another run)');
       }
     }

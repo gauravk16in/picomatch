@@ -423,12 +423,13 @@ impl Parser {
     fn close_brace_branch(&mut self) {
         let brace = self.braces.last().cloned();
 
-        if self.opts.nobrace() || brace.is_none() {
-            self.push(Token::units(TokenKind::Text, &[RBRACE], Some(vec![RBRACE])));
-            return;
-        }
-
-        let brace = brace.unwrap();
+        let brace = match brace {
+            Some(b) if !self.opts.nobrace() => b,
+            _ => {
+                self.push(Token::units(TokenKind::Text, &[RBRACE], Some(vec![RBRACE])));
+                return;
+            }
+        };
         let mut value = vec![RBRACE];
         let mut output = vec![RPAREN];
 
@@ -465,7 +466,11 @@ impl Parser {
 
             self.state.output = out;
             for t in &toks {
-                let piece = t.output.as_deref().unwrap_or(&t.value);
+                // JS L931: `state.output += (t.output || t.value)` — '' is falsy in JS.
+                let piece = match t.output.as_deref() {
+                    Some(o) if !o.is_empty() => o,
+                    _ => &t.value,
+                };
                 self.state.output.extend_from_slice(piece);
             }
         }
@@ -662,7 +667,7 @@ impl Parser {
             return self.extglobClose(frame);
         }
 
-        let out = if self.state.parens > 0 {
+        let out = if self.state.parens != 0 {
             vec![RPAREN]
         } else {
             vec![BS, RPAREN]
@@ -687,19 +692,12 @@ impl Parser {
     ///
     /// Parity rule: odd count of leading `!` → negated; even → not negated.
     /// The while-loop guard stops eating `!` if the next `!` opens an extglob:
-    ///   `peek(2) === '(' && peek(3) !== '?' / '!' / '=' / '<' / ':'`
+    ///   `peek(2) === '(' && peek(3) !== '?'`  (parse.js L460; the `!=<:` set belongs to extglobOpen L1055)
     fn negate(&mut self) {
         let mut count: u32 = 1;
         // peek(1) is the char after the current '!' (which is already at state.index)
         while self.peek(1) == Some(EXCLAMATION)
-            && (self.peek(2) != Some(LPAREN)
-                || self.peek(3).is_some_and(|u| {
-                    u == EXCLAMATION
-                        || u == b'=' as u16
-                        || u == b'<' as u16
-                        || u == COLON
-                        || u == b'?' as u16
-                }))
+            && (self.peek(2) != Some(LPAREN) || self.peek(3) == Some(b'?' as u16))
         {
             self.advance();
             self.state.start += 1;
@@ -867,6 +865,10 @@ impl Parser {
 
                 let is_brace = self.state.braces > 0
                     && (prior.kind == TokenKind::Comma || prior.kind == TokenKind::Brace);
+                // JS L1161 checks `prev.type === 'pipe'` — but pipe tokens are typed `text`
+                // (parse.js L950), so the JS check is dead code. Rust checks value instead,
+                // which is also functionally dead (masked by the `prior.kind != Paren` guard
+                // at L1167/L874). Semantically equivalent; forked approach noted.
                 let is_pipe = prior.value == [PIPE];
                 let is_extglob =
                     !self.extglobs.is_empty() && (is_pipe || prior.kind == TokenKind::Paren);
@@ -1164,31 +1166,56 @@ pub(crate) fn expand_range(args: &[Vec<u16>], options: &Options) -> Vec<u16> {
     }
 }
 
-fn validate_js_range_class(args: &[Vec<u16>]) -> bool {
-    for i in 0..args.len().saturating_sub(1) {
-        let last_a = match args[i].last() {
-            Some(&c) => c,
-            None => continue,
-        };
-        let first_b = match args[i + 1].first() {
-            Some(&c) => c,
-            None => continue,
-        };
-        if last_a > first_b {
-            return false;
+/// Validate whether the sorted range args form a valid ECMAScript character class.
+/// JS: `new RegExp('[' + args.join('-') + ']')` — if it throws, the range is invalid.
+///
+/// With the `validate-regex` feature (default), we construct the candidate class string
+/// and try to parse it with `regress::Regex::new()` — exactly mirroring the JS probe.
+/// Without the feature, falls back to a conservative approximation.
+fn validate_js_range_class(sorted: &[Vec<u16>]) -> bool {
+    // Build the candidate class string: [arg0-arg1-arg2-...]
+    let mut candidate = String::from('[');
+    for (i, item) in sorted.iter().enumerate() {
+        if i > 0 {
+            candidate.push('-');
         }
+        candidate.push_str(&String::from_utf16_lossy(item));
     }
-    if let Some(last_arg) = args.last() {
-        let num_trailing_slashes = last_arg
-            .iter()
-            .rev()
-            .take_while(|&&c| c == b'\\' as u16)
-            .count();
-        if num_trailing_slashes % 2 == 1 {
-            return false;
+    candidate.push(']');
+
+    #[cfg(feature = "validate-regex")]
+    {
+        regress::Regex::new(&candidate).is_ok()
+    }
+
+    #[cfg(not(feature = "validate-regex"))]
+    {
+        // Conservative fallback: adjacent-pair endpoint comparison + trailing backslash.
+        for i in 0..sorted.len().saturating_sub(1) {
+            let last_a = match sorted[i].last() {
+                Some(&c) => c,
+                None => continue,
+            };
+            let first_b = match sorted[i + 1].first() {
+                Some(&c) => c,
+                None => continue,
+            };
+            if last_a > first_b {
+                return false;
+            }
         }
+        if let Some(last_arg) = sorted.last() {
+            let num_trailing_slashes = last_arg
+                .iter()
+                .rev()
+                .take_while(|&&c| c == b'\\' as u16)
+                .count();
+            if num_trailing_slashes % 2 == 1 {
+                return false;
+            }
+        }
+        true
     }
-    true
 }
 
 #[cfg(test)]
@@ -1302,9 +1329,11 @@ mod tests {
     fn test_bug001_unclosed_brace_recovery() {
         let opts = Options::default().with_fastpaths(false);
 
-        // Simple unclosed brace: should emit \(abc not (abc
+        // BUG-001 bug-for-bug: JS escapeLast(output, '{') searches for '{' but
+        // output contains '(' (brace open emits '(' as regex). Recovery no-ops.
+        // Output is "(abc" — invalid regex, which toRegex collapses to /$^/.
         let res1 = parse("{abc", &opts).unwrap();
-        assert_eq!(res1.output, "\\(abc".encode_utf16().collect::<Vec<_>>());
+        assert_eq!(res1.output, "(abc".encode_utf16().collect::<Vec<_>>());
 
         // Unclosed brace with range inside (triggers backtrack + recovery): should emit ([a-z]
         let res2 = parse("{{a..z}", &opts).unwrap();
@@ -1362,5 +1391,100 @@ mod tests {
         let opts = Options::default().with_fastpaths(false);
         let res = parse("?(a|b)", &opts).unwrap();
         println!("output: {:?}", String::from_utf16_lossy(&res.output));
+    }
+
+    // ---- Review finding regression tests (2026-08-03) ----
+
+    /// F-2 (B2): extglobClose rest-test must enforce ≥2 chars and no subsequent dot.
+    /// JS: /^\.[^\\/.]+$/.test(rest) — `x!(*a).b.c` must NOT absorb `.b.c` into
+    /// the negation lookahead.
+    #[test]
+    fn test_f2_extglob_rest_dotted() {
+        let opts = Options::default().with_fastpaths(false);
+
+        // x!(*a).b.c — rest ".b.c" contains a second dot → rest-test must FAIL
+        let res = parse("x!(*a).b.c", &opts).unwrap();
+        let out = String::from_utf16_lossy(&res.output);
+        // JS output: "x(?:(?!(?:[^/]*?a))[^/]*?)\.b\.c"
+        // The negation group must NOT contain ".b.c"
+        assert!(
+            !out.contains("(?!(?:[^/]*?a)\\.b\\.c)"),
+            "F-2: rest `.b.c` should NOT be absorbed into the negation lookahead. Got: {out}"
+        );
+
+        // x!(*a). — rest "." is only 1 char → rest-test must FAIL (≥2 chars required)
+        let res2 = parse("x!(*a).", &opts).unwrap();
+        let out2 = String::from_utf16_lossy(&res2.output);
+        assert!(
+            !out2.contains("(?!(?:[^/]*?a)\\.)"),
+            "F-2: single-char rest '.' should NOT be absorbed. Got: {out2}"
+        );
+    }
+
+    /// F-3 (B3): brace literal-close must use JS truthiness (empty string is falsy).
+    /// `{a@(bc)}` — the `@` token has output: Some("") which must fall back to value "@".
+    #[test]
+    fn test_f3_brace_literal_close_empty_output() {
+        let opts = Options::default().with_fastpaths(false);
+
+        let res = parse("{a@(bc)}", &opts).unwrap();
+        let out = String::from_utf16_lossy(&res.output);
+        // JS output: "\{a@(bc)\}" — braces are literalized, '@' preserved in value
+        assert_eq!(
+            out, "\\{a@(bc)\\}",
+            "F-3: empty output must fall back to value '@'"
+        );
+    }
+
+    /// F-6 (B4): negate peek(3) must accept only '?' (not '!', '=', '<', ':').
+    /// `!!(!a)` — the inner `!(` is an extglob, not a second negation.
+    #[test]
+    fn test_f6_negate_peek3_only_question() {
+        let opts = Options::default().with_fastpaths(false);
+
+        let res = parse("!!(!a)", &opts).unwrap();
+        // JS: negated=true, the pattern is a negated extglob
+        assert!(res.negated, "F-6: !!(!a) must be negated");
+
+        // Also test !!(=a) — should also be negated (peek(3) is '=' which is NOT '?')
+        let res2 = parse("!!(=a)", &opts).unwrap();
+        assert!(res2.negated, "F-6: !!(=a) must be negated");
+    }
+
+    /// F-4 (M2): close-paren with parens < 0 must emit raw ')' not '\\)'.
+    /// JS: `state.parens ? ')' : '\\)'` — -1 is truthy.
+    #[test]
+    fn test_f4_close_paren_negative_count() {
+        let opts = Options::default().with_fastpaths(false);
+
+        let res = parse("a))b", &opts).unwrap();
+        let out = String::from_utf16_lossy(&res.output);
+        // JS output: "a\))b" — first ')' escapes (parens=0), second ')' raw (parens=-1, truthy)
+        assert_eq!(
+            out, "a\\))b",
+            "F-4: stray ')' with parens<0 must emit raw ')'"
+        );
+    }
+
+    /// F-7 (M1): expandRange validation must reject `{a-..z}` (produces `[a--z]`
+    /// which is a reversed range in ECMAScript).
+    #[test]
+    fn test_f7_expand_range_reversed() {
+        let opts = Options::default().with_fastpaths(false);
+
+        // {a-..z} — args ["a-", "z"], sorted → ["a-", "z"], class → "[a--z]"
+        // V8 throws SyntaxError on [a--z] → JS falls back to escaped dot-join
+        let res = parse("{a-..z}", &opts).unwrap();
+        let out = String::from_utf16_lossy(&res.output);
+        // Must NOT contain "[a--z]" (that's the invalid class)
+        assert!(
+            !out.contains("[a--z]"),
+            "F-7: {{a-..z}} must not produce [a--z] (reversed range). Got: {out}"
+        );
+        // Should contain the escaped fallback: "a\\-..z" or similar
+        assert!(
+            out.contains("a\\-") || out.contains("a\\x2d"),
+            "F-7: {{a-..z}} should produce escaped fallback. Got: {out}"
+        );
     }
 }
