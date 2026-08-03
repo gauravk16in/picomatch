@@ -55,7 +55,8 @@ node fixtures/run-integrated.js
 node fixtures/attack-scan.js
 node fixtures/attack-integrated.js
 
-# Run 69 benchmark canary mutations
+# Run 79 benchmark canary mutations (build scanbench first)
+cargo build --release --example scanbench
 node benchmarks/bench-canaries.js
 ```
 
@@ -97,7 +98,9 @@ pmx/
 
 ## Code Conventions
 
-- `#![forbid(unsafe_code)]` — no unsafe anywhere in `src/`.
+- `#![forbid(unsafe_code)]` — enforced in `pmx-core`, `pmx-exec`, and `pmx-cli`. `pmx-node` is a NAPI-rs test
+  adapter; its foreign-function boundary uses macro-generated NAPI code. All unsafe is confined there
+  and documented in `docs/decisions.md` (D-019).
 - No `unwrap()`, `expect()`, `panic!()`, `todo!()`, or narrowing `as` casts.
 - Index arithmetic goes through `try_into().ok()`.
 - Emitted text is `Vec<u16>` (UTF-16 units), not `String`. See `docs/decisions.md` D-02.

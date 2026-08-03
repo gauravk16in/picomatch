@@ -62,7 +62,7 @@ pub fn is_match(
 pub type GroupRange = Option<(usize, usize)>;
 
 /// JS `regex.exec(input)` (first match, no /g), with capture groups as
-/// [start,end] unit ranges — regress Match API groups[0] is the full match.
+/// `[start,end]` unit ranges — regress Match API `groups[0]` is the full match.
 pub fn exec_captures(
     source_units: &[u16],
     input_units: &[u16],

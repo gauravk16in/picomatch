@@ -8,6 +8,7 @@ repository.workspace = true
 homepage.workspace = true
 keywords.workspace = true
 categories.workspace = true
+publish = false  # path-only workspace deps; not yet published to crates.io
 
 [lib]
 name = "pmx_cli"

@@ -9,7 +9,10 @@ Rust port of `micromatch/picomatch` v4.0.5, bug-for-bug (parity includes upstrea
 
 ## Layout (chunk-mapped, per docs/design/parse-chunks.md C0–C9)
 
-- `crates/pmx-core/` — the only crate so far. Pure Rust: `#![forbid(unsafe_code)]`; runtime dep = `thiserror` only (dev-deps serde/serde_json for tests).
+- `crates/pmx-core/` — core compiler. `#![forbid(unsafe_code)]`; runtime deps: `thiserror`, optional `regress` (dev-deps: serde/serde_json for tests).
+- `crates/pmx-exec/` — ECMAScript regex execution via `regress`. `#![forbid(unsafe_code)]`.
+- `crates/pmx-cli/` — `pmx` binary + shared op-dispatch lib; JSONL `--serve` transport. `#![forbid(unsafe_code)]`.
+- `crates/pmx-node/` — NAPI-rs native addon (test adapter only; never linked from pmx-core). Contains macro-generated NAPI FFI boundary; all unsafe is confined here (D-019).
 - `src/parse/` — `mod.rs` (parse() entry: REPLACEMENTS → guards → inline fastpath → main_loop → finish), `state.rs` (ParseState/Token arena, `Vec<u16>` emitted text), `parser.rs` (C0 machinery: cursor/push/recovery/rebuild), `fragments.rs`, `inline_fastpath.rs` + `main_loop.rs` (C1). Later chunks: `impl Parser` in their own file (braces.rs, brackets.rs, …).
 - `fixtures/` — JS side of the oracle: `extract-cN.js` → `cN_oracle.json` → `verify-cN.js`; `canon.js` shared encoding; `attack-c*.js` adversarial differential harnesses.
 - `tests/c0_foundation.rs` — the combined corpus-runner (loads all `*_oracle.json`); unit byte-pins live inline in `src/`.
