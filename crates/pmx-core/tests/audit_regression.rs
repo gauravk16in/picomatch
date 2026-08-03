@@ -8,8 +8,8 @@
 //! See: docs/internal/audits/2026-08-03-2130-upstream-bug-verification-and-rust-fixes.md
 
 use pmx_core::constants::{
-    self, DEFAULT_MAX_EXTGLOB_RECURSION, EXTGLOB_CHARS_POSIX, EXTGLOB_CHARS_WINDOWS,
-    POSIX_CHARS, WINDOWS_CHARS,
+    self, DEFAULT_MAX_EXTGLOB_RECURSION, EXTGLOB_CHARS_POSIX, EXTGLOB_CHARS_WINDOWS, POSIX_CHARS,
+    WINDOWS_CHARS,
 };
 
 /// CVE-2026-33672: POSIX_REGEX_SOURCE must not resolve inherited properties.
