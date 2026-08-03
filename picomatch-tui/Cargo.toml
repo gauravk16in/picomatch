@@ -1,0 +1,13 @@
+[package]
+name = "picomatch-tui"
+version = "0.1.0"
+edition = "2021"
+description = "A beautiful interactive Terminal UI demo for picomatch-rust"
+authors = ["Picomatch Rust Team"]
+
+[dependencies]
+pmx-core = { path = "../crates/pmx-core" }
+pmx-exec = { path = "../crates/pmx-exec" }
+ratatui = "0.29"
+crossterm = "0.28"
+unicode-width = "0.1"
