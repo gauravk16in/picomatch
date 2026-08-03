@@ -37,10 +37,6 @@ jobs:
           repository: micromatch/picomatch
           ref: '4.0.5'
           path: Main
-      - name: Create reference path symlinks for fixtures
-        run: |
-          ln -sf "$GITHUB_WORKSPACE/Main" "$GITHUB_WORKSPACE/../Main"
-          ln -sf "$GITHUB_WORKSPACE/Main" "$GITHUB_WORKSPACE/../picomatch-original"
       - uses: dtolnay/rust-toolchain@stable
       - uses: actions/setup-node@v4
         with:
@@ -52,12 +48,10 @@ jobs:
       - name: Install Node dependencies
         run: cd adapter && npm ci || npm install
       - name: Run corpus verification
+        env:
+          PICOMATCH_REF: ${{ github.workspace }}/Main
         run: |
           for f in fixtures/verify-c*.js; do
-            if [ "$f" = "fixtures/verify-c3.js" ]; then
-              echo "--- $f (skipped: ../../picomatch conflicts with workspace) ---"
-              continue
-            fi
             echo "--- $f ---"
             node "$f"
           done

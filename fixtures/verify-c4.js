@@ -10,7 +10,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const assert = require('assert');
 
-const REF = path.join(__dirname, '..', '..', 'picomatch-original');
+const REF = process.env.PICOMATCH_REF || path.join(__dirname, '..', '..', 'picomatch-original');
 const parse = require(path.join(REF, 'lib', 'parse'));
 
 const corpusPath = path.join(__dirname, 'c4_oracle.json');

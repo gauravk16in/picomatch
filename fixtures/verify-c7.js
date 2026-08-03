@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
 
-const REF = path.join(__dirname, '..', '..', 'picomatch-original');
+const REF = process.env.PICOMATCH_REF || path.join(__dirname, '..', '..', 'picomatch-original');
 const origParse = require(path.join(REF, 'lib', 'parse'));
 const { canonState, decOptions } = require('./canon');
 
