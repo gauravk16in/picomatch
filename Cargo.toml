@@ -8,3 +8,12 @@ members = [
 ]
 
 exclude = ["fuzz"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/gauravk16in/picomatch"
+homepage = "https://github.com/gauravk16in/picomatch"
+keywords = ["glob", "picomatch", "pattern", "match", "wildcard"]
+categories = ["text-processing", "filesystem"]

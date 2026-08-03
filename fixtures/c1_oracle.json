@@ -2,7 +2,7 @@
  "meta": {
   "corpus": "c1-dispatcher",
   "generator": "fixtures/extract-c1.js",
-  "reference": "..\\Main (read-only checkout)",
+  "reference": "../Main (read-only checkout)",
   "picomatchVersion": "4.0.5",
   "fieldPolicy": "u16-unit sequences for emitted text (canon.js); assert-all when no assert list"
  },

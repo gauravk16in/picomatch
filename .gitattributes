@@ -1,0 +1,12 @@
+# Fix GitHub language detection — Rust is the primary language.
+# The JS files are test oracle infrastructure, not deliverables.
+
+# Vendored: the original picomatch JS test suite, copied byte-for-byte
+tests/original/** linguist-vendored
+
+# Generated: oracle JSON corpora (regeneratable via extract-c*.js)
+fixtures/*_oracle.json linguist-generated
+fixtures/capability-matrix.json linguist-generated
+
+# Generated: benchmark raw results (machine-specific, not source)
+benchmarks/results/** linguist-generated

@@ -1,8 +1,13 @@
 [package]
 name = "pmx-cli"
-version = "0.1.0"
-edition = "2021"
-description = "pmx binary + shared op-dispatch library; `--serve` subprocess adapter for the JS parity harness (ADAPTER_PLAN A1)."
+description = "pmx binary + shared op-dispatch library; --serve subprocess adapter for the JS parity harness."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [lib]
 name = "pmx_cli"
@@ -16,4 +21,3 @@ path = "src/main.rs"
 pmx-core = { path = "../pmx-core" }
 pmx-exec = { path = "../pmx-exec" }
 serde_json = "1"
-
