@@ -304,7 +304,7 @@ function main() {
     return raw;
   }
 
-  function runVerifierCanary(name, setupFn) {
+  function runVerifierCanary(name, setupFn, expectedCode) {
     const dir = path.join(tmpDirBase, name);
     fs.mkdirSync(dir, { recursive: true });
     setupFn(dir);
@@ -312,6 +312,13 @@ function main() {
     if (out.error) throw new Error('verifier crashed (spawn error): ' + out.error.message);
     if (out.status === null) throw new Error('verifier killed by signal ' + out.signal);
     if (out.status === 0) throw new Error('verifier accepted malformed input (exit 0)');
+    const stderr = (out.stderr || '') + (out.stdout || '');
+    if (!stderr.includes('VERIFICATION FAILED')) {
+      throw new Error('verifier exited ' + out.status + ' but did not print VERIFICATION FAILED (possible uncaught exception). stderr: ' + stderr.slice(0, 200));
+    }
+    if (expectedCode && !stderr.includes(expectedCode)) {
+      throw new Error('verifier exited ' + out.status + ' but stderr missing expected code ' + expectedCode + '. stderr: ' + stderr.slice(0, 200));
+    }
   }
 
   // Canary: corpus path pointing to a directory

@@ -40,7 +40,7 @@ jobs:
       - name: Build scanbench example
         run: cargo build --release --example scanbench
       - name: Install Node dependencies
-        run: npm ci || npm install
+        run: cd adapter && npm ci || npm install
       - name: Run corpus verification
         run: |
           for f in fixtures/verify-c*.js; do

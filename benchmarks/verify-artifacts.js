@@ -189,28 +189,30 @@ function main() {
     // --- derive expectations independently ---
     const cfg = raw.config || {};
     let corpusSha = null;
-    if (fs.existsSync(corpusPath)) {
-      corpusSha = sha256(fs.readFileSync(corpusPath));
-    } else {
-      errors.push('Referenced corpus not found: ' + corpusPath);
-    }
     let scenarioIds = [];
     let scenarioDocs = [];
-    if (corpusSha) {
-      try {
-        const stat = fs.statSync(corpusPath);
-        if (!stat.isFile()) {
-          errors.push(base + ' [MALFORMED_CORPUS] corpus_path is not a file: ' + corpusPath);
+    try {
+      const stat = fs.statSync(corpusPath);
+      if (!stat.isFile()) {
+        errors.push(base + ' [MALFORMED_CORPUS] corpus_path is not a file: ' + corpusPath);
+      } else {
+        // Read and hash the corpus file, then parse it — all within the
+        // same try/catch so EISDIR, EACCES, or invalid JSON all produce
+        // a structured error instead of an uncaught exception.
+        const corpusBuf = fs.readFileSync(corpusPath);
+        corpusSha = sha256(corpusBuf);
+        scenarioDocs = JSON.parse(corpusBuf.toString('utf8'));
+        if (!Array.isArray(scenarioDocs)) {
+          errors.push(base + ' [MALFORMED_CORPUS] corpus file does not contain a JSON array: ' + corpusPath);
+          scenarioDocs = [];
         } else {
-          scenarioDocs = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
-          if (!Array.isArray(scenarioDocs)) {
-            errors.push(base + ' [MALFORMED_CORPUS] corpus file does not contain a JSON array: ' + corpusPath);
-            scenarioDocs = [];
-          } else {
-            scenarioIds = scenarioDocs.map(s => s.id);
-          }
+          scenarioIds = scenarioDocs.map(s => s.id);
         }
-      } catch (e) {
+      }
+    } catch (e) {
+      if (e.code === 'ENOENT') {
+        errors.push('Referenced corpus not found: ' + corpusPath);
+      } else {
         errors.push(base + ' [MALFORMED_CORPUS] failed to read or parse corpus file: ' + e.message);
       }
     }
