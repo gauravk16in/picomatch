@@ -560,8 +560,17 @@ impl Parser {
             }
 
             if token.inner.contains(&STAR) {
-                let rem_str = String::from_utf16_lossy(remaining_units);
-                if rem_str.starts_with('.') && !rem_str.contains('/') && !rem_str.contains('\\') {
+                // JS L582: /^\.[^\\/\.]+$/.test(rest) — starts with '.', ≥2 chars total,
+                // and NO backslash, forward-slash, or additional dot in the remainder.
+                let dot = b'.' as u16;
+                let bs = b'\\' as u16;
+                let fslash = b'/' as u16;
+                let rem = remaining_units;
+                if rem.len() >= 2
+                    && rem[0] == dot
+                    && rem[1..].iter().all(|&u| u != bs && u != fslash && u != dot)
+                {
+                    let rem_str = String::from_utf16_lossy(rem);
                     let sub_opts = self.opts.clone().with_fastpaths(false);
                     if let Ok(sub_state) = super::parse(&rem_str, &sub_opts) {
                         let sub_out = String::from_utf16_lossy(&sub_state.output);

@@ -12,7 +12,7 @@
 **Severity:** High  
 **Affected:** picomatch ≤ v4.0.5 (all known versions)  
 **Chunks:** C0 (`finish`/`recovery`) + C5 (brace open)  
-**Status in Rust port:** Fixed  
+**Status in Rust port:** Reproduced upstream bug, ported bug-for-bug (constitution §1)  
 
 ### Description
 
@@ -161,7 +161,7 @@ fn recovery(&mut self) -> Result<(), PmxError> {
 **Severity:** Medium  
 **Affected:** picomatch ≤ v4.0.5 (all known versions)  
 **Chunks:** C0 (bos token + backtrack rebuild) + C2 (slash-branch `./` collapse)  
-**Status in Rust port:** Fixed  
+**Status in Rust port:** Ported bug-for-bug — `./` collapse clears prepend exactly as JS does (constitution §1)  
 
 ### Description
 
@@ -352,7 +352,7 @@ divergences in 148,488 engine comparisons; zero engine errors).
 
 ### Tracking
 
-* `DECISIONS.md` D-024 documents choice, reproducer, cost, rejected alternatives.
+* `DECISIONS.md` D-027 documents choice, reproducer, cost, rejected alternatives.
 * A purposefully-pinned unit test `engine_boundary_astral_class_is_documented`
   (crates/pmx-exec/src/lib.rs) asserts the CURRENT engine behavior and flips the
   day an upgraded engine fixes it — never silent.
@@ -364,7 +364,7 @@ divergences in 148,488 engine comparisons; zero engine errors).
 Pending upstream: either `regress` ships a fix for bracket-class surrogate handling
 in `find_from_utf16` (watch upstream releases), or pmx-exec gains a pre-match detector
 that routes astral-input class patterns through the &-str path (analysis owned here —
-do not pre-implement without a failing case beyond the D-024 reproducer class).
+do not pre-implement without a failing case beyond the D-027 reproducer class).
 
 ---
 
