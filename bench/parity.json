@@ -1,272 +1,258 @@
 {
- "generatedBy": "fixtures/parity-run.js",
- "files": [
-  {
-   "file": "api.picomatch.js",
-   "pass": 24,
-   "fail": 0,
-   "total": 24,
-   "failures": []
-  },
-  {
-   "file": "api.posix.js",
-   "pass": 2,
-   "fail": 0,
-   "total": 2,
-   "failures": []
-  },
-  {
-   "file": "api.scan.js",
-   "pass": 40,
-   "fail": 0,
-   "total": 40,
-   "failures": []
-  },
-  {
-   "file": "bash.js",
-   "pass": 12,
-   "fail": 0,
-   "total": 12,
-   "failures": []
-  },
-  {
-   "file": "bash.spec.js",
-   "pass": 111,
-   "fail": 0,
-   "total": 111,
-   "failures": []
-  },
-  {
-   "file": "braces.js",
-   "pass": 16,
-   "fail": 1,
-   "total": 17,
-   "failures": [
+  "generatedBy": "fixtures/parity-run.js",
+  "generatedAt": "2026-08-03T12:41:18.735Z",
+  "files": [
     {
-     "title": "braces should match special chars and expand ranges in parentheses",
-     "err": "The expression evaluated to a falsy value:"
-    }
-   ]
-  },
-  {
-   "file": "brackets.js",
-   "pass": 3,
-   "fail": 0,
-   "total": 3,
-   "failures": []
-  },
-  {
-   "file": "dotfiles.js",
-   "pass": 23,
-   "fail": 0,
-   "total": 23,
-   "failures": []
-  },
-  {
-   "file": "dots-invalid.js",
-   "pass": 152,
-   "fail": 0,
-   "total": 152,
-   "failures": []
-  },
-  {
-   "file": "extglobs-bash.js",
-   "pass": 647,
-   "fail": 1,
-   "total": 648,
-   "failures": [
+      "file": "api.picomatch.js",
+      "pass": 24,
+      "fail": 0,
+      "total": 24,
+      "failures": []
+    },
     {
-     "title": "extglobs (bash) \"moo.cow\" should not match \"!(*.*).!(*.*)\"",
-     "err": "The expression evaluated to a falsy value:"
-    }
-   ]
-  },
-  {
-   "file": "extglobs-minimatch.js",
-   "pass": 642,
-   "fail": 0,
-   "total": 642,
-   "failures": []
-  },
-  {
-   "file": "extglobs-temp.js",
-   "pass": 11,
-   "fail": 0,
-   "total": 11,
-   "failures": []
-  },
-  {
-   "file": "extglobs.js",
-   "pass": 42,
-   "fail": 0,
-   "total": 42,
-   "failures": []
-  },
-  {
-   "file": "globstars.js",
-   "pass": 18,
-   "fail": 0,
-   "total": 18,
-   "failures": []
-  },
-  {
-   "file": "issue-related.js",
-   "pass": 7,
-   "fail": 0,
-   "total": 7,
-   "failures": []
-  },
-  {
-   "file": "malicious.js",
-   "pass": 5,
-   "fail": 0,
-   "total": 5,
-   "failures": []
-  },
-  {
-   "file": "minimatch.js",
-   "pass": 8,
-   "fail": 0,
-   "total": 8,
-   "failures": []
-  },
-  {
-   "file": "negation.js",
-   "pass": 13,
-   "fail": 0,
-   "total": 13,
-   "failures": []
-  },
-  {
-   "file": "non-globs.js",
-   "pass": 4,
-   "fail": 0,
-   "total": 4,
-   "failures": []
-  },
-  {
-   "file": "options.expandRange.js",
-   "pass": 0,
-   "fail": 1,
-   "total": 1,
-   "failures": [
+      "file": "api.posix.js",
+      "pass": 2,
+      "fail": 0,
+      "total": 2,
+      "failures": []
+    },
     {
-     "title": "options.expandRange should support a custom function for expanding ranges in brace patterns",
-     "err": "The expression evaluated to a falsy value:"
+      "file": "api.scan.js",
+      "pass": 40,
+      "fail": 0,
+      "total": 40,
+      "failures": []
+    },
+    {
+      "file": "bash.js",
+      "pass": 12,
+      "fail": 0,
+      "total": 12,
+      "failures": []
+    },
+    {
+      "file": "bash.spec.js",
+      "pass": 111,
+      "fail": 0,
+      "total": 111,
+      "failures": []
+    },
+    {
+      "file": "braces.js",
+      "pass": 17,
+      "fail": 0,
+      "total": 17,
+      "failures": []
+    },
+    {
+      "file": "brackets.js",
+      "pass": 3,
+      "fail": 0,
+      "total": 3,
+      "failures": []
+    },
+    {
+      "file": "dotfiles.js",
+      "pass": 23,
+      "fail": 0,
+      "total": 23,
+      "failures": []
+    },
+    {
+      "file": "dots-invalid.js",
+      "pass": 152,
+      "fail": 0,
+      "total": 152,
+      "failures": []
+    },
+    {
+      "file": "extglobs-bash.js",
+      "pass": 648,
+      "fail": 0,
+      "total": 648,
+      "failures": []
+    },
+    {
+      "file": "extglobs-minimatch.js",
+      "pass": 642,
+      "fail": 0,
+      "total": 642,
+      "failures": []
+    },
+    {
+      "file": "extglobs-temp.js",
+      "pass": 11,
+      "fail": 0,
+      "total": 11,
+      "failures": []
+    },
+    {
+      "file": "extglobs.js",
+      "pass": 42,
+      "fail": 0,
+      "total": 42,
+      "failures": []
+    },
+    {
+      "file": "globstars.js",
+      "pass": 18,
+      "fail": 0,
+      "total": 18,
+      "failures": []
+    },
+    {
+      "file": "issue-related.js",
+      "pass": 7,
+      "fail": 0,
+      "total": 7,
+      "failures": []
+    },
+    {
+      "file": "malicious.js",
+      "pass": 5,
+      "fail": 0,
+      "total": 5,
+      "failures": []
+    },
+    {
+      "file": "minimatch.js",
+      "pass": 8,
+      "fail": 0,
+      "total": 8,
+      "failures": []
+    },
+    {
+      "file": "negation.js",
+      "pass": 13,
+      "fail": 0,
+      "total": 13,
+      "failures": []
+    },
+    {
+      "file": "non-globs.js",
+      "pass": 4,
+      "fail": 0,
+      "total": 4,
+      "failures": []
+    },
+    {
+      "file": "options.expandRange.js",
+      "pass": 1,
+      "fail": 0,
+      "total": 1,
+      "failures": []
+    },
+    {
+      "file": "options.format.js",
+      "pass": 1,
+      "fail": 0,
+      "total": 1,
+      "failures": []
+    },
+    {
+      "file": "options.ignore.js",
+      "pass": 2,
+      "fail": 0,
+      "total": 2,
+      "failures": []
+    },
+    {
+      "file": "options.js",
+      "pass": 16,
+      "fail": 0,
+      "total": 16,
+      "failures": []
+    },
+    {
+      "file": "options.maxExtglobRecursion.js",
+      "pass": 11,
+      "fail": 0,
+      "total": 11,
+      "failures": []
+    },
+    {
+      "file": "options.noextglob.js",
+      "pass": 2,
+      "fail": 0,
+      "total": 2,
+      "failures": []
+    },
+    {
+      "file": "options.noglobstar.js",
+      "pass": 1,
+      "fail": 0,
+      "total": 1,
+      "failures": []
+    },
+    {
+      "file": "options.onMatch.js",
+      "pass": 1,
+      "fail": 0,
+      "total": 1,
+      "failures": []
+    },
+    {
+      "file": "parens.js",
+      "pass": 2,
+      "fail": 0,
+      "total": 2,
+      "failures": []
+    },
+    {
+      "file": "posix-classes.js",
+      "pass": 34,
+      "fail": 0,
+      "total": 34,
+      "failures": []
+    },
+    {
+      "file": "qmarks.js",
+      "pass": 10,
+      "fail": 0,
+      "total": 10,
+      "failures": []
+    },
+    {
+      "file": "regex-features.js",
+      "pass": 26,
+      "fail": 0,
+      "total": 26,
+      "failures": []
+    },
+    {
+      "file": "slashes-posix.js",
+      "pass": 18,
+      "fail": 0,
+      "total": 18,
+      "failures": []
+    },
+    {
+      "file": "slashes-windows.js",
+      "pass": 12,
+      "fail": 0,
+      "total": 12,
+      "failures": []
+    },
+    {
+      "file": "special-characters.js",
+      "pass": 39,
+      "fail": 0,
+      "total": 39,
+      "failures": []
+    },
+    {
+      "file": "stars.js",
+      "pass": 17,
+      "fail": 0,
+      "total": 17,
+      "failures": []
+    },
+    {
+      "file": "wildmat.js",
+      "pass": 2,
+      "fail": 0,
+      "total": 2,
+      "failures": []
     }
-   ]
-  },
-  {
-   "file": "options.format.js",
-   "pass": 1,
-   "fail": 0,
-   "total": 1,
-   "failures": []
-  },
-  {
-   "file": "options.ignore.js",
-   "pass": 2,
-   "fail": 0,
-   "total": 2,
-   "failures": []
-  },
-  {
-   "file": "options.js",
-   "pass": 16,
-   "fail": 0,
-   "total": 16,
-   "failures": []
-  },
-  {
-   "file": "options.maxExtglobRecursion.js",
-   "pass": 11,
-   "fail": 0,
-   "total": 11,
-   "failures": []
-  },
-  {
-   "file": "options.noextglob.js",
-   "pass": 2,
-   "fail": 0,
-   "total": 2,
-   "failures": []
-  },
-  {
-   "file": "options.noglobstar.js",
-   "pass": 1,
-   "fail": 0,
-   "total": 1,
-   "failures": []
-  },
-  {
-   "file": "options.onMatch.js",
-   "pass": 1,
-   "fail": 0,
-   "total": 1,
-   "failures": []
-  },
-  {
-   "file": "parens.js",
-   "pass": 2,
-   "fail": 0,
-   "total": 2,
-   "failures": []
-  },
-  {
-   "file": "posix-classes.js",
-   "pass": 34,
-   "fail": 0,
-   "total": 34,
-   "failures": []
-  },
-  {
-   "file": "qmarks.js",
-   "pass": 10,
-   "fail": 0,
-   "total": 10,
-   "failures": []
-  },
-  {
-   "file": "regex-features.js",
-   "pass": 26,
-   "fail": 0,
-   "total": 26,
-   "failures": []
-  },
-  {
-   "file": "slashes-posix.js",
-   "pass": 18,
-   "fail": 0,
-   "total": 18,
-   "failures": []
-  },
-  {
-   "file": "slashes-windows.js",
-   "pass": 12,
-   "fail": 0,
-   "total": 12,
-   "failures": []
-  },
-  {
-   "file": "special-characters.js",
-   "pass": 39,
-   "fail": 0,
-   "total": 39,
-   "failures": []
-  },
-  {
-   "file": "stars.js",
-   "pass": 17,
-   "fail": 0,
-   "total": 17,
-   "failures": []
-  },
-  {
-   "file": "wildmat.js",
-   "pass": 2,
-   "fail": 0,
-   "total": 2,
-   "failures": []
-  }
- ]
+  ]
 }

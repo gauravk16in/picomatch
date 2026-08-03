@@ -241,12 +241,21 @@ pub mod dispatch {
         }
     }
 
-    /* makeRe / compileRe wrap — port: lib/picomatch.js:L264-L284 anchors and
-     * negation wrapper. Shared by makeReSource and compileReSource. */
+    /* makeRe/compileRe wrap — closes with the toRegex swallow emulation, port:
+     * lib/picomatch.js:L340-L348. If the engine can't construct the wrapped
+     * source, makeRe().source MUST be "$^" — the reference's exact answer for
+     * unconstructible sources, before any flags/debug rules. */
+    fn js_to_regex_source(source: &[u16], flags: pmx_exec::ExecFlags) -> Vec<u16> {
+        match pmx_exec::is_match(source, &[], flags) {
+            Ok(_) | Err(pmx_exec::ExecError::IllFormedSource) => source.to_vec(),
+            Err(pmx_exec::ExecError::Construction(_)) => "$^".encode_utf16().collect(),
+        }
+    }
+
+    /* port: lib/picomatch.js:L264-L284 anchors + negation wrapper. */
     fn wrap_source(output: &[u16], negated: bool, contains: bool) -> Vec<u16> {
         let caret = b'^' as u16;
         let dollar = b'$' as u16;
-        let mut inner = Vec::with_capacity(output.len() + 4);
         let mut wrapped = Vec::with_capacity(output.len() + 4);
         if !contains {
             wrapped.push(caret);
@@ -258,6 +267,7 @@ pub mod dispatch {
             wrapped.push(dollar);
         }
         if negated {
+            let mut inner = Vec::with_capacity(wrapped.len() + 6);
             inner.extend("^(?!".encode_utf16());
             inner.append(&mut wrapped);
             inner.extend(").*$".encode_utf16());
@@ -270,19 +280,23 @@ pub mod dispatch {
     /* port: lib/picomatch.js:L305-L321 — makeRe.
      * Gate: fastpaths only when pattern[0] ∈ {'.','*'} and fastpaths enabled;
      * on gallery-miss fall through to full parse, then wrap (or returnOutput). */
-    fn make_re_op(req: &Value) -> Value {
+    fn make_re_op(
+        req: &Value,
+        opts: &Options,
+        _hook: Option<&pmx_core::options::ExpandRangeFn>,
+    ) -> Value {
         let pattern = req.get("pattern").and_then(|p| p.as_str()).unwrap_or("");
         if pattern.is_empty() {
             return json!({"kind":"error","class":"TypeError","message":"Expected a non-empty string"});
         }
+        // opts already assembled by dispatch_with_options (incl. any expansion hook)
         let options = req.get("options").cloned().unwrap_or_else(|| json!({}));
-        let opts = parse_options_of(&options);
         let return_output = req.get("returnOutput").and_then(|v| v.as_bool()) == Some(true);
         let return_state = req.get("returnState").and_then(|v| v.as_bool()) == Some(true);
 
         let mut extracted: Option<(Vec<u16>, Value, bool)> = None;
         if opts.fastpaths() && (pattern.starts_with('.') || pattern.starts_with('*')) {
-            match pmx_core::fastpaths(pattern, &opts) {
+            match pmx_core::fastpaths(pattern, opts) {
                 Ok(Some(src)) => {
                     // picomatch.js:308-316 gallery-hit state = synthetic {negated:false, fastpaths:true, output}
                     extracted = Some((
@@ -300,7 +314,7 @@ pub mod dispatch {
 
         let (output, state_json) = match extracted {
             Some((out, st, _)) => (out, st),
-            None => match parse(pattern, &opts) {
+            None => match parse(pattern, opts) {
                 Ok(s) => (s.output.clone(), parse_projection(s)),
                 Err(e) => {
                     return json!({"kind":"error","class":class_of(&e),"message":format!("{e}")});
@@ -314,6 +328,17 @@ pub mod dispatch {
 
         let negated = state_json.get("negated").and_then(|v| v.as_bool()) == Some(true);
         let source = wrap_source(&output, negated, opts.contains());
+        // picomatch.js:L340-L348 — the toRegex construction swallow: sources the
+        // engine can't construct report as "$^", matching makeRe().source.
+        let source = js_to_regex_source(
+            &source,
+            pmx_exec::ExecFlags {
+                nocase: options
+                    .get("nocase")
+                    .and_then(|v| v.as_bool())
+                    .unwrap_or(false),
+            },
+        );
         let mut row = json!({"kind":"ok","source":source});
         if return_state {
             row["state"] = state_json;
@@ -339,6 +364,15 @@ pub mod dispatch {
         }
         let negated = state.get("negated").and_then(|v| v.as_bool()) == Some(true);
         let source = wrap_source(&output, negated, opts.contains());
+        let source = js_to_regex_source(
+            &source,
+            pmx_exec::ExecFlags {
+                nocase: options
+                    .get("nocase")
+                    .and_then(|v| v.as_bool())
+                    .unwrap_or(false),
+            },
+        );
         let mut row = json!({"kind":"ok","source":source});
         if return_state {
             row["state"] = state;
@@ -365,18 +399,49 @@ pub mod dispatch {
     /// One JSON request object -> one answer object. The single source of
     /// truth for both transports (`pmx --serve` and `pmx-node`).
     pub fn dispatch(req: &Value) -> Value {
-        let pattern = req.get("pattern").and_then(|p| p.as_str()).unwrap_or("");
+        dispatch_inner(req, None)
+    }
+
+    /// Same dispatch with a custom `expandRange` hook injected into Options
+    /// (the napi transport passes a JS callback this way; BUG-005).
+    pub fn dispatch_with_expansion(
+        req: &Value,
+        expander: pmx_core::options::ExpandRangeFn,
+    ) -> Value {
+        dispatch_inner(req, Some(expander))
+    }
+
+    fn dispatch_inner(
+        req: &Value,
+        expansion_hook: Option<pmx_core::options::ExpandRangeFn>,
+    ) -> Value {
         let options = req.get("options").cloned().unwrap_or_else(|| json!({}));
+        let mut opts = parse_options_of(&options);
+        if let Some(f) = &expansion_hook {
+            opts.expand_range = Some(f.clone());
+        }
+        dispatch_with_options(req, &opts, expansion_hook.as_ref())
+    }
+
+    fn dispatch_with_options(
+        req: &Value,
+        opts: &Options,
+        hook: Option<&pmx_core::options::ExpandRangeFn>,
+    ) -> Value {
+        let pattern = req.get("pattern").and_then(|p| p.as_str()).unwrap_or("");
         match req.get("op").and_then(|o| o.as_str()) {
             Some("ping") => json!({"kind":"ok","op":"ping","version":VERSION}),
-            Some("parse") => match parse(pattern, &parse_options_of(&options)) {
+            Some("parse") => match parse(pattern, opts) {
                 Ok(s) => parse_projection(s),
                 Err(e) => json!({"kind":"error","class":class_of(&e),"message":format!("{e}")}),
             },
-            Some("scan") => scan_projection(scan(pattern, &scan_options_of(&options))),
+            Some("scan") => {
+                let options = req.get("options").cloned().unwrap_or_else(|| json!({}));
+                scan_projection(scan(pattern, &scan_options_of(&options)))
+            }
             Some("regexTest") => regex_test_op(req),
             Some("regexExec") => regex_exec_op(req),
-            Some("makeRe") => make_re_op(req),
+            Some("makeRe") => make_re_op(req, opts, hook),
             Some("compileRe") => compile_re_op(req),
             other => {
                 json!({"kind":"error","class":"SyntaxError","message":format!("unknown op: {other:?}")})

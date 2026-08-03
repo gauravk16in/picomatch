@@ -8,6 +8,7 @@ description = "napi-rs bridge exposing pmx ops to Node. TEST ADAPTER ONLY (const
 crate-type = ["cdylib"]
 
 [dependencies]
+pmx-core = { path = "../pmx-core" }
 pmx-cli = { path = "../pmx-cli" }
 napi = "2"
 napi-derive = "2"

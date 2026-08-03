@@ -373,7 +373,15 @@ do not pre-implement without a failing case beyond the D-027 reproducer class).
 **Severity:** Medium (one suite block + one options file)
 **Affected:** `test/braces.js` "special chars and expand ranges in parentheses"; `test/options.expandRange.js`
 **Chunks:** adapter protocol (B-track)
-**Status:** OPEN (defined, needs napi callback protocol)
+**Status:** OPEN (defined, needs napi callback protocol) — currently the ONLY remaining suite-resident divergence class: braces.js:16/17 + options.expandRange.js:0/1 = **2/1977** as of 2026-08-03 measurements, both from this single class.
+
+### Resolution (2026-08-03 — CLOSED)
+
+Fixed exactly per the defined design above, and verified at the suite level:
+- `PMX_ADAPTER=napi` full battery → **1977/1977 passing (100.00%)** (`bench/parity.json`)
+- napi-side implementation: `bridgeOpExpand(env, payload, expandFn)` in `crates/pmx-node`, boxed via a frame-bounded `HoldingEnv` with `unsafe impl Send + Sync` (constitution §2 sanction for THIS crate only), documented as **DECISIONS.md D-026**
+- `serve` (subprocess) transport keeps default expansion; the JS-callback path is napi-exclusive (the unavoidable boundary — no JSON can transport a function).
+- Files touched: `crates/pmx-node/src/lib.rs`, `crates/pmx-cli/src/lib.rs` (expansion-hook threading through `dispatch_with_expansion`), `adapter/_bridge.js` (route selection when `options.expandRange` is a function).
 
 ### Description
 
@@ -427,3 +435,20 @@ Re-read lib/parse.js:L571-L591 closely: which of the three negate-close variants
 the inner has BOTH `*` and `.` segments; the reference's suffix-recursion runs
 `parse(rest, {..., fastpaths:false})` only when `/^\.[^\\/.]+$/.test(rest)` — the
 divergent branch probably mispicks on dotted-star inner content. Friend-side fix.
+
+### Resolution (2026-08-03)
+
+**FIXED in friend's commit `90ee46b` — verified byte-for-byte.** Root cause confirmed
+as exactly predicted above: the suffix-test condition `/^\.[^\\/.]+$/` needs ≥2 chars
+with NO subsequent dot after the leading dot; their earlier translation accepted
+dot-containing tails, splicing parsed-rest output INTO the negative lookahead instead
+of leaving the close default. The fix in `extglob.rs` now enforces the same condition
+as JS. Verified by byte-identity on:
+`x!(*a).b.c`, `x!(*a).`, `a!(*b)..x`, and the original `!(*.*).!(*.*)` reproducer —
+all now source-identical to the reference.
+
+**Incident record**: stale `target/debug/pmx` timestamps twice made unrelated
+verifications report "STILL DIVERGED" while the fix was already correct in source.
+**Rule**: rebuild the binary (`cargo build --workspace` or `-p pmx-cli`) before any
+parity probe conclusion. The c3probe example and the pmx-cli binary build separately;
+only one was current.

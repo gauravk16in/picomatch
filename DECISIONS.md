@@ -212,6 +212,18 @@ Formally records material design decisions, tradeoffs, and parity locks per cons
 
 ---
 
+### D-026 — `expandRange` JS callbacks through napi, boxed in a frame-bounded Send/Sync holder
+
+- **Original**: `lib/parse.js:L22-L38` — `options.expandRange(a, b, options)` is a user-supplied **JavaScript function** invoked synchronously at brace-range assembly.
+- **Port**: the parse loop already took `Options::expand_range: Option<Arc<dyn Fn(&[String], &Options) -> String + Send + Sync>>` — but our `serve` JSONL adapter can't ship a function across a process boundary. Fix: `crates/pmx-node`'s `bridge_op_expand(env, payload, expand_fn)` wraps the JS function into `HoldingEnv { env, cb }` with an `unsafe impl Send + Sync`, and the closure calls back into JS **inside the SAME synchronous napi-export frame** (nested callback, same thread). Options carry the hook end-to-end (Option<&ExpandRangeFn> threading added to `pmx_cli::dispatch`/`dispatch_with_expansion`).
+- **Why**: without it, the suite's braces block (`foo/bar \({4..10}\)` with a fill-range callback) and `options.expandRange.js` are unreachable — the last 2 of 1977 rows after B1–B4 + the majors.
+- **Caveat (rejected alternative)**: napi's public `ThreadsafeFunction` is one-way (no synchronous return to Rust from JS), and `JsFunction`/`Env` are thread-scoped; direct `Arc` capture without the documented unsafe wrapper cannot type-check. Lifetime rule inside the holder: created, executed, and dropped in ONE export frame; never cross-thread, never stored. That invariant is the whole argument.
+- **Cost**: one small unsafe-impl line in the test-adapter crate (constitution §2 calls this crate out as the unsafe exception; everything else stays `#![forbid(unsafe_code)]`.
+- **Evidence**: `fixtures/parity-run.js` full battery → 1977/1977 green (napi transport); the braces block output bytes identical to reference (`makeRe('a{1..3}z', { expandRange: fill })`).
+- **Links**: BUG-005 in bug-reports.md (closed); `crates/pmx-node/src/lib.rs` (`bridge_op_expand`, `HoldingEnv`); `crates/pmx-core/src/options.rs` (`ExpandRangeFn`).
+
+---
+
 ### D-028 — napi-rs adapter (`pmx-node`) as TEST ADAPTER ONLY, with unsafe accounting
 
 *(Restored from commit abba348's D-019 on 2026-08-03 after the rust-port rebase; number bumped for the same reason as D-027.)*
