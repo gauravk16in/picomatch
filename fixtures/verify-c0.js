@@ -13,7 +13,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const assert = require('assert');
 
-const REF = path.join(__dirname, '..', '..', 'Main');
+const REF = process.env.PICOMATCH_REF || path.join(__dirname, '..', '..', 'Main');
 const parse = require(path.join(REF, 'lib', 'parse'));
 const pm = require(REF);
 

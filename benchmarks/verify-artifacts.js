@@ -21,7 +21,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('node:crypto');
 const { spawnSync } = require('child_process');
-const { validateRaw, validateSummary } = require('./validator');
+const { ErrorCodes, validateRaw, validateSummary } = require('./validator');
 const { analyzeScenario } = require('./stats');
 const { mulberry32 } = require('./prng');
 
@@ -73,7 +73,14 @@ function main() {
   // and legacy schema v1 artifacts (superseded pre-H2 evidence).
   const finals = [];
   for (const f of rawFiles) {
-    const raw = JSON.parse(fs.readFileSync(path.join(resultsDir, f), 'utf8'));
+    let raw;
+    try {
+      raw = JSON.parse(fs.readFileSync(path.join(resultsDir, f), 'utf8'));
+    } catch (e) {
+      errors.push(f + ' [MALFORMED_RAW] failed to read or parse raw artifact: ' + e.message);
+      legacy.push(f + ' (unreadable/malformed — skipped)');
+      continue;
+    }
     if (raw.schema_version === 2 && raw.config && raw.config.mode === 'final') {
       const base = f.replace(/-raw\.json$/, '');
       finals.push({ base, raw });
@@ -87,7 +94,9 @@ function main() {
     console.log('SKIP legacy artifact: ' + f);
   }
   if (finals.length === 0) {
-    console.error('VERIFICATION FAILED: no final artifact set found (schema_version 2, mode "final").');
+    console.error('VERIFICATION FAILED:');
+    console.error('  no final artifact set found (schema_version 2, mode "final").');
+    for (const e of errors) console.error('  ' + e);
     process.exit(1);
   }
   if (finals.length > 1) {
@@ -98,6 +107,42 @@ function main() {
     const rawPath = path.join(resultsDir, base + '-raw.json');
     const summaryPath = path.join(resultsDir, base + '-summary.json');
     const schedulePath = path.join(resultsDir, base + '-schedule.json');
+
+    // --- validate provenance BEFORE use (trust boundary) ---
+    // Missing/malformed provenance, an escaping corpus path, or a malformed
+    // harness SHA must produce validation errors, not crashes or silent use.
+    const provErrors = [];
+    const prov = (raw.provenance && typeof raw.provenance === 'object') ? raw.provenance : {};
+    if (!raw.provenance || typeof raw.provenance !== 'object') {
+      provErrors.push('missing or malformed provenance object');
+    }
+    if (typeof prov.schedule_sha256 !== 'string' || !/^[0-9a-f]{64}$/i.test(prov.schedule_sha256)) {
+      provErrors.push('malformed provenance.schedule_sha256');
+    }
+    if (!Array.isArray(prov.schedule)) {
+      provErrors.push('malformed provenance.schedule (not an array)');
+    }
+    if (typeof prov.harness_sha !== 'string' || !/^[0-9a-f]{40}$/i.test(prov.harness_sha)) {
+      provErrors.push('malformed provenance.harness_sha (expected 40 hex chars)');
+    }
+    let corpusPath = null;
+    if (typeof prov.corpus_path !== 'string' || prov.corpus_path.length === 0) {
+      provErrors.push('malformed provenance.corpus_path');
+    } else {
+      // Normalize both slash styles (Windows-generated artifacts stay
+      // readable on POSIX) and confine the resolved path beneath ROOT.
+      const normalized = prov.corpus_path.replace(/\\/g, '/');
+      const resolved = path.resolve(ROOT, normalized);
+      if (resolved !== ROOT && !resolved.startsWith(ROOT + path.sep)) {
+        provErrors.push('corpus_path escapes the repository root: ' + prov.corpus_path);
+      } else {
+        corpusPath = resolved;
+      }
+    }
+    if (provErrors.length > 0) {
+      for (const e of provErrors) errors.push(base + ' [MISSING_PROVENANCE] ' + e);
+      continue;
+    }
 
     // --- sidecars ---
     for (const p of [rawPath, summaryPath]) {
@@ -118,37 +163,60 @@ function main() {
       errors.push('Missing summary for final set: ' + summaryPath);
       continue;
     }
-    const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+    let summary = null;
+    try {
+      summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+    } catch (e) {
+      errors.push(base + ' [MALFORMED_SUMMARY] failed to read or parse summary: ' + e.message);
+    }
 
     // --- schedule file binds to embedded schedule hash ---
     if (!fs.existsSync(schedulePath)) {
       errors.push('Missing schedule file: ' + schedulePath);
     } else {
-      const schedSha = sha256(fs.readFileSync(schedulePath));
-      if (schedSha !== raw.provenance.schedule_sha256) {
-        errors.push('Schedule file hash ' + schedSha + ' != embedded schedule_sha256 ' + raw.provenance.schedule_sha256);
-      }
-      const onDisk = JSON.parse(fs.readFileSync(schedulePath, 'utf8'));
-      if (JSON.stringify(onDisk) !== JSON.stringify(raw.provenance.schedule)) {
-        errors.push('Schedule file entries differ from embedded provenance.schedule');
+      try {
+        const schedSha = sha256(fs.readFileSync(schedulePath));
+        if (schedSha !== prov.schedule_sha256) {
+          errors.push('Schedule file hash ' + schedSha + ' != embedded schedule_sha256 ' + prov.schedule_sha256);
+        }
+        const onDisk = JSON.parse(fs.readFileSync(schedulePath, 'utf8'));
+        if (JSON.stringify(onDisk) !== JSON.stringify(prov.schedule)) {
+          errors.push('Schedule file entries differ from embedded provenance.schedule');
+        }
+      } catch (e) {
+        errors.push(base + ' [MALFORMED_SCHEDULE] failed to read or parse schedule file: ' + e.message);
       }
     }
 
     // --- derive expectations independently ---
     const cfg = raw.config || {};
     let corpusSha = null;
-    const rawCorpus = (raw.provenance.corpus_path || '').replace(/[\\/]/g, path.sep);
-    const corpusPath = path.join(ROOT, rawCorpus);
-    if (fs.existsSync(corpusPath)) {
-      corpusSha = sha256(fs.readFileSync(corpusPath));
-    } else {
-      errors.push('Referenced corpus not found: ' + corpusPath);
-    }
     let scenarioIds = [];
     let scenarioDocs = [];
-    if (corpusSha) {
-      scenarioDocs = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
-      scenarioIds = scenarioDocs.map(s => s.id);
+    try {
+      const stat = fs.statSync(corpusPath);
+      if (!stat.isFile()) {
+        errors.push(base + ' [MALFORMED_CORPUS] corpus_path is not a file: ' + corpusPath);
+      } else {
+        // Read and hash the corpus file, then parse it — all within the
+        // same try/catch so EISDIR, EACCES, or invalid JSON all produce
+        // a structured error instead of an uncaught exception.
+        const corpusBuf = fs.readFileSync(corpusPath);
+        corpusSha = sha256(corpusBuf);
+        scenarioDocs = JSON.parse(corpusBuf.toString('utf8'));
+        if (!Array.isArray(scenarioDocs)) {
+          errors.push(base + ' [MALFORMED_CORPUS] corpus file does not contain a JSON array: ' + corpusPath);
+          scenarioDocs = [];
+        } else {
+          scenarioIds = scenarioDocs.map(s => s.id);
+        }
+      }
+    } catch (e) {
+      if (e.code === 'ENOENT') {
+        errors.push('Referenced corpus not found: ' + corpusPath);
+      } else {
+        errors.push(base + ' [MALFORMED_CORPUS] failed to read or parse corpus file: ' + e.message);
+      }
     }
     // Re-derive the seeded schedule rather than trusting the embedded one.
     const rng = mulberry32(cfg.seed >>> 0);
@@ -165,21 +233,33 @@ function main() {
       warmupIters: cfg.warmup_iters,
       seed: cfg.seed,
       corpusSha: corpusSha,
-      harnessSha: raw.provenance.harness_sha, // presence/consistency checked below
+      harnessSha: prov.harness_sha, // presence/consistency checked below
       dirtyTree: false,
       mode: 'final',
       schedule: derivedSchedule,
     });
     for (const e of rawErrors) errors.push(base + ' [' + e.code + '] ' + e.message);
 
+    // If structural validation of the raw artifact failed (missing/malformed
+    // measurements, missing runtimes, missing results arrays), the raw data
+    // is NOT safe to pass to analyzeScenario — it dereferences m.js.results
+    // and m.rust.results unconditionally. Skip summary recomputation for this
+    // artifact and continue collecting/reporting validation errors.
+    const hasStructuralErrors = rawErrors.some(e =>
+      e.code === ErrorCodes.MALFORMED_MEASUREMENT ||
+      e.code === ErrorCodes.MISSING_PAIR ||
+      e.code === ErrorCodes.MISSING_RUNTIME ||
+      e.code === ErrorCodes.WRONG_PROCESS_COUNT
+    );
+
     // --- harness commit exists and is HEAD or an ancestor of HEAD ---
-    const catFile = spawnSync('git', ['cat-file', '-t', raw.provenance.harness_sha], { cwd: ROOT, encoding: 'utf8' });
+    const catFile = spawnSync('git', ['cat-file', '-t', prov.harness_sha], { cwd: ROOT, encoding: 'utf8' });
     if (catFile.status !== 0 || catFile.stdout.trim() !== 'commit') {
-      errors.push('harness_sha ' + raw.provenance.harness_sha + ' is not a commit in this repository');
+      errors.push('harness_sha ' + prov.harness_sha + ' is not a commit in this repository');
     } else {
-      const anc = spawnSync('git', ['merge-base', '--is-ancestor', raw.provenance.harness_sha, 'HEAD'], { cwd: ROOT, encoding: 'utf8' });
+      const anc = spawnSync('git', ['merge-base', '--is-ancestor', prov.harness_sha, 'HEAD'], { cwd: ROOT, encoding: 'utf8' });
       if (anc.status !== 0) {
-        errors.push('harness_sha ' + raw.provenance.harness_sha + ' is not HEAD or an ancestor of HEAD');
+        errors.push('harness_sha ' + prov.harness_sha + ' is not HEAD or an ancestor of HEAD');
       }
     }
 
@@ -192,22 +272,37 @@ function main() {
     for (const e of summaryErrors) errors.push(base + ' [' + e.code + '] ' + e.message);
 
     // --- independent recomputation of every summary row from raw ---
-    for (const scenario of scenarioDocs) {
-      const recomputed = analyzeScenario(
-        scenario,
-        scenarioIds.indexOf(scenario.id),
-        raw.measurements,
-        cfg.iters_per_sample,
-        cfg.seed,
-        cfg.bootstrap_resamples
-      );
-      const committed = summary.scenarios.find(s => s.scenario_id === scenario.id);
-      if (!committed) {
-        errors.push(base + ' summary missing scenario row: ' + scenario.id);
-        continue;
-      }
-      if (!summaryRowsMatch(committed, recomputed)) {
-        errors.push(base + ' summary row for ' + scenario.id + ' does not recompute from raw (altered or from another run)');
+    // Skip recomputation when structural validation failed: analyzeScenario
+    // dereferences m.js.results / m.rust.results and will crash on malformed
+    // measurements. Also skip when the summary itself failed to parse.
+    if (hasStructuralErrors) {
+      errors.push(base + ' [SKIP_RECOMPUTE] summary recomputation skipped due to structural raw validation errors');
+    } else if (!summary || !Array.isArray(summary.scenarios)) {
+      errors.push(base + ' [SKIP_RECOMPUTE] summary is null or has no scenarios array — cannot recompute');
+    } else {
+      for (const scenario of scenarioDocs) {
+        let recomputed;
+        try {
+          recomputed = analyzeScenario(
+            scenario,
+            scenarioIds.indexOf(scenario.id),
+            raw.measurements,
+            cfg.iters_per_sample,
+            cfg.seed,
+            cfg.bootstrap_resamples
+          );
+        } catch (e) {
+          errors.push(base + ' [RECOMPUTE_CRASH] scenario ' + scenario.id + ' threw during recomputation: ' + e.message);
+          continue;
+        }
+        const committed = summary.scenarios.find(s => s.scenario_id === scenario.id);
+        if (!committed) {
+          errors.push(base + ' summary missing scenario row: ' + scenario.id);
+          continue;
+        }
+        if (!summaryRowsMatch(committed, recomputed)) {
+          errors.push(base + ' summary row for ' + scenario.id + ' does not recompute from raw (altered or from another run)');
+        }
       }
     }
 
@@ -217,7 +312,7 @@ function main() {
       const binPath = path.join(ROOT, 'target', 'release', 'examples', name + ext);
       if (fs.existsSync(binPath)) {
         const actual = sha256(fs.readFileSync(binPath));
-        if (actual !== raw.provenance[key]) {
+        if (actual !== prov[key]) {
           errors.push('Local ' + name + ' binary hash differs from provenance ' + key + ' (binary not rebuilt from the harness commit, or provenance forged)');
         }
       } else {

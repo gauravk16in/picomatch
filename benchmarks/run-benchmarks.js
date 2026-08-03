@@ -390,7 +390,7 @@ function main() {
       harness_sha: headSha,
       dirty_tree: isDirty,
       corpus_sha256: corpusSha,
-      corpus_path: path.relative(ROOT, opts.scenarios),
+      corpus_path: path.relative(ROOT, opts.scenarios).replace(/\\/g, '/'),
       schedule_sha256: scheduleSha,
       schedule: schedule,
       scanbench_sha256: benchBinSha,

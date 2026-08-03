@@ -151,11 +151,13 @@ Scanner microbench (counting allocator + Instant, ns/op best-of-5):
 | `node fixtures/attack-scan.js` | 0 | 4,932 comparisons, 0 divergences, 0 process failures |
 | `node fixtures/attack-integrated.js` | 0 | 4,189 compared, 0 divergences/process/transport failures |
 | `npx mocha --require ../Rust/fixtures/scan-bridge.js test/api.scan.js` (Main) | 0 | 40/40 passing against Rust, original file unchanged |
-| `node fixtures/verify-c0.js / verify-c1.js / verify-c2.js` | 0 | 39/39, 55/55, 487/487 deterministic |
+| `node fixtures/verify-c0.js` | 0 | 39/39 deterministic |
+| `node fixtures/verify-c1.js` | 0 | 55/55 deterministic |
+| `node fixtures/verify-c2.js` | 0 | 487/487 deterministic |
 | `node fixtures/run-integrated.js` | 0 | 16/16 steps green |
 | `node benchmarks/bench-canaries.js` | 0 | 67/67 mutations detected |
 | `node benchmarks/verify-artifacts.js benchmarks/results` | 0 | E2 final set verified incl. per-row summary recompute; 2 legacy sets skipped |
-| `node benchmarks/run-benchmarks.js --harness-sha 14e3128…` | 0 | final 20-pair run from clean H2; parity 20/20; digest+consumption equality 400/400 |
+| `node benchmarks/run-benchmarks.js --harness-sha 14e3128cf458bca684927e76c54499e6bdfa305b` | 0 | final 20-pair run from clean H2; parity 20/20; digest+consumption equality 400/400 |
 
 ## 16. Differential and adversarial evidence
 
@@ -270,3 +272,78 @@ An automated PR review (Copilot) flagged that `run-benchmarks.js` derived `confi
 - **Fix (commit after F):** three-mode model — `pilot` (reduced settings), `full` (complete settings, no declared binding), `final` (`--harness-sha` declared, clean tree enforced). The controller records the derived mode and prints a "NOT final evidence" note for full runs; the validator accepts exactly the three values; the verifier selects only `mode:"final"` and reports pilot/full/legacy skips explicitly. Two canaries added (`wrong-mode-bogus`, `full-is-not-final`) → 69/69 green.
 - **Validation:** plain full run now records `mode:"full"` and is rejected as final evidence (exit 1); the E2 final set still verifies (exit 0); pilot runs unchanged.
 - **E2 impact:** none — the E2 artifact was produced with `--harness-sha` and remains `mode:"final"`; the timed operation, workers, statistics, and artifact hashes are untouched by this fix.
+
+## 25. Post-review addendum 2 (2026-08-03, CodeRabbit round + merge-integrity finding)
+
+### 25.1 Merge-integrity finding (repo-critical)
+
+PR #9 was merged at 2026-08-02T21:09:27Z via merge commit `f2b58b4` with parents `e47dd11` (rust-port) and `69d6aa0` (Copilot conflict-resolution). The CodeRabbit **autofix** commit `8562ab6` ("Fixed 8 file(s) based on 8 unresolved review comments", pushed 21:15:31Z, ~6 minutes AFTER the merge) **is not an ancestor of `origin/rust-port`** (`git merge-base --is-ancestor 8562ab6 origin/rust-port` fails; `git diff 8562ab6 f2b58b4` is exactly the inverse of the autofix). Despite the PR page showing "Fixes Applied Successfully", **none of the autofix changes are present in the merged tree** — the review fixes it claims were silently dropped. This follow-up branch re-applies every still-valid fix with evidence.
+
+### 25.2 CodeRabbit finding dispositions (verified against the merged tree)
+
+| Finding | Disposition |
+|---|---|
+| AGENTS.md C0–C9 "done" vs "other teammates' work" contradiction | FIXED — one status statement: chunks merged/accepted; parser/matcher release completion remains other teammates' work |
+| Audit command table: slash-joined verifier command + abbreviated SHA | FIXED — three separate executable commands + full H2 SHA |
+| `bench-canaries` scanbench resolution (debug-only) + spawn-failure counts as pass | FIXED — resolve release-then-debug, hard error if neither exists; spawn error / null status is a canary failure |
+| `corpus_path` Windows separator breaks POSIX verification | FIXED — writer normalizes to POSIX (`run-benchmarks.js`); reader normalizes both styles with ROOT confinement (`verify-artifacts.js`). Existing E2 artifacts remain valid (read-side normalization); evidence was NOT regenerated for a cosmetic path form |
+| Require `--harness-sha` for every non-pilot run | SKIPPED (reasoned) — duplicate of the Copilot finding already fixed by the merged three-mode model (pilot/full/final, `ba33c2c`); requiring the SHA would revert the accepted design and remove the documented full-run workflow. Final-evidence integrity is enforced by mode selection |
+| `stats.js` zero valid pairs silently yields NaN | FIXED — explicit throw before bootstrap, matching the documented "throws on non-finite" contract (the verifier calls `analyzeScenario` on external data) |
+| `validator` runtime with missing results array passes silently | FIXED — records `MALFORMED_MEASUREMENT` (code added to the map; the dropped autofix referenced it without defining it) |
+| `verify-artifacts` unvalidated provenance (crash, path escape, git-arg shape) | FIXED — provenance guarded before use: presence, 64-hex schedule SHA, schedule array, 40-hex harness SHA, corpus_path normalized + confined beneath ROOT |
+| Nitpick: `bootstrap_resamples` absence passes | FIXED — required (missing → `BOOTSTRAP_TOO_FEW`) |
+| Nitpick: consumption comparison skips on missing | FIXED — required per-row u32 check (missing → `MALFORMED_DIGEST`) |
+
+New canaries: `missing-results-array`, `bootstrap-missing`, `consumption-missing` → **72/72 green**.
+
+### 25.3 Reviewed-and-accepted teammate change (INFO)
+
+PR #10 (`90ee46b`, parser review remediation) also touched `benchmarks/verify-artifacts.js`: it added `summaryRowsMatch` (1e-8 tolerance) replacing the exact `JSON.stringify` comparison in the summary recomputation, and an independent corpus_path separator normalization. Reviewed: the analysis is deterministic (seeded PRNG, same `stats.js` on both sides), so exact comparison is strictly stronger; the 1e-8 tolerance still catches any material tamper, so the change is accepted rather than reverted (teammate ownership, no practical integrity loss). Recorded here for transparency.
+
+### 25.4 Validation of this addendum's fixes
+
+`node benchmarks/bench-canaries.js` 72/72; `node benchmarks/verify-artifacts.js benchmarks/results` verifies the E2 final set (exit 0); a fresh pilot run writes POSIX `corpus_path` and is rejected as final evidence (exit 1); `cargo fmt --check` / `clippy -D warnings` / `cargo test --workspace` (incl. teammates' new crates) green; `node fixtures/run-integrated.js` 16/16; Main `npm test` 1977/1977, tree clean.
+
+## 26. Post-review addendum 3 (2026-08-03, PR #11 post-merge-verify review remediation)
+
+### 26.1 Copilot review findings on PR #11 (two unresolved threads)
+
+Copilot identified two valid crash paths in `verify-artifacts.js`:
+
+1. **Unprotected filesystem and JSON operations** — the verifier performed `fs.readFileSync(corpusPath)` and `JSON.parse(fs.readFileSync(...))` guarded only by `existsSync`. An artifact could point to a directory (EISDIR), an unreadable file, invalid JSON, or an unexpected filesystem object, causing an uncaught exception instead of a structured `VERIFICATION FAILED` result. This applied to raw classification, summary reads, schedule reads, and corpus reads.
+
+2. **Analysis continues after structural validation fails** — `validateRaw()` correctly detected missing/malformed `results` arrays, but the verifier then continued into `analyzeScenario(..., raw.measurements, ...)` which dereferences `m.js.results`/`m.rust.results`, crashing on malformed measurements.
+
+### 26.2 Fixes applied
+
+| Fix | Description |
+|---|---|
+| Raw classification guarded | `JSON.parse(fs.readFileSync(...))` for raw artifact classification wrapped in try/catch, records `[MALFORMED_RAW]` error, skips to legacy |
+| Summary read guarded | Summary `readFileSync`+`JSON.parse` wrapped in try/catch, records `[MALFORMED_SUMMARY]` error |
+| Schedule read guarded | Schedule file `readFileSync`+`JSON.parse` wrapped in try/catch, records `[MALFORMED_SCHEDULE]` error |
+| Corpus read guarded | Corpus `statSync` (isFile check) + `readFileSync`+`JSON.parse` wrapped in try/catch, records `[MALFORMED_CORPUS]` error (directory, unreadable, invalid JSON, non-array) |
+| Recomputation skipped on structural failure | If `validateRaw()` returns `MALFORMED_MEASUREMENT`, `MISSING_PAIR`, `MISSING_RUNTIME`, or `WRONG_PROCESS_COUNT`, summary recomputation is skipped (records `[SKIP_RECOMPUTE]`), preventing `analyzeScenario` from dereferencing invalid `m.js.results`/`m.rust.results` |
+| Recomputation try/catch | `analyzeScenario` call wrapped in try/catch, records `[RECOMPUTE_CRASH]` instead of uncaught exception |
+| Summary null guard | Recomputation skipped when summary is null or has no scenarios array |
+
+### 26.3 CI workflow fix
+
+The `adapter-parity` CI job built only `cargo build --release -p pmx-cli` but not the `scanbench` example. The fail-closed canary suite (which hard-errors if neither release nor debug `scanbench` exists) would fail because the required executable was never built. Added `cargo build --release --example scanbench` step before running benchmark canaries.
+
+### 26.4 New mutation canaries (7)
+
+| Canary | Tests |
+|---|---|
+| `verify-corpus-is-dir` | corpus_path pointing to a directory results in `[MALFORMED_CORPUS]` not crash |
+| `verify-corpus-missing` | corpus_path pointing to nonexistent file results in error not crash |
+| `verify-corpus-malformed-json` | corpus file with invalid JSON results in `[MALFORMED_CORPUS]` not crash |
+| `verify-raw-malformed-json` | raw artifact file with invalid JSON results in `[MALFORMED_RAW]` not crash |
+| `verify-summary-malformed-json` | summary file with invalid JSON results in `[MALFORMED_SUMMARY]` not crash |
+| `verify-schedule-malformed-json` | schedule file with invalid JSON results in `[MALFORMED_SCHEDULE]` not crash |
+| `verify-missing-results-recompute` | missing results array results in `[SKIP_RECOMPUTE]` not crash in `analyzeScenario` |
+
+Total canaries: 72 + 7 = **79/79 green**.
+
+### 26.5 Validation
+
+`node benchmarks/bench-canaries.js` 79/79; `cargo fmt --check` 0; `cargo clippy --workspace --all-targets -- -D warnings` 0; `node benchmarks/verify-artifacts.js benchmarks/results` (E2 final set: binary hash mismatches are pre-existing — binaries rebuilt locally, not from harness commit).

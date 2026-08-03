@@ -1,4 +1,3 @@
-
 #!/usr/bin/env node
 'use strict';
 
@@ -97,6 +96,7 @@ function runCanary(c) {
 
 register('missing-runtime', (raw) => { raw.measurements[0].rust = null; }, ErrorCodes.MISSING_RUNTIME);
 register('duplicate-runtime', (raw) => { raw.measurements[0].rust.runtime = 'js'; }, ErrorCodes.MISSING_RUNTIME);
+register('missing-results-array', (raw) => { raw.measurements[0].js = { runtime: 'js' }; }, ErrorCodes.MALFORMED_MEASUREMENT);
 register('missing-pair', (raw) => { raw.measurements = raw.measurements.slice(0, 2); }, ErrorCodes.WRONG_PROCESS_COUNT);
 register('duplicate-pair-id', (raw) => { raw.measurements[1].pair_id = 0; }, ErrorCodes.DUPLICATE_PAIR_ID);
 register('noncontiguous-pair-id', (raw) => { raw.measurements[2].pair_id = 3; raw.measurements[2].js.results.forEach(r => r.pair_id = 3); raw.measurements[2].rust.results.forEach(r => r.pair_id = 3); }, ErrorCodes.NONCONTIGUOUS_PAIR_ID);
@@ -129,6 +129,7 @@ register('total-ops-mismatch', (raw) => { raw.measurements[0].js.results[0].tota
 register('mismatched-digest', (raw) => { raw.measurements[1].rust.results[0].digest = 54321; }, ErrorCodes.MISMATCHED_DIGEST);
 register('malformed-digest', (raw) => { raw.measurements[1].rust.results[0].digest = -5; }, ErrorCodes.MALFORMED_DIGEST);
 register('consumption-mismatch', (raw) => { raw.measurements[1].rust.results[0].consumption = 111; }, ErrorCodes.CONSUMPTION_MISMATCH);
+register('consumption-missing', (raw) => { delete raw.measurements[0].js.results[0].consumption; }, ErrorCodes.MALFORMED_DIGEST);
 register('wrong-execution-order', (raw) => { const tmp = raw.measurements[1]; raw.measurements[1] = raw.measurements[2]; raw.measurements[2] = tmp; }, ErrorCodes.WRONG_EXECUTION_ORDER);
 register('schedule-measurement-contradiction', (raw) => { raw.measurements[1].rust_first = false; }, ErrorCodes.WRONG_EXECUTION_ORDER);
 register('wrong-schedule', (raw) => { raw.provenance.schedule[1].rust_first = false; raw.measurements[1].rust_first = false; }, ErrorCodes.WRONG_SCHEDULE);
@@ -138,6 +139,7 @@ register('full-is-not-final', (raw) => { raw.config.mode = 'full'; }, ErrorCodes
 register('missing-binary-hashes', (raw) => { delete raw.provenance.scanbench_sha256; }, ErrorCodes.MISSING_PROVENANCE);
 register('config-mismatch', (raw) => { raw.config.samples = 10; }, ErrorCodes.CONFIG_MISMATCH);
 register('bootstrap-too-few', (raw) => { raw.config.bootstrap_resamples = 100; }, ErrorCodes.BOOTSTRAP_TOO_FEW);
+register('bootstrap-missing', (raw) => { delete raw.config.bootstrap_resamples; }, ErrorCodes.BOOTSTRAP_TOO_FEW);
 register('schema-version', (raw) => { raw.schema_version = 1; }, ErrorCodes.SCHEMA_VERSION);
 
 // ---------- summary canaries ----------
@@ -177,7 +179,15 @@ function registerCli(name, exec, args, input) {
 
 const RUNNER = path.join(__dirname, 'run-benchmarks.js');
 const WORKER = path.join(__dirname, 'bench-worker.js');
-const SCANBENCH = path.join(ROOT, 'target', 'debug', 'examples', process.platform === 'win32' ? 'scanbench.exe' : 'scanbench');
+// Resolve scanbench from EITHER build mode — silently skipping the scanbench
+// canaries when the debug binary is absent would be a fail-open coverage hole
+// (run-benchmarks.js builds --release; a debug build may not exist).
+const SCANBENCH_CANDIDATES = ['release', 'debug'].map(m =>
+  path.join(ROOT, 'target', m, 'examples', process.platform === 'win32' ? 'scanbench.exe' : 'scanbench'));
+const SCANBENCH = SCANBENCH_CANDIDATES.find(p => fs.existsSync(p));
+if (!SCANBENCH) {
+  throw new Error('[bench-canaries] scanbench binary not found in release or debug examples. Run `cargo build --example scanbench` (or `--release`) first.');
+}
 
 registerCli('cli-runner-unknown-flag', process.execPath, [RUNNER, '--bogus'], null);
 registerCli('cli-runner-positional', process.execPath, [RUNNER, 'positional'], null);
@@ -192,12 +202,10 @@ registerCli('cli-worker-unknown-flag', process.execPath, [WORKER, '--bogus'], nu
 registerCli('cli-worker-fractional', process.execPath, [WORKER, '--samples', '2.5'], null);
 registerCli('cli-worker-zero', process.execPath, [WORKER, '--samples', '0'], null);
 registerCli('cli-worker-missing-value', process.execPath, [WORKER, '--samples'], null);
-if (fs.existsSync(SCANBENCH)) {
-  registerCli('cli-scanbench-unknown-flag', SCANBENCH, ['--bogus'], '[]\n');
-  registerCli('cli-scanbench-malformed', SCANBENCH, ['--samples', 'abc'], '[]\n');
-  registerCli('cli-scanbench-missing-value', SCANBENCH, ['--samples'], '[]\n');
-  registerCli('cli-scanbench-negative', SCANBENCH, ['--samples', '-1'], '[]\n');
-}
+registerCli('cli-scanbench-unknown-flag', SCANBENCH, ['--bogus'], '[]\n');
+registerCli('cli-scanbench-malformed', SCANBENCH, ['--samples', 'abc'], '[]\n');
+registerCli('cli-scanbench-missing-value', SCANBENCH, ['--samples'], '[]\n');
+registerCli('cli-scanbench-negative', SCANBENCH, ['--samples', '-1'], '[]\n');
 
 // ---------- statistics synthetic fixture (hand-verifiable) ----------
 
@@ -244,7 +252,7 @@ function statsCanary() {
 function main() {
   let executed = 0, failed = 0;
   const failures = [];
-  const registered = canaries.length + summaryCanaries.length + cliCanaries.length + 1;
+  const registered = canaries.length + summaryCanaries.length + cliCanaries.length + 1 + 7;
 
   for (const c of canaries) {
     try { runCanary(c); executed++; } catch (e) { failed++; failures.push(c.name + ': ' + e.message); }
@@ -261,6 +269,12 @@ function main() {
   for (const c of cliCanaries) {
     try {
       const out = spawnSync(c.exec, c.args, { input: c.input || undefined, encoding: 'utf8', timeout: 30000 });
+      // Fail closed: a process that failed to START (spawn error / null
+      // status) is a canary failure, not a pass. Only a non-zero exit
+      // status from a successfully started process is the expected
+      // rejection of malformed input.
+      if (out.error) throw new Error('process failed to start: ' + out.error.message);
+      if (out.status === null) throw new Error('process terminated by signal ' + out.signal + ' (no exit status)');
       if (out.status === 0) throw new Error('CLI accepted malformed input (exit 0): ' + c.args.slice(1).join(' '));
       executed++;
     } catch (e) { failed++; failures.push(c.name + ': ' + e.message); }
@@ -270,6 +284,148 @@ function main() {
     console.log('  stats synthetic fixture OK (' + detail + ')');
     executed++;
   } catch (e) { failed++; failures.push('stats-synthetic: ' + e.message); }
+
+  // ---------- verifier crash-path canaries ----------
+  // These exercise the trust-boundary guards in verify-artifacts.js by
+  // crafting malformed artifact directories and invoking the verifier as a
+  // subprocess. Each must exit non-zero with a structured error message,
+  // NOT crash with an uncaught exception.
+  const VERIFY = path.join(__dirname, 'verify-artifacts.js');
+  // tmpDirBase MUST reside under ROOT so that corpus_path references
+  // (relative to ROOT) resolve within the repo and pass the verifier's
+  // ROOT confinement check. Using os.tmpdir() would cause the path to
+  // escape ROOT, rejecting the artifact before reaching the target code.
+  const tmpDirBase = fs.mkdtempSync(path.join(ROOT, 'target', 'canary-verify-'));
+
+  function makeFinalRawBase() {
+    const raw = makeValidRaw();
+    raw.measurements = [
+      makeValidMeasurement(0, 5000, 20),
+      makeValidMeasurement(1, 5000, 20),
+      makeValidMeasurement(2, 5000, 20),
+    ];
+    return raw;
+  }
+
+  // A minimal valid summary so the verifier gets past the "Missing summary"
+  // check and reaches the target code path (corpus/schedule/recompute).
+  function makeMinimalSummary(raw) {
+    return {
+      schema_version: 2,
+      provenance: raw.provenance,
+      config: raw.config,
+      scenarios: [],
+    };
+  }
+
+  function runVerifierCanary(name, setupFn, expectedCode) {
+    const dir = path.join(tmpDirBase, name);
+    fs.mkdirSync(dir, { recursive: true });
+    setupFn(dir);
+    const out = spawnSync(process.execPath, [VERIFY, dir], { encoding: 'utf8', timeout: 30000 });
+    if (out.error) throw new Error('verifier crashed (spawn error): ' + out.error.message);
+    if (out.status === null) throw new Error('verifier killed by signal ' + out.signal);
+    if (out.status === 0) throw new Error('verifier accepted malformed input (exit 0)');
+    const stderr = (out.stderr || '') + (out.stdout || '');
+    if (!stderr.includes('VERIFICATION FAILED')) {
+      throw new Error('verifier exited ' + out.status + ' but did not print VERIFICATION FAILED (possible uncaught exception). stderr: ' + stderr.slice(0, 200));
+    }
+    if (expectedCode && !stderr.includes(expectedCode)) {
+      throw new Error('verifier exited ' + out.status + ' but stderr missing expected code ' + expectedCode + '. stderr: ' + stderr.slice(0, 200));
+    }
+  }
+
+  // Canary: corpus path pointing to a directory — must produce MALFORMED_CORPUS
+  try {
+    runVerifierCanary('corpus-is-dir', (dir) => {
+      const raw = makeFinalRawBase();
+      const corpusDir = path.join(dir, 'corpusdir');
+      fs.mkdirSync(corpusDir, { recursive: true });
+      raw.provenance.corpus_path = path.relative(ROOT, corpusDir).replace(/\\/g, '/');
+      raw.provenance.schedule_sha256 = 'a'.repeat(64);
+      raw.provenance.harness_sha = 'b'.repeat(40);
+      fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), JSON.stringify(makeMinimalSummary(raw)));
+    }, 'MALFORMED_CORPUS');
+    executed++;
+  } catch (e) { failed++; failures.push('verify-corpus-is-dir: ' + e.message); }
+
+  // Canary: missing/unreadable corpus — must report corpus not found
+  try {
+    runVerifierCanary('corpus-missing', (dir) => {
+      const raw = makeFinalRawBase();
+      raw.provenance.corpus_path = 'benchmarks/nonexistent-scenarios.json';
+      raw.provenance.schedule_sha256 = 'a'.repeat(64);
+      raw.provenance.harness_sha = 'b'.repeat(40);
+      fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), JSON.stringify(makeMinimalSummary(raw)));
+    }, 'Referenced corpus not found');
+    executed++;
+  } catch (e) { failed++; failures.push('verify-corpus-missing: ' + e.message); }
+
+  // Canary: malformed corpus JSON — must produce MALFORMED_CORPUS
+  try {
+    runVerifierCanary('corpus-malformed-json', (dir) => {
+      const raw = makeFinalRawBase();
+      const corpusFile = path.join(dir, 'scenarios.json');
+      fs.writeFileSync(corpusFile, '{ invalid json !!!');
+      raw.provenance.corpus_path = path.relative(ROOT, corpusFile).replace(/\\/g, '/');
+      raw.provenance.schedule_sha256 = 'a'.repeat(64);
+      raw.provenance.harness_sha = 'b'.repeat(40);
+      fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), JSON.stringify(makeMinimalSummary(raw)));
+    }, 'MALFORMED_CORPUS');
+    executed++;
+  } catch (e) { failed++; failures.push('verify-corpus-malformed-json: ' + e.message); }
+
+  // Canary: malformed raw JSON — must produce MALFORMED_RAW
+  try {
+    runVerifierCanary('raw-malformed-json', (dir) => {
+      fs.writeFileSync(path.join(dir, 'test-raw.json'), '{ broken raw !!!');
+    }, 'MALFORMED_RAW');
+    executed++;
+  } catch (e) { failed++; failures.push('verify-raw-malformed-json: ' + e.message); }
+
+  // Canary: malformed summary JSON — must produce MALFORMED_SUMMARY
+  try {
+    runVerifierCanary('summary-malformed-json', (dir) => {
+      const raw = makeFinalRawBase();
+      raw.provenance.schedule_sha256 = 'a'.repeat(64);
+      raw.provenance.harness_sha = 'b'.repeat(40);
+      fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), '{ broken summary !!!');
+    }, 'MALFORMED_SUMMARY');
+    executed++;
+  } catch (e) { failed++; failures.push('verify-summary-malformed-json: ' + e.message); }
+
+  // Canary: malformed schedule JSON — must produce MALFORMED_SCHEDULE
+  try {
+    runVerifierCanary('schedule-malformed-json', (dir) => {
+      const raw = makeFinalRawBase();
+      raw.provenance.schedule_sha256 = 'a'.repeat(64);
+      raw.provenance.harness_sha = 'b'.repeat(40);
+      fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), JSON.stringify(makeMinimalSummary(raw)));
+      fs.writeFileSync(path.join(dir, 'test-schedule.json'), '{ broken schedule !!!');
+    }, 'MALFORMED_SCHEDULE');
+    executed++;
+  } catch (e) { failed++; failures.push('verify-schedule-malformed-json: ' + e.message); }
+
+  // Canary: missing results array followed by attempted recomputation — must produce MALFORMED_MEASUREMENT
+  try {
+    runVerifierCanary('missing-results-recompute', (dir) => {
+      const raw = makeFinalRawBase();
+      raw.provenance.schedule_sha256 = 'a'.repeat(64);
+      raw.provenance.harness_sha = 'b'.repeat(40);
+      raw.measurements[0].js = { runtime: 'js' }; // missing results array
+      fs.writeFileSync(path.join(dir, 'test-raw.json'), JSON.stringify(raw));
+      fs.writeFileSync(path.join(dir, 'test-summary.json'), JSON.stringify(makeMinimalSummary(raw)));
+    }, 'MALFORMED_MEASUREMENT');
+    executed++;
+  } catch (e) { failed++; failures.push('verify-missing-results-recompute: ' + e.message); }
+
+  // Clean up temp dir
+  try { fs.rmSync(tmpDirBase, { recursive: true, force: true }); } catch (e) { /* ignore */ }
 
   console.log('\n=== BENCHMARK CANARY RESULTS ===');
   console.log('Executed: ' + executed + '/' + registered);
