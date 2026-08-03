@@ -48,7 +48,7 @@ impl Tab {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct OptionsState {
     pub nocase: bool,
     pub dot: bool,
@@ -57,20 +57,6 @@ pub struct OptionsState {
     pub noextglob: bool,
     pub contains: bool,
     pub windows: bool,
-}
-
-impl Default for OptionsState {
-    fn default() -> Self {
-        Self {
-            nocase: false,
-            dot: false,
-            bash: false,
-            nonegate: false,
-            noextglob: false,
-            contains: false,
-            windows: false,
-        }
-    }
 }
 
 impl OptionsState {
@@ -107,7 +93,7 @@ pub struct BenchmarkStats {
     pub active: bool,
     pub total_ops: u64,
     pub matched_ops: u64,
-    pub min_nanos: u128,
+    pub min_nanos: Option<u128>,
     pub max_nanos: u128,
     pub total_nanos: u128,
     pub ops_history: Vec<u64>,
@@ -267,13 +253,13 @@ impl App {
             active_tab: Tab::LiveMatcher,
             theme: Theme::from_kind(ThemeKind::Cyberpunk),
             pattern_input: "src/**/*.rs".to_string(),
-            cursor_position: 11,
+            cursor_position: "src/**/*.rs".len(),
             options: OptionsState::default(),
             active_option_index: 0,
             candidate_paths,
             selected_path_index: 0,
             brace_input: "src/{components,utils}/*.{js,ts}".to_string(),
-            brace_cursor: 32,
+            brace_cursor: "src/{components,utils}/*.{js,ts}".len(),
             tree_paths,
             preset_list,
             selected_preset_index: 0,
@@ -347,8 +333,8 @@ impl App {
                     .map(|path| {
                         let start = Instant::now();
                         let input_units: Vec<u16> = path.encode_utf16().collect();
-                        let is_match = pmx_exec::is_match(&regex_source, &input_units, flags)
-                            .unwrap_or(false);
+                        let is_match =
+                            pmx_exec::is_match(&regex_source, &input_units, flags).unwrap_or(false);
                         let elapsed = start.elapsed().as_nanos();
                         PathMatchResult {
                             path: path.clone(),
@@ -365,9 +351,7 @@ impl App {
     }
 
     pub fn evaluate_scan(&self) -> ScanState {
-        let scan_opts = ScanOptions::default()
-            .with_parts(true)
-            .with_tokens(true);
+        let scan_opts = ScanOptions::default().with_parts(true).with_tokens(true);
         pmx_core::scan(&self.pattern_input, &scan_opts)
     }
 
@@ -401,8 +385,10 @@ impl App {
                 }
                 batch_nanos += elapsed;
 
-                if self.benchmark_stats.min_nanos == 0 || elapsed < self.benchmark_stats.min_nanos {
-                    self.benchmark_stats.min_nanos = elapsed;
+                if self.benchmark_stats.min_nanos.is_none()
+                    || elapsed < self.benchmark_stats.min_nanos.unwrap()
+                {
+                    self.benchmark_stats.min_nanos = Some(elapsed);
                 }
                 if elapsed > self.benchmark_stats.max_nanos {
                     self.benchmark_stats.max_nanos = elapsed;

@@ -44,9 +44,16 @@ pub fn render_benchmark_tab(f: &mut Frame, app: &mut App, area: Rect) {
     };
 
     let control_block = Block::default()
-        .title(Span::styled(" 🚀 Micro-Benchmark Arena ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " 🚀 Micro-Benchmark Arena ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
-        .border_style(if is_active { app.theme.active_border_style() } else { app.theme.border_style() });
+        .border_style(if is_active {
+            app.theme.active_border_style()
+        } else {
+            app.theme.border_style()
+        });
 
     let control_lines = vec![
         Line::from(vec![
@@ -57,12 +64,31 @@ pub fn render_benchmark_tab(f: &mut Frame, app: &mut App, area: Rect) {
                 Span::styled(" PAUSED / IDLE ", status_style)
             },
             Span::styled("  │  Controls: ", Style::default().fg(app.theme.muted)),
-            Span::styled("Press 'b' or 'Space' to toggle live benchmark", Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "Press 'b' or 'Space' to toggle live benchmark",
+                Style::default()
+                    .fg(app.theme.primary)
+                    .add_modifier(Modifier::BOLD),
+            ),
         ]),
         Line::from(vec![
-            Span::styled("Benchmarking Pattern: ", Style::default().fg(app.theme.muted)),
-            Span::styled(&app.pattern_input, Style::default().fg(app.theme.accent).add_modifier(Modifier::BOLD)),
-            Span::styled(format!(" across {} sample candidate paths", app.candidate_paths.len()), Style::default().fg(app.theme.secondary)),
+            Span::styled(
+                "Benchmarking Pattern: ",
+                Style::default().fg(app.theme.muted),
+            ),
+            Span::styled(
+                &app.pattern_input,
+                Style::default()
+                    .fg(app.theme.accent)
+                    .add_modifier(Modifier::BOLD),
+            ),
+            Span::styled(
+                format!(
+                    " across {} sample candidate paths",
+                    app.candidate_paths.len()
+                ),
+                Style::default().fg(app.theme.secondary),
+            ),
         ]),
     ];
 
@@ -80,13 +106,21 @@ pub fn render_benchmark_tab(f: &mut Frame, app: &mut App, area: Rect) {
     let gauge_ratio = ((ops_sec as f64 / 1_000_000.0).min(1.0)) as f64; // Max scaled at 1M ops/sec
 
     let gauge_block = Block::default()
-        .title(Span::styled(" ⚡ Throughput Ops / Sec Gauge ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " ⚡ Throughput Ops / Sec Gauge ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
     let gauge = Gauge::default()
         .block(gauge_block)
-        .gauge_style(Style::default().fg(app.theme.primary).bg(app.theme.surface).add_modifier(Modifier::BOLD))
+        .gauge_style(
+            Style::default()
+                .fg(app.theme.primary)
+                .bg(app.theme.surface)
+                .add_modifier(Modifier::BOLD),
+        )
         .ratio(gauge_ratio)
         .label(format!("{} Ops/sec", format_num(ops_sec)));
 
@@ -94,7 +128,10 @@ pub fn render_benchmark_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // Right: Detailed Latency Stats Box
     let stats_block = Block::default()
-        .title(Span::styled(" ⏱️ Latency Distribution ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " ⏱️ Latency Distribution ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
@@ -102,21 +139,47 @@ pub fn render_benchmark_tab(f: &mut Frame, app: &mut App, area: Rect) {
     let stats_lines = vec![
         Line::from(vec![
             Span::styled("Total Operations: ", Style::default().fg(app.theme.muted)),
-            Span::styled(format_num(stats.total_ops), Style::default().fg(app.theme.text).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                format_num(stats.total_ops),
+                Style::default()
+                    .fg(app.theme.text)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::styled(" | Matched: ", Style::default().fg(app.theme.muted)),
-            Span::styled(format_num(stats.matched_ops), Style::default().fg(app.theme.success)),
+            Span::styled(
+                format_num(stats.matched_ops),
+                Style::default().fg(app.theme.success),
+            ),
         ]),
         Line::from(vec![
             Span::styled("Minimum Latency: ", Style::default().fg(app.theme.muted)),
-            Span::styled(format!("{:.3} µs", stats.min_nanos as f64 / 1000.0), Style::default().fg(app.theme.success).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                match stats.min_nanos {
+                    Some(ns) => format!("{:.3} µs", ns as f64 / 1000.0),
+                    None => "N/A".to_string(),
+                },
+                Style::default()
+                    .fg(app.theme.success)
+                    .add_modifier(Modifier::BOLD),
+            ),
         ]),
         Line::from(vec![
             Span::styled("Average Latency: ", Style::default().fg(app.theme.muted)),
-            Span::styled(format!("{:.3} µs", stats.avg_nanos() as f64 / 1000.0), Style::default().fg(app.theme.primary).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                format!("{:.3} µs", stats.avg_nanos() as f64 / 1000.0),
+                Style::default()
+                    .fg(app.theme.primary)
+                    .add_modifier(Modifier::BOLD),
+            ),
         ]),
         Line::from(vec![
             Span::styled("Maximum Latency: ", Style::default().fg(app.theme.muted)),
-            Span::styled(format!("{:.3} µs", stats.max_nanos as f64 / 1000.0), Style::default().fg(app.theme.error).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                format!("{:.3} µs", stats.max_nanos as f64 / 1000.0),
+                Style::default()
+                    .fg(app.theme.error)
+                    .add_modifier(Modifier::BOLD),
+            ),
         ]),
     ];
 
@@ -125,7 +188,10 @@ pub fn render_benchmark_tab(f: &mut Frame, app: &mut App, area: Rect) {
 
     // 3. Throughput History Sparkline
     let sparkline_block = Block::default()
-        .title(Span::styled(" 📈 Live Throughput History (Ops/sec over time) ", app.theme.block_title_style()))
+        .title(Span::styled(
+            " 📈 Live Throughput History (Ops/sec over time) ",
+            app.theme.block_title_style(),
+        ))
         .borders(Borders::ALL)
         .border_style(app.theme.border_style());
 
